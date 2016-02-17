@@ -24,7 +24,7 @@ widgets:
 
 
 #### RSS
-rss: /atom.xml ## RSS address.
+rss: /blog/atom.xml ## RSS address.
 
 #### Image
 imglogo:
@@ -86,8 +86,8 @@ links:
 
 
 #### Comment
-duoshuo_shortname:  snowdream-blog  ## e.g. wuchong   your duoshuo short name.
-disqus_shortname:     ## e.g. wuchong   your disqus short name.
+duoshuo_shortname:  snowdream-blog ## e.g. wuchong   your duoshuo short name.
+disqus_shortname:  snowdream-blog   ## e.g. wuchong   your disqus short name.
 
 #### Share button
 jiathis:
