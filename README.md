@@ -1,6 +1,6 @@
 #blog
 
-Blog by [snowdream][0] with help from [Jekyll Bootstrap][1] and [The Hooligan Theme][2].
+Blog by [snowdream][0] with help from [Hexo][1] and [The Jacman Theme][2].
 
 
 ##License
@@ -21,5 +21,5 @@ limitations under the License.
 ```
 
 [0]:http://snowdream.github.io/
-[1]:http://jekyllbootstrap.com/
-[2]:http://github.com/dhulihan/hooligan
+[1]:http://hexo.io/
+[2]:https://github.com/wuchong/jacman
