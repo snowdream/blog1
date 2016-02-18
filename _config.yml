@@ -6,7 +6,8 @@
 title: snowdream
 subtitle: "Impossible is nothing！ Email: yanghui1986527#gmail.com QQ: 273247606"
 description: android,java,nodejs
-author: snowdream
+keywords: Android,Nodejs,Java # 博客关键字
+author: snowdream <yanghui1986527@gmail.com>
 language: zh-CN
 timezone: Asia/Shanghai
 
