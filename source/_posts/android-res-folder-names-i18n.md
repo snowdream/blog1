@@ -15,7 +15,6 @@ android多国语言文件夹文件汇总如下：
 中文（台湾）：values-zh-rTW
 
 中文（香港）：values-zh-rHK
- <!-- more -->
 
 英语（美国）：values-en-rUS
 
