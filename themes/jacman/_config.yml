@@ -16,9 +16,9 @@ widgets:
 - category
 - tag
 - links
-- douban
+#- douban
 - rss
-- weibo
+#- weibo
   ## provide eight widgets:github-card,category,tag,rss,archive,tagcloud,links,weibo
 
 
