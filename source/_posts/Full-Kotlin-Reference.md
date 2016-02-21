@@ -5,7 +5,6 @@ tags:
 - kotlin
 categories:
 - books
-- kotlin
 ---
 [《Full Kotlin Reference》](http://kotlinlang.org/docs/kotlin-docs.pdf)
 
