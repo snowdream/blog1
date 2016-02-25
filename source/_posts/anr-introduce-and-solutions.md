@@ -39,7 +39,7 @@ static final int SERVICE_BACKGROUND_TIMEOUT = SERVICE_TIMEOUT * 10;
 
 当一个程序第一次启动时，Android会同时启动一个对应的主线程（Main Thread），主线程主要负责处理与UI相关的事件，如：用户的按键事件，用户接触屏幕的事件以及屏幕绘图事件，并把相关的事件分发到对应的组件进行处理。所以主线程通常又被叫做UI线程。
 
-** ANR的原因只有一个： 那就是把IO操作/耗时操作放在了主线程，导致主线程无法及时处理份内的事情（诸如：响应按键，点击事件，刷新界面等），超过了预定时间阀值，最终导致ANR。** 
+** ANR的原因只有一个： 那就是把IO操作/耗时操作放在了主线程，导致主线程无法及时处理份内的事情（诸如：响应按键，点击事件，刷新界面等），超过了预定时间阀值，最终导致ANR。**
 
 ## ANR的解决方案
 ### 分析ANR Trace文件 （被动方案）　
@@ -47,7 +47,7 @@ static final int SERVICE_BACKGROUND_TIMEOUT = SERVICE_TIMEOUT * 10;
 
 ANR Trace文件的路径通常是：data/anr/traces.txt 但是文件名可能稍有不同。因此，建议上传data/anr/下所有文件。
 
-具体上传方法不展开，请自行百度，或者参考：[浅谈ANR及log分析ANR](http://blog.csdn.net/itachi85/article/details/6918761)
+具体上传方法不展开，请自行百度，或者参考：[在Android中自定义捕获Application全局异常，可以替换掉系统的强制退出对话框（很有参考价值与实用价值）](http://blog.csdn.net/jdsjlzx/article/details/7606423)
 
 ### 预防ANR （主动方案）　
 1. #### 同步改异步
