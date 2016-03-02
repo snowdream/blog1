@@ -38,3 +38,8 @@ android:icon="@drawable/ic_launcher"
 
 R.drawable.ic_launcher
 ```
+
+## 参考
+1. [Mipmap纹理技术简介](http://blog.csdn.net/linber214/article/details/3342051/)
+1. [mipmap vs drawable folders](http://stackoverflow.com/a/28065664)
+1. [google官方关于mipmap和drawable的定位](http://developer.android.com/intl/ko/tools/projects/index.html)
