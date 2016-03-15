@@ -74,3 +74,8 @@ xmlns:tools="http://schemas.android.com/tools"
 1. 文本控件，需要考虑，文本过长时的省略策略。
 1. 防止控件相互压盖
 1. 切图至少提供两套，hdpi和xhdpi
+
+
+## 参考
+1. [Designtime Layout Attributes](http://tools.android.com/tips/layout-designtime-attributes)
+1. [Tools Attributes](http://tools.android.com/tech-docs/tools-attributes)
