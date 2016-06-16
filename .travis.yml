@@ -26,4 +26,4 @@ install:
 - npm install
 script:
 - chmod u+x .travis/deploy.sh
-- sh .travis/deploy.sh
+- .travis/deploy.sh

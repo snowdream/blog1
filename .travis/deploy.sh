@@ -37,11 +37,11 @@ echo "5"
 # Copy SSH config and known_hosts
 cp .travis/ssh_config ~/.ssh/config
 # cp .travis/ssh_known_hosts ~/.ssh/known_hosts
-
+echo "6"
 # Set Git config
 git config --global user.name 'snowdream'
 git config --global user.email yanghui1986527@gmail.com 
-
+echo "7"
 # Deploy with Hexo
 # Hide any sensitive credential data that might otherwise be exposed
 # In case of debugging you should remove those redirections to /dev/null
@@ -59,3 +59,4 @@ expect >/dev/null 2>&1 << EOF
     eof { exit 0 }
   }
 EOF
+echo "8"
