@@ -4,8 +4,8 @@
 # set -o errexit -o nounset
 echo "1"
 # Decrypt the private key
-openssl aes-256-cbc -K $encrypted_b9113630a4c4_key -iv $encrypted_b9113630a4c4_iv
-  -in id_rsa.enc -out ~/.ssh/id_rsa -d
+# openssl aes-256-cbc -K $encrypted_b9113630a4c4_key -iv $encrypted_b9113630a4c4_iv
+#   -in id_rsa.enc -out ~/.ssh/id_rsa -d
   echo "2"
   
 # Set the permission of the key
