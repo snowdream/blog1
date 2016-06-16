@@ -1,7 +1,7 @@
 #!/bin/bash
 # stop executing if any errors occur
 # stop executing if an unset variable is encountered
-set -o errexit -o nounset
+# set -o errexit -o nounset
 echo "1"
 # Decrypt the private key
 openssl aes-256-cbc -K $encrypted_b9113630a4c4_key -iv $encrypted_b9113630a4c4_iv
