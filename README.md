@@ -1,9 +1,10 @@
-#blog
+# blog
+[![Build Status](https://travis-ci.org/snowdream/blog.svg?branch=master)](https://travis-ci.org/snowdream/blog)
 
 Blog by [snowdream][0] with help from [Hexo][1] and [The Jacman Theme][2].
 
 
-##License
+## License
 ```
 Copyright (C) 2014 Snowdream Mobile <yanghui1986527@gmail.com>
 
