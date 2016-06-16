@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - "6"
+branches:
+  only:
+    - master
+before_install:
+  - npm install hexo -g
+install:
+  - npm install
+script:
+  - hexo clean
+  - hexo d -g
