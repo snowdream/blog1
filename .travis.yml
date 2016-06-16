@@ -22,7 +22,7 @@ before_install:
     -in .travis/id_rsa.enc -out ~/.ssh/id_rsa -d
 
 install:
-- npm install hexo -g
+- npm install hexo-cli -g
 - npm install
 script:
 - chmod u+x .travis/deploy.sh
