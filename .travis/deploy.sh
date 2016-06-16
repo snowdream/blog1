@@ -47,7 +47,8 @@ echo "7"
 # In case of debugging you should remove those redirections to /dev/null
 expect >/dev/null 2>&1 << EOF
   set timeout 600
-  spawn hexo clean && hexo d -g
+  spawn hexo clean
+  spawn hexo d -g
   expect {
     "Enter passphrase for" {
       send "$ssh_pass\r"
