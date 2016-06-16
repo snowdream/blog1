@@ -11,7 +11,7 @@ openssl aes-256-cbc -K $encrypted_b9113630a4c4_key -iv $encrypted_b9113630a4c4_i
 chmod 600 ~/.ssh/id_rsa
 
 # Start SSH agent in the background
-eval "$(ssh-agent -s)"
+eval $(ssh-agent)
 
 # Add the private key to the ssh-agent
 # Enter passphrase automatically
