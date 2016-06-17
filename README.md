@@ -4,9 +4,14 @@
 Blog by [snowdream][0] with help from [Hexo][1] and [The Jacman Theme][2].
 
 
+## Contacts
+* Email：yanghui1986527#gmail.com
+* QQ Group: 529327615      
+**Welcome to talk about Android.**
+
 ## License
 ```
-Copyright (C) 2014 Snowdream Mobile <yanghui1986527@gmail.com>
+Copyright (C) 2015 Snowdream Mobile <yanghui1986527@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
