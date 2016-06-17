@@ -3,8 +3,8 @@
 # stop executing if an unset variable is encountered
 set -o errexit -o nounset
 # Decrypt the private key
-# openssl aes-256-cbc -K $encrypted_b9113630a4c4_key -iv $encrypted_b9113630a4c4_iv
-#   -in id_rsa.enc -out ~/.ssh/id_rsa -d
+openssl aes-256-cbc -K $encrypted_b9113630a4c4_key -iv $encrypted_b9113630a4c4_iv
+  -in .travis/id_rsa.enc -out ~/.ssh/id_rsa -d
   
 # Set the permission of the key
 chmod 600 ~/.ssh/id_rsa
