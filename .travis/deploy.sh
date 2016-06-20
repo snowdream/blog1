@@ -49,11 +49,11 @@ expect >/dev/null 2>&1 << EOF
       send "$ssh_pass\r"
     }
   }
-  expect {
-    timeout { exit 1 }
-    "denied" { exit 1 }
-    eof { exit 0 }
-  }
+  # expect {
+  #   timeout { exit 1 }
+  #   "denied" { exit 1 }
+  #   eof { exit 0 }
+  # }
   spawn gulp deploy
   foreach  i { 1 2 3} {
     expect {
