@@ -23,6 +23,13 @@ tags: [ubuntu,linux]
 [http://wps-community.org/download.html](http://wps-community.org/download.html)
 1. MuPDF       
 [http://mupdf.com/](http://mupdf.com/)
+1. 钉钉           
+[https://im.dingtalk.com/](https://im.dingtalk.com/)
+1. QQ        
+[http://w.qq.com/](http://w.qq.com/)
+1. 微信         
+[https://github.com/geeeeeeeeek/electronic-wechat](https://github.com/geeeeeeeeek/electronic-wechat)
+
 
 ## 编程相关
 1. JDK8     
