@@ -21,7 +21,8 @@ tags: [ubuntu,linux]
 [http://www.zhixing123.cn/ubuntu/53207.html](http://www.zhixing123.cn/ubuntu/53207.html)
 1. 办公Office软件 WPS     
 [http://wps-community.org/download.html](http://wps-community.org/download.html)
-
+1. MuPDF       
+[http://mupdf.com/](http://mupdf.com/)
 
 ## 编程相关
 1. JDK8     
