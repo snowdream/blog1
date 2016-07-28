@@ -19,6 +19,8 @@ tags: [ubuntu,linux]
 [https://www.douban.com/note/252982281/](https://www.douban.com/note/252982281/)
 1. 搜狗拼音输入法    
 [http://www.zhixing123.cn/ubuntu/53207.html](http://www.zhixing123.cn/ubuntu/53207.html)
+1. 办公Office软件 WPS
+[http://wps-community.org/download.html](http://wps-community.org/download.html)
 
 
 ## 编程相关
