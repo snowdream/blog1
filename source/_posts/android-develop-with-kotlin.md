@@ -7,7 +7,7 @@ tags: [android,kotlin]
 >作者：snowdream
 >Email：yanghui1986527#gmail.com
 >QQ 群: 529327615      
->原文地址：[https://snowdream.github.io/blog/2016/08/13/android-develop-with-kotlin/](https://snowdream.github.io/blog/2016/08/12/android-develop-with-kotlin/)
+>原文地址：[https://snowdream.github.io/blog/2016/08/13/android-develop-with-kotlin/](https://snowdream.github.io/blog/2016/08/13/android-develop-with-kotlin/)
 
 
 ## 目标
