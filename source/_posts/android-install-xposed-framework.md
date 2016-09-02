@@ -4,6 +4,11 @@ date: 2016-09-02 09:25:43
 categories: android
 tags: [android,xposed]
 ---
+>作者：snowdream   
+>Email：yanghui1986527#gmail.com    
+>Github: [https://github.com/snowdream](https://github.com/snowdream)   
+>QQ 群: 529327615        
+>原文地址：[https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/](https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/)
 
 ## 简介
 提到Xposed框架时，人们总会用到一个词“神器”。     
