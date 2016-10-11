@@ -4,6 +4,12 @@ date: 2016-10-11 10:41:00
 categories: android
 tags: android
 ---
+>作者：snowdream   
+>Email：yanghui1986527#gmail.com    
+>Github: [https://github.com/snowdream](https://github.com/snowdream)   
+>QQ 群: 529327615        
+>原文地址：[https://snowdream.github.io/blog/2016/10/11/android-secret-codes/](https://snowdream.github.io/blog/2016/10/11/android-secret-codes/)
+
 注： 本文根据[《Android-SecretCodes》](http://simonmarquis.github.io/Android-SecretCodes/)翻译整理。
 
 ## 什么是暗码？
