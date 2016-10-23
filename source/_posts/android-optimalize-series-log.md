@@ -67,14 +67,14 @@ Log.i(TAG,"这样使用，得到的LOGTAG的值就是DroidSettings，" +
 ```
 在添加上述Proguard配置前后，编译打包Release模式的正式包，使用JD-GUI进行反编译，对比上述代码的编译后代码。
 
-## 结果
+### 结果
 添加配置前
 {% asset_img case1-a.png [case1-a] %}
 
 添加配置后
 {% asset_img case1-b.png [case1-b] %}
 
-## 结论
+### 结论
 通过比对结果，我们可以得出结论：      
 通过添加Proguard配置，可以在Release模式下，移除掉日志。
 
