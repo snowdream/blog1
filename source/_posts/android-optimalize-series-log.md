@@ -4,6 +4,13 @@ date: 2016-10-22 22:19:41
 categories: android
 tags: android
 ---
+>作者：snowdream   
+>Email：yanghui1986527#gmail.com    
+>Github: [https://github.com/snowdream](https://github.com/snowdream)   
+>QQ 群: 529327615        
+>原文地址：[https://snowdream.github.io/blog/2016/10/22/android-optimalize-series-log/](https://snowdream.github.io/blog/2016/10/22/android-optimalize-series-log/)
+
+
 ## 简介
 在Android应用开发过程中，通过Log类输出日志是一种很重要的调试手段。    
 大家对于Log类的使用，一般会形成几点共识：
