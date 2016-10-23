@@ -61,9 +61,9 @@ public static void i(String tag, String msg) {
 
 本着大胆假设，小心求证的原则，下面我们通过实践来探索上面的问题答案。
 
-//TODO 本文基于以下项目进行测试实践：
-
-工具：[JD-GUI](http://jd.benow.ca/)
+本文基于以下项目进行测试实践：
+[https://github.com/snowdream/test/tree/master/android/test/logtest](https://github.com/snowdream/test/tree/master/android/test/logtest)
+反编译工具：[JD-GUI](http://jd.benow.ca/)
 ## 验证Proguard配置清理日志的有效性
 ### CASE 
 ```
