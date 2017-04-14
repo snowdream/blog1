@@ -4,6 +4,7 @@ date: 2017-04-11 21:01:48
 categories: gradle
 tags: gradle
 ---
+原文：http://mrhaki.blogspot.com/2016/12/gradle-goodness-run-task-ignoring-up-to.html
 
 Gradle构建很快，是因为支持增量任务。简单来说，Gradle可以在运行Task前，就知道Task的输入和输出是否改变。如果什么都没有改变，那么这个Task将会被标记为up-to-date，并且不会被执行，否则则会被执行。如果不管一个Task是否是up-to-date，我们都希望能够运行它，此时我们需要增加一个命令行选项`--rerun-tasks`。
 
