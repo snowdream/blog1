@@ -1,5 +1,5 @@
 ---
-title: “学 Kotlin，看这一篇就够了。”
+title: 学 Kotlin，看这一篇就够了。
 date: 2017-06-06 21:52:20
 categories: android
 tags: android
