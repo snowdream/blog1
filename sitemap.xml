@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://www.snowdream.tech/tags/index.html</loc>
+    
+    <lastmod>2018-04-19T02:49:42.031Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/about/index.html</loc>
+    
+    <lastmod>2018-04-19T02:49:42.031Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/categories/index.html</loc>
+    
+    <lastmod>2018-04-19T02:49:42.031Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/03/02/mipmap-vs-drawable-folders/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/03/23/mintty-chinese-garbled-code/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/10/27/wifi-adb-without-usb/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/29/widgets-modules-plugins/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/05/06/ubuntu-16-04-configure/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/thinking-in-asyncTask/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/03/31/proxy-settings-with-shadowsocks/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/npm-proxy-config/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/10/20/mobile-app-develop-flow/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/04/11/gradle-goodness-run-task-ignoring-up-to/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/handler-removeCallbacksAndMessages/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/07/26/gradle-repositories-issues/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/11/27/gradle-issues-with-android/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/04/09/gradle-goodness-skip-task-when-input/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/03/15/gradle-goodness-show-more-information/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/03/27/gradle-goodness-running-single-test/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/10/26/gradle-goodness-changing-name-of/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/04/09/gradle-goodness-check-operating-system/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/10/26/gradle-goodness-check-task-dependencies/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/03/28/gradle-goodness-create-shortcut-key-to/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/04/14/gradle-goodness-enable-build-cache-for/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/intellij-idea-custom/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.027Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/11/13/android-wifimanager-leak-context/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/25/anr-introduce-and-solutions/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/03/22/build-private-os-system-with-docker-debian-mate-x2go/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/06/06/full-kotlin-docs/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/04/20/gitbook-android/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/08/10/gradle-android-task-graph-visteg/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/08/03/android-mock-test/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/android-proguard-custom/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/android-remove-log/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/android-res-folder-names-i18n/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/10/11/android-secret-codes/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.023Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/09/02/android-install-xposed-framework/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.019Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/08/23/android-incremental-update-solutions/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.015Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/08/12/android-develop-with-groovy/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/10/17/android-genymotion-install-and-settings/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/03/15/android-effective-layout/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/09/02/android-develop-xposed-module/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/08/13/android-develop-with-kotlin/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/03/11/android-color-argb-alpha-convert/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/08/24/android-incremental-update-solutions-flowchart/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/07/02/android-ci-gitlab/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/07/16/android-ci-gitlab-docker/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/android-bad-habit/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/android-avoid-null/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/04/06/agile-development-advices/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.011Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/18/Singleton-mode/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.007Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/19/ViewStub-error-must-have-a-valid-layoutResource/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.007Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/05/07/ToyBricks-Manual/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.007Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2017/05/03/ToyBricks-Introduction/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.007Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.snowdream.tech/2016/02/20/Full-Kotlin-Reference/</loc>
+    
+    <lastmod>2018-04-19T02:49:42.007Z</lastmod>
+    
+  </url>
+  
+</urlset>

@@ -1,0 +1,1478 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="android,java,nodejs">
+<meta name="keywords" content="Android,Nodejs,Java">
+<meta property="og:type" content="website">
+<meta property="og:title" content="snowdream - Impossible is nothing!">
+<meta property="og:url" content="http://www.snowdream.tech/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="android,java,nodejs">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="snowdream - Impossible is nothing!">
+<meta name="twitter:description" content="android,java,nodejs">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/11/13/android-wifimanager-leak-context/" title="用了WifiManager这么多年，今天才知道彻底用错了" itemprop="url">用了WifiManager这么多年，今天才知道彻底用错了</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-11-13T12:15:45.000Z" itemprop="datePublished"> 发表于 2017-11-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <hr>
+<blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a><br>原文地址：<a href="https://snowdream.github.io/blog/2017/11/13/android-wifimanager-leak-context/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2017/11/13/android-wifimanager-leak-context/</a></p>
+</blockquote>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>之前在处理内存泄漏相关问题时，碰到一个奇怪的问题。有一个闪屏界面，由于包含大图片，屡次内存泄漏，屡次修改。屡次修改，屡次还内存泄漏。<br>直到有一天，通过MAT工具分析一个相关hprof文件时，发现一个新的case: 内存泄漏矛头直指WifiManager。<br><img src="https://static.dingtalk.com/media/lALPBbCc1SB50q5GzQKq_682_70.png_620x10000q90g.jpg" alt="android-wifimanager-leak-context"></p>
+<p>关于WifiManager内存泄漏问题，在Android官方网站得到确认：</p>
+<ol>
+<li><a href="https://issuetracker.google.com/issues/36964970" target="_blank" rel="noopener">Memory leak in WifiManager/WifiService of Android 4.2</a></li>
+<li><a href="https://issuetracker.google.com/issues/63244509" target="_blank" rel="noopener">WifiManager use AsyncChannel leading to memory leak</a></li>
+</ol>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>对于WifiManager，我一直都是这么用的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WifiManager wifiManager = ((WifiManager) <span class="keyword">this</span>.getSystemService(Context.WIFI_SERVICE));</span><br></pre></td></tr></table></figure></p>
+<p>但是当我查阅WifiManager相关文档后，我终于改变了看法。<br>在WifiManager官方文档 <a href="https://developer.android.com/reference/android/net/wifi/WifiManager.html" target="_blank" rel="noopener">https://developer.android.com/reference/android/net/wifi/WifiManager.html</a> 中，提到一句话：</p>
+<p>“On releases before N, this object should only be obtained from an application context, and not from any other derived context to avoid memory leaks within the calling process.”</p>
+<p>大概意思便是：<br>在Android N以前，你应该只通过ApplicationContext来获取WifiManager，否则可能面临内存泄漏问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WifiManager wifiManager = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE));</span><br></pre></td></tr></table></figure>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>为什么WifiManager可能发生内存泄漏？</p>
+<p>下面我们具体分析一下：</p>
+<p>以Android 5.1.1_r6为例进行分析。</p>
+<p>1.打开在线源码网站： <a href="http://androidxref.com/" target="_blank" rel="noopener">http://androidxref.com/</a>   。找到ContextImpl.java类源码。</p>
+<p>2.从ContextImpl.java源码中，我们可以看到：一个进程可能创建多个WifiManager。同时，我们把Activity(也就是ctx.getOuterContext())，传给了WifiManager。    </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ContextImpl</span> <span class="keyword">extends</span> <span class="title">Context</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Object <span class="title">getSystemService</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">     ServiceFetcher fetcher = SYSTEM_SERVICE_MAP.get(name);</span><br><span class="line">     <span class="keyword">return</span> fetcher == <span class="keyword">null</span> ? <span class="keyword">null</span> : fetcher.getService(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> &#123;</span><br><span class="line">   registerService(WIFI_SERVICE, <span class="keyword">new</span> ServiceFetcher() &#123;</span><br><span class="line">          <span class="function"><span class="keyword">public</span> Object <span class="title">createService</span><span class="params">(ContextImpl ctx)</span> </span>&#123;</span><br><span class="line">              IBinder b = ServiceManager.getService(WIFI_SERVICE);</span><br><span class="line">              IWifiManager service = IWifiManager.Stub.asInterface(b);</span><br><span class="line">              <span class="keyword">return</span> <span class="keyword">new</span> WifiManager(ctx.getOuterContext(), service);</span><br><span class="line">          &#125;&#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.我们再接着浏览 WifiManager源码。这里把Context传给了sAsyncChannel，而这个sAsyncChannel竟然是一个静态变量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WifiManager</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> AsyncChannel sAsyncChannel;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">WifiManager</span><span class="params">(Context context, IWifiManager service)</span> </span>&#123;</span><br><span class="line">      mContext = context;</span><br><span class="line">      mService = service;</span><br><span class="line">      init();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">synchronized</span> (sThreadRefLock) &#123;</span><br><span class="line">          <span class="keyword">if</span> (++sThreadRefCount == <span class="number">1</span>) &#123;</span><br><span class="line">              Messenger messenger = getWifiServiceMessenger();</span><br><span class="line">              <span class="keyword">if</span> (messenger == <span class="keyword">null</span>) &#123;</span><br><span class="line">                  sAsyncChannel = <span class="keyword">null</span>;</span><br><span class="line">                  <span class="keyword">return</span>;</span><br><span class="line">              &#125;</span><br><span class="line"></span><br><span class="line">              sHandlerThread = <span class="keyword">new</span> HandlerThread(<span class="string">"WifiManager"</span>);</span><br><span class="line">              sAsyncChannel = <span class="keyword">new</span> AsyncChannel();</span><br><span class="line">              sConnected = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">              sHandlerThread.start();</span><br><span class="line">              Handler handler = <span class="keyword">new</span> ServiceHandler(sHandlerThread.getLooper());</span><br><span class="line">              sAsyncChannel.connect(mContext, handler, messenger);</span><br><span class="line">              <span class="keyword">try</span> &#123;</span><br><span class="line">                  sConnected.await();</span><br><span class="line">              &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                  Log.e(TAG, <span class="string">"interrupted wait at init"</span>);</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.再接着浏览AsyncChannel的源码。这个context被保存在了AsyncChannel内部。<br>换一句话来说：你传进来的Activity/Fragment，被一个静态对象给持有了。一旦这个静态对象没有正确释放，就会造成内存泄漏。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncChannel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Context for source */</span></span><br><span class="line">    <span class="keyword">private</span> Context mSrcContext;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Connect handler and messenger.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Sends a CMD_CHANNEL_HALF_CONNECTED message to srcHandler when complete.</span></span><br><span class="line"><span class="comment">     *      msg.arg1 = status</span></span><br><span class="line"><span class="comment">     *      msg.obj = the AsyncChannel</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> srcContext</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> srcHandler</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> dstMessenger</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(Context srcContext, Handler srcHandler, Messenger dstMessenger)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (DBG) log(<span class="string">"connect srcHandler to the dstMessenger  E"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// We are connected</span></span><br><span class="line">        connected(srcContext, srcHandler, dstMessenger);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Tell source we are half connected</span></span><br><span class="line">        replyHalfConnected(STATUS_SUCCESSFUL);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (DBG) log(<span class="string">"connect srcHandler to the dstMessenger X"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Connect handler to messenger. This method is typically called</span></span><br><span class="line"><span class="comment">     * when a server receives a CMD_CHANNEL_FULL_CONNECTION request</span></span><br><span class="line"><span class="comment">     * and initializes the internal instance variables to allow communication</span></span><br><span class="line"><span class="comment">     * with the dstMessenger.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> srcContext</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> srcHandler</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> dstMessenger</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connected</span><span class="params">(Context srcContext, Handler srcHandler, Messenger dstMessenger)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (DBG) log(<span class="string">"connected srcHandler to the dstMessenger  E"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initialize source fields</span></span><br><span class="line">        mSrcContext = srcContext;</span><br><span class="line">        mSrcHandler = srcHandler;</span><br><span class="line">        mSrcMessenger = <span class="keyword">new</span> Messenger(mSrcHandler);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initialize destination fields</span></span><br><span class="line">        mDstMessenger = dstMessenger;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (DBG) log(<span class="string">"connected srcHandler to the dstMessenger X"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>5.最后。既然google声称Android 7.0已经改了这个问题。那我们就来围观一下这个改动:WiFiManager中的AsyncChannel已经被声明为普通对象，而不是静态的。</p>
+<p><a href="http://androidxref.com/7.0.0_r1/xref/frameworks/base/wifi/java/android/net/wifi/WifiManager.java#mAsyncChannel" target="_blank" rel="noopener">http://androidxref.com/7.0.0_r1/xref/frameworks/base/wifi/java/android/net/wifi/WifiManager.java#mAsyncChannel</a></p>
+<h2 id="发散"><a href="#发散" class="headerlink" title="发散"></a>发散</h2><p>另外，查询资料，发现不止WiFiManager，还有AudioManager等也可能存在内存泄漏问题。具体参考： <a href="https://android-review.googlesource.com/#/c/platform/frameworks/base/+/140481/" target="_blank" rel="noopener">https://android-review.googlesource.com/#/c/platform/frameworks/base/+/140481/</a></p>
+<p>因此，建议，除了和UI相关的系统service，其他一律使用ApplicationContext来获取。</p>
+<p>欢迎大家关注我的微信公众号:  sn0wdr1am<br><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://developer.android.com/reference/android/net/wifi/WifiManager.html" target="_blank" rel="noopener">WifiManager</a></li>
+<li><a href="https://issuetracker.google.com/issues/63244509" target="_blank" rel="noopener">WifiManager use AsyncChannel leading to memory leak</a></li>
+<li><a href="https://issuetracker.google.com/issues/36964970" target="_blank" rel="noopener">Memory leak in WifiManager/WifiService of Android 4.2
+</a></li>
+<li><a href="https://android-review.googlesource.com/#/c/platform/frameworks/base/+/140481/" target="_blank" rel="noopener">Fix context leak with AudioManager</a></li>
+<li><a href="https://github.com/androidannotations/androidannotations/issues/1628" target="_blank" rel="noopener">@SystemService for WifiManager causes a memory leak #1628</a></li>
+<li><a href="https://github.com/pwittchen/NetworkEvents/issues/106" target="_blank" rel="noopener">Memory leak in WiFiManager from Android SDK</a></li>
+<li><a href="https://stackoverflow.com/a/42639000" target="_blank" rel="noopener">signed apk error [WifiManagerLeak]</a></li>
+<li><a href="https://segmentfault.com/a/1190000004882511" target="_blank" rel="noopener">Android: 记一次Android内存泄露</a></li>
+</ol>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a></li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/11/13/android-wifimanager-leak-context/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/11/13/android-wifimanager-leak-context/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/06/06/full-kotlin-docs/" title="学 Kotlin，看这一篇就够了。" itemprop="url">学 Kotlin，看这一篇就够了。</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-06-06T13:52:20.000Z" itemprop="datePublished"> 发表于 2017-06-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="为什么学习Kotlin？"><a href="#为什么学习Kotlin？" class="headerlink" title="为什么学习Kotlin？"></a>为什么学习Kotlin？</h2><ol>
+<li><p><a href="https://www.oschina.net/news/84938/android-o-release-with-kotlin" target="_blank" rel="noopener">欢呼声热烈 谷歌宣布 Kotlin 成 Android 开发一级语言</a></p>
+</li>
+<li><p><a href="https://blog.jetbrains.com/kotlin/2017/05/kotlin-on-android-now-official/?spm=a1zb6.8232479.0.0.Zj53Pa" target="_blank" rel="noopener">Kotlin on Android. Now official</a></p>
+</li>
+<li><p><a href="https://www.oschina.net/news/85468/what-do-17-google-developers-experts-for-kotlin" target="_blank" rel="noopener">17 位谷歌 Android 开发专家是如何看待 Kotlin 的？</a></p>
+</li>
+<li><p><a href="https://www.oschina.net/news/85488/why-you-should-totally-switch-to-kotlin" target="_blank" rel="noopener">为什么你该摒弃 Java ，全面转向 Kotlin 语言？</a></p>
+</li>
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&amp;mid=404087761&amp;idx=1&amp;sn=d80625ee52f860a7a2ed4c238d2151b6" target="_blank" rel="noopener">为什么说Kotlin值得一试</a></p>
+</li>
+</ol>
+<h2 id="如何学习Kotlin？"><a href="#如何学习Kotlin？" class="headerlink" title="如何学习Kotlin？"></a>如何学习Kotlin？</h2><h3 id="官网以及相关文档"><a href="#官网以及相关文档" class="headerlink" title="官网以及相关文档"></a>官网以及相关文档</h3><ol>
+<li><p><a href="https://kotlinlang.org" target="_blank" rel="noopener">Kotlin 官网</a></p>
+</li>
+<li><p><a href="https://kotlinlang.org/docs/reference/" target="_blank" rel="noopener">Kotlin 文档</a></p>
+</li>
+<li><p><a href="https://blog.jetbrains.com/kotlin/" target="_blank" rel="noopener">Kotlin 博客</a></p>
+</li>
+<li><p><a href="http://www.kotlincn.net/docs/reference/" target="_blank" rel="noopener">Kotlin 中文文档</a></p>
+</li>
+<li><p><a href="https://github.com/JetBrains/kotlin" target="_blank" rel="noopener">Kotlin on GitHub</a></p>
+</li>
+</ol>
+<h3 id="Kotlin开发实践"><a href="#Kotlin开发实践" class="headerlink" title="Kotlin开发实践"></a>Kotlin开发实践</h3><ol>
+<li><p><a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html" target="_blank" rel="noopener">Getting started with Android and Kotlin</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/tutorials/android-plugin.html" target="_blank" rel="noopener">Kotlin Android Extensions</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/tutorials/android-frameworks.html" target="_blank" rel="noopener">Android Frameworks Using Annotation Processing</a></p>
+</li>
+<li><p><a href="https://github.com/JetBrains/kotlin-examples" target="_blank" rel="noopener">kotlin-examples</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/reference/java-interop.html" target="_blank" rel="noopener">Calling Java code from Kotlin</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/reference/java-to-kotlin-interop.html" target="_blank" rel="noopener">Calling Kotlin from Java</a></p>
+</li>
+<li><p><a href="http://www.jianshu.com/p/2161ba6e56cf" target="_blank" rel="noopener">使用Kotlin开发Android应用</a></p>
+</li>
+<li><p><a href="https://github.com/mcxiaoke/kotlin-notes/blob/master/slides.md" target="_blank" rel="noopener">Kotlin入门和使用讲稿(PPT)</a></p>
+</li>
+<li><p><a href="https://github.com/mcxiaoke/kotlin-notes/blob/master/notes.md" target="_blank" rel="noopener">Kotlin入门和使用讲稿(文本)</a></p>
+</li>
+<li><p><a href="https://github.com/enbandari/Kotlin-Tutorials" target="_blank" rel="noopener">Kotlin从入门到『放弃』系列 视频教程</a></p>
+</li>
+<li><p><a href="https://news.realm.io/cn/news/droidcon-michael-pardo-kotlin/" target="_blank" rel="noopener">Kotlin: Java 6 废土中的一线希望</a></p>
+</li>
+<li><p><a href="https://news.realm.io/cn/news/oredev-jake-wharton-kotlin-advancing-android-dev/" target="_blank" rel="noopener">Kotlin 语言高级安卓开发入门</a></p>
+</li>
+<li><p><a href="https://wangjiegulu.gitbooks.io/kotlin-for-android-developers-zh/content/" target="_blank" rel="noopener">《Kotlin for android developers》中文版</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzMTYzOTYzNA==&amp;mid=2247483875&amp;idx=1&amp;sn=b1b565f651ee1221d4bda19ab12009ce" target="_blank" rel="noopener">深入理解 Kotlin Coroutine（一）</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzMTYzOTYzNA==&amp;mid=2247483878&amp;idx=1&amp;sn=710189e6e22a13fc7d1ea67bc2dd9270&amp;chksm=e8a05edbdfd7d7cd163ee1a2d5769fc2bf003e2d5a6d3f9c6382531b7efc22a6ab75300bb906#rd" target="_blank" rel="noopener">深入理解 Kotlin Coroutine（二）</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzMTYzOTYzNA==&amp;mid=2247483899&amp;idx=1&amp;sn=7d24a9aecb00c80c9c6165b48660394c&amp;chksm=e8a05ec6dfd7d7d0842d41d79bad3d099afddc0c5c8012ada18a1b3f2a13aa314127b91e3a15#rd" target="_blank" rel="noopener">Kotlin Script 及其运行机制简析</a></p>
+</li>
+<li><p><a href="http://www.kotliner.cn/2017/04/15/Kotlin%20Native%20详细体验，你想要的都在这儿/" target="_blank" rel="noopener">Kotlin Native 详细体验，你想要的都在这儿</a></p>
+</li>
+</ol>
+<h2 id="Kotlin相关类库和资源"><a href="#Kotlin相关类库和资源" class="headerlink" title="Kotlin相关类库和资源"></a>Kotlin相关类库和资源</h2><h3 id="Libraries"><a href="#Libraries" class="headerlink" title="Libraries"></a>Libraries</h3><ol>
+<li><a href="https://github.com/Kotlin/anko" target="_blank" rel="noopener">Kotlin/anko</a> - Pleasant Android application development.</li>
+<li><a href="https://github.com/JakeWharton/kotterknife" target="_blank" rel="noopener">JakeWharton/kotterknife</a> - View injection library for Android.</li>
+<li><a href="https://github.com/MarcinMoskala/ActivityStarter" target="_blank" rel="noopener">MarcinMoskala/ActivityStarter</a> - Activity starter generator and arguments injection library for Android.</li>
+<li><a href="https://github.com/MarcinMoskala/KotlinPreferences" target="_blank" rel="noopener">MarcinMoskala/KotlinPreferences</a> - Kotlin Android Library, that makes preference usage in Kotlin simple and fun.</li>
+<li><a href="https://github.com/MarcinMoskala/PreferenceHolder" target="_blank" rel="noopener">MarcinMoskala/PreferenceHolder</a> - Kotlin Android Library, that makes preference usage in Kotlin simple and fun using object with fields binded to SharedPreferences.</li>
+<li><a href="https://github.com/nsk-mironov/kotlin-jetpack" target="_blank" rel="noopener">nsk-mironov/kotlin-jetpack</a> - A collection of useful extension methods for Android.</li>
+<li><a href="https://github.com/pawegio/KAndroid" target="_blank" rel="noopener">pawegio/KAndroid</a> - Kotlin library for Android providing useful extensions to eliminate boilerplate code.</li>
+<li><a href="https://github.com/chibatching/Kotpref" target="_blank" rel="noopener">chibatching/Kotpref</a> - Android SharedPreference delegation for Kotlin.</li>
+<li><a href="https://github.com/TouK/bubble" target="_blank" rel="noopener">TouK/bubble</a> - Library for obtaining screen orientation when orientation is blocked in AndroidManifest.</li>
+<li><a href="https://github.com/ragunathjawahar/kaffeine" target="_blank" rel="noopener">ragunathjawahar/kaffeine</a> - Kaffeine is a Kotlin-flavored Android library for accelerating development.</li>
+<li><a href="https://github.com/mcxiaoke/kotlin-koi" target="_blank" rel="noopener">mcxiaoke/kotlin-koi</a> - Koi, a lightweight kotlin library for Android Development.</li>
+<li><a href="https://github.com/BennyWang/KBinding" target="_blank" rel="noopener">BennyWang/KBinding</a> - Android View Model binding framework write in kotlin, base on anko, simple but powerful.</li>
+<li><a href="https://github.com/inaka/KillerTask" target="_blank" rel="noopener">inaka/KillerTask</a> -  Android AsyncTask wrapper library, written in Kotlin.</li>
+<li><a href="https://github.com/grandstaish/paperparcel" target="_blank" rel="noopener">grandstaish/paperparcel</a> - Boilerplate reduction library written specifically for working with Kotlin data classes on Android.</li>
+<li><a href="https://github.com/andre-artus/AnvilKotlin" target="_blank" rel="noopener">andre-artus/AnvilKotlin</a> - Minimal UI library for Android inspired by React.</li>
+<li><a href="https://github.com/mathcamp/fiberglass" target="_blank" rel="noopener">mathcamp/fiberglass</a> - Easy lightweight SharedPreferences library for Android in Kotlin using delegated properties.</li>
+<li><a href="https://github.com/nitrico/LastAdapter" target="_blank" rel="noopener">nitrico/LastAdapter</a> - Don’t write a RecyclerView adapter again. Not even a ViewHolder!.</li>
+<li><a href="https://github.com/denisidoro/krouter" target="_blank" rel="noopener">denisidoro/krouter</a> - A lightweight Android activity router.</li>
+<li><a href="https://github.com/metalabdesign/AsyncAwait" target="_blank" rel="noopener">metalabdesign/AsyncAwait</a> - async/await for Android built upon coroutines introduced in Kotlin 1.1.</li>
+<li><a href="https://github.com/jupf/staticlog" target="_blank" rel="noopener">jupf/staticlog</a> - StaticLog - super lightweight static logging for Kotlin, Java and Android.</li>
+<li><a href="https://github.com/zserge/anvil" target="_blank" rel="noopener">zserge/anvil</a> - Minimal UI library for Android inspired by React.</li>
+<li><a href="https://github.com/DanielMartinus/Stepper-Touch" target="_blank" rel="noopener">DanielMartinus/Stepper-Touch</a> - Fun playful Android stepper widget for counting, written in Kotlin.</li>
+<li><a href="https://github.com/GlimpseFramework/glimpse-framework-android" target="_blank" rel="noopener">GlimpseFramework/glimpse-framework-android</a> - OpenGL made simple.</li>
+<li><a href="https://github.com/infotech-group/android-drawable-dsl" target="_blank" rel="noopener">infotech-group/android-drawable-dsl</a> - DSL for constructing the drawables in Kotlin instead of in XML.</li>
+<li><a href="https://github.com/zsmb13/MaterialDrawerKt" target="_blank" rel="noopener">zsmb13/MaterialDrawerKt</a> - A DSL for creating Material Design navigation drawers without any XML.</li>
+<li><a href="https://github.com/SnowdreamFramework/ToyBricks" target="_blank" rel="noopener">SnowdreamFramework/ToyBricks</a> - Android Library that provide simpler way to achieve modularity.</li>
+</ol>
+<h3 id="Frameworks"><a href="#Frameworks" class="headerlink" title="Frameworks"></a>Frameworks</h3><ol>
+<li><a href="https://github.com/nekocode/kotgo" target="_blank" rel="noopener">nekocode/kotgo</a> - An android development framwork on kotlin using MVP architecture.</li>
+<li><a href="https://github.com/lightningkite/kotlin-core" target="_blank" rel="noopener">lightningkite/kotlin-core</a> - A full framework for making Android apps. Based on Anko and Kotson.</li>
+</ol>
+<h3 id="Projects"><a href="#Projects" class="headerlink" title="Projects"></a>Projects</h3><ol>
+<li><a href="https://github.com/antoniolg/Bandhook-Kotlin" target="_blank" rel="noopener">antoniolg/Bandhook-Kotlin</a> - A showcase music app for Android entirely written using Kotlin language.</li>
+<li><a href="https://github.com/antoniolg/Kotlin-for-Android-Developers" target="_blank" rel="noopener">antoniolg/Kotlin-for-Android-Developers</a> - Companion App for the book “Kotlin Android Developers”.</li>
+<li><a href="https://github.com/damianpetla/kotlin-dagger-example" target="_blank" rel="noopener">damianpetla/kotlin-dagger-example</a> - Example of Android project showing integration with Kotlin and Dagger 2.</li>
+<li><a href="https://github.com/dodyg/AndroidRivers" target="_blank" rel="noopener">dodyg/AndroidRivers</a> - RSS Readers for Android.</li>
+<li><a href="https://github.com/MakinGiants/banjen-android-banjo-tuner" target="_blank" rel="noopener">MakinGiants/banjen-android-banjo-tuner</a> - App that plays sounds helping to tune a brazilian banjo.</li>
+<li><a href="https://github.com/inaka/kotlillon" target="_blank" rel="noopener">inaka/kotlillon</a> - Android Kotlin Examples.</li>
+<li><a href="https://github.com/MakinGiants/todayhistory" target="_blank" rel="noopener">MakinGiants/todayhistory</a> - App that shows what happened today in history.</li>
+<li><a href="https://github.com/RxKotlin/Pocket" target="_blank" rel="noopener">RxKotlin/Pocket</a> - This app help user to save links easily, and can export to Evernote as weekly.</li>
+<li><a href="https://github.com/SidneyXu/AndroidDemoIn4Languages" target="_blank" rel="noopener">SidneyXu/AndroidDemoIn4Languages</a> - Comparison between Java, Groovy, Scala, Kotlin in Android Development.</li>
+<li><a href="https://github.com/inorichi/tachiyomi" target="_blank" rel="noopener">inorichi/tachiyomi</a> -  Free and open source manga reader for Android.</li>
+<li><a href="https://github.com/ziggy42/Blum-kotlin" target="_blank" rel="noopener">ziggy42/Blum-kotlin</a> - A simple android Twitter client written in Kotlin</li>
+<li><a href="https://github.com/TwidereProject/Twidere-Android" target="_blank" rel="noopener">TwidereProject/Twidere-Android</a> - Material Design ready and feature rich Twitter app for Android 4.0+</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Calendar" target="_blank" rel="noopener">SimpleMobileTools/Simple-Calendar</a> - A simple calendar with events, customizable widget and no ads.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Camera" target="_blank" rel="noopener">SimpleMobileTools/Simple-Camera</a> - A camera with flash, zoom and no ads.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Draw" target="_blank" rel="noopener">SimpleMobileTools/Simple-Draw</a> - A canvas you can draw on with different colors.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-File-Manager" target="_blank" rel="noopener">SimpleMobileTools/Simple-File-Manager</a> - A simple file manager for browsing and editing files and directories.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Gallery" target="_blank" rel="noopener">SimpleMobileTools/Simple-Gallery</a> - A gallery for viewing photos and videos without ads.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Notes" target="_blank" rel="noopener">SimpleMobileTools/Simple-Notes</a> - A simple textfield for adding quick notes without ads.</li>
+</ol>
+<h3 id="Extensions"><a href="#Extensions" class="headerlink" title="Extensions"></a>Extensions</h3><ol>
+<li><a href="https://github.com/ajalt/timberkt" target="_blank" rel="noopener">ajalt/timberkt</a> - Easy Android logging with Kotlin and Timber.</li>
+</ol>
+<h3 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h3><ol>
+<li><a href="https://github.com/kiruto/debug-bottle" target="_blank" rel="noopener">kiruto/debug-bottle</a> - Debug Bottle is an Android runtime debug / develop tools written using kotlin language.</li>
+</ol>
+<h3 id="Websites"><a href="#Websites" class="headerlink" title="Websites"></a>Websites</h3><ol>
+<li><p><a href="https://github.com/KotlinBy/awesome-kotlin" target="_blank" rel="noopener">awesome-kotlin</a></p>
+</li>
+<li><p><a href="https://kotlin.link/" target="_blank" rel="noopener">kotlin.link</a></p>
+</li>
+</ol>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/06/06/full-kotlin-docs/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/06/06/full-kotlin-docs/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/05/07/ToyBricks-Manual/" title="ToyBricks用户手册" itemprop="url">ToyBricks用户手册</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-07T12:32:22.000Z" itemprop="datePublished"> 发表于 2017-05-07</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>注：阅读本文之前，建议先阅读一下：<br><a href="https://mp.weixin.qq.com/s?__biz=MzIyNTczOTYwMA==&amp;mid=2247483911&amp;idx=1&amp;sn=16a661bee016146fa7ee83f15a0ea615&amp;chksm=e87a5438df0ddd2e847a742fca7c5e31538350a1585158ee72a31f83cf4dc549aff13080c5f7#rd" target="_blank" rel="noopener">ToyBricks简介以及原理分析</a></p>
+<h3 id="ToyBricks简介"><a href="#ToyBricks简介" class="headerlink" title="ToyBricks简介"></a>ToyBricks简介</h3><p>ToyBricks是一个Android项目模块化的解决方案，主要包括四个部分，APT注解，APT注解处理器，ToyBricks插件（Gradle Plugin）,ToyBricks库。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/66954-57bf455f0fdee874.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ToyBricks简介"></p>
+<p>其中：</p>
+<ol>
+<li>APT注解，主要定义了两个注解：Interface（接口，例如：IText）,Implementation （实现，例如：TextImpl）</li>
+<li>APT注解处理器，在javac编译java源码之前。APT注解处理器会扫描Java源码中带有上面两个注解的接口和类，并且生成一个json文件， ToyBricks.json.</li>
+<li>ToyBricks插件（Gradle Plugin）,负责ToyBricks.json的打包，合并，生成Java源文件等工作</li>
+<li>ToyBricks，提供对外调用方法。通过参数传入接口，返回相应的实现。</li>
+</ol>
+<h3 id="ToyBricks特性"><a href="#ToyBricks特性" class="headerlink" title="ToyBricks特性"></a>ToyBricks特性</h3><ol>
+<li>同时支持Kotlin，Java</li>
+<li>支持Android Build Variants</li>
+<li>Proguard免配置</li>
+</ol>
+<h3 id="ToyBricks局限性"><a href="#ToyBricks局限性" class="headerlink" title="ToyBricks局限性"></a>ToyBricks局限性</h3><p>ToyBricks具有传染性。<br>任何Android Application 或者 Android Library 使用包含ToyBricks.json的jar包或者aar包作为依赖，都必须继续使用ToyBricks，否则无法保证代码能正确运行。</p>
+<h3 id="ToyBricks规则"><a href="#ToyBricks规则" class="headerlink" title="ToyBricks规则"></a>ToyBricks规则</h3><p><strong>每个模块分为接口和实现两个部分。接口部分提供给模块外部调用，而实现部分则禁止来自外部的调用。</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/66954-3c4fa19a7bfca742.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="模块划分"></p>
+<p><strong>接口</strong> 以@Interface进行注解，示例如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Interface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IText</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">getText</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>实现</strong> 以@Implementation进行注解，示例如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Implementation</span>(IText.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewTextImpl</span> <span class="keyword">implements</span> <span class="title">IText</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getText</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"NewTextImpl Implementation from "</span>+ getClass().getCanonicalName();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>@Implementation更详细的使用方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Implementation</span>(value = IText.class,global = <span class="keyword">true</span>,singleton = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewTextGobalImpl</span> <span class="keyword">implements</span> <span class="title">IText</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getText</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"NewTextImpl Implementation from "</span>+ getClass().getCanonicalName() ;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参数说明如下：</p>
+<ol>
+<li>value后面应该填写接口的class</li>
+<li>global代表这个实现拥有高优先级。如果没有设置，默认取值为false。</li>
+<li>singleton代表这个实现将会以单例形式存在。如果没有设置，默认取值为false。由于单例会一直存在于APP的整个生命周期，因此，不应该滥用单例。</li>
+</ol>
+<p>使用ToyBricks应该遵守以下规则：</p>
+<ol>
+<li>接口命令强烈建议以I开头，例如：IText</li>
+<li>每一个接口都必须至少有一个相应实现，否则编译出错。</li>
+<li>每个实现类必须是public的。</li>
+<li>每个实现类必须实现注解中标明的接口。</li>
+<li>每个实现类必须拥有一个默认无参数的构造函数。</li>
+<li>每个实现类不可以是abstract抽象类。</li>
+<li>实现一共分成三类，全局实现（global=true）,普通实现(global=false),替补实现(按照默认的包名和类名进行加载)。它们的优先级从前往后一直降低。<strong>每一类只能同时存在一个实现，否则编译出错。</strong></li>
+<li>替补实现遵循以下规则：<br>假如接口为：com.github.snowdream.toybricks.app.IText,<br>则替补实现为：com.github.snowdream.toybricks.app.impl.TextImpl<br>实现的包名为接口的包名+”.impl”,实现的类名为接口名去掉第一个字母，第二个字母大写，然后加上”Impl”。</li>
+<li>任何发布到Maven仓库的库，都应该将global设置为false。global设置为true，只适合Android Application测试新实现，或者替换默认实现。</li>
+</ol>
+<h3 id="ToyBricks使用方法"><a href="#ToyBricks使用方法" class="headerlink" title="ToyBricks使用方法"></a>ToyBricks使用方法</h3><p>由于ToyBricks对Android的Gradle编译流程稍微进行了修改，因此，请注意按照下面的说明进行详细操作。<br>对于编译流程的修改如下：</p>
+<ol>
+<li>Android Application模块：首先按照上面的步骤生成ToyBricks.json，然后和依赖库中的ToyBricks.json进行合并，校验，最后按照预定规则，生成InterfaceLoaderImpl.java源代码，并参与编译。</li>
+<li>Android Library: 通过APT生成Json文件（ToyBricks.json，生成目录在“build/generated/source/apt”或者“build/generated/source/kapt”），然后打包到aar。如果你需要打包成jar包，并发布到maven仓库，请参考下面代码:         </li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">task <span class="title">androidReleaseJar</span><span class="params">(type: Jar,dependsOn: <span class="string">"assembleRelease"</span>)</span> </span>&#123;</span><br><span class="line">    from <span class="string">"$buildDir/intermediates/classes/release/"</span></span><br><span class="line">    from <span class="string">"$buildDir/generated/source/kapt/release/ToyBricks.json"</span></span><br><span class="line">    from <span class="string">"$buildDir/generated/source/apt/release/ToyBricks.json"</span></span><br><span class="line">    exclude <span class="string">'**/BuildConfig.class'</span></span><br><span class="line">    exclude <span class="string">'**/R.class'</span></span><br><span class="line">    exclude <span class="string">'**/R$*.class'</span></span><br><span class="line">    includeEmptyDirs <span class="keyword">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">task <span class="title">androidJavadocsJar</span><span class="params">(type: Jar)</span> </span>&#123;</span><br><span class="line">    classifier = <span class="string">'javadoc'</span></span><br><span class="line">    from <span class="string">"generateReleaseJavadoc.destinationDir"</span></span><br><span class="line">    includeEmptyDirs <span class="keyword">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">task <span class="title">androidSourcesJar</span><span class="params">(type: Jar)</span> </span>&#123;</span><br><span class="line">    classifier = <span class="string">'sources'</span></span><br><span class="line">    from android.sourceSets.main.java.srcDirs</span><br><span class="line">    from <span class="string">"$buildDir/generated/source/kapt/release/ToyBricks.json"</span></span><br><span class="line">    from <span class="string">"$buildDir/generated/source/apt/release/ToyBricks.json"</span></span><br><span class="line">    includeEmptyDirs <span class="keyword">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Gradle主工程"><a href="#Gradle主工程" class="headerlink" title="Gradle主工程"></a>Gradle主工程</h4><p>在主工程的build.gradle文件中添加ToyBricks的gradle插件。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:2.2.2'</span></span><br><span class="line">        </span><br><span class="line">        classpath <span class="string">'com.github.snowdream.toybricks:android-toybricks-gradle-plugin:0.9.10'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Android-Library模块"><a href="#Android-Library模块" class="headerlink" title="Android Library模块"></a>Android Library模块</h4><p>在Library模块的build.gradle文件中添加ToyBricks的相关库依赖。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kapt &#123;</span><br><span class="line">    generateStubs = <span class="keyword">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile <span class="string">"com.github.snowdream:toybricks:0.9.10@aar"</span></span><br><span class="line">    compile <span class="string">"com.github.snowdream.toybricks:annotation:0.9.10"</span></span><br><span class="line"></span><br><span class="line">    kapt <span class="string">"com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">    <span class="comment">//annotationProcessor "com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: <span class="string">'com.github.snowdream.toybricks'</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>注：</strong> 有两种引用方式，一种是kotlin的kapt方式，需要配置上面的generateStubs。另外一种，是Android默认支持的annotationProcessor方式。</p>
+<p><strong>如果你的工程中包含任何Kotlin源文件，则必须选择kapt的方式，否则，可以选择annotationProcessor方式。</strong></p>
+<h4 id="Android-Application模块"><a href="#Android-Application模块" class="headerlink" title="Android Application模块"></a>Android Application模块</h4><p>在Application模块的build.gradle文件中添加ToyBricks的相关库依赖。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kapt &#123;</span><br><span class="line">    generateStubs = <span class="keyword">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile <span class="string">'com.github.snowdream:annotation:0.7@aar'</span></span><br><span class="line"></span><br><span class="line">    compile <span class="string">"com.github.snowdream:toybricks:0.9.10@aar"</span></span><br><span class="line">    compile <span class="string">"com.github.snowdream.toybricks:annotation:0.9.10"</span></span><br><span class="line"></span><br><span class="line">    kapt <span class="string">"com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">    <span class="comment">//annotationProcessor "com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: <span class="string">'com.github.snowdream.toybricks'</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="ToyBricks使用方法-1"><a href="#ToyBricks使用方法-1" class="headerlink" title="ToyBricks使用方法"></a>ToyBricks使用方法</h4><p>通过上面的方式，开发好接口和实现模块后。只需要引用接口，就可以通过下面方式获取接口的实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IText text = ToyBricks.getImplementation(IText.class);</span><br></pre></td></tr></table></figure></p>
+<p>其中，IText为接口。</p>
+<h4 id="ToyBricks最佳实践"><a href="#ToyBricks最佳实践" class="headerlink" title="ToyBricks最佳实践"></a>ToyBricks最佳实践</h4><p>按照替补实现的命名规则，来开发接口的实现类。</p>
+<p>如果您对ToyBricks有什么问题或者建议，欢迎通过后面的联系方式联系我。</p>
+<h3 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h3><ol>
+<li><a href="https://github.com/SnowdreamFramework/ToyBricks" target="_blank" rel="noopener">SnowdreamFramework/ToyBricks</a></li>
+<li><a href="https://github.com/SnowdreamFramework/log" target="_blank" rel="noopener">SnowdreamFramework/log</a></li>
+</ol>
+<h3 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h3><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/05/07/ToyBricks-Manual/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/05/07/ToyBricks-Manual/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/05/03/ToyBricks-Introduction/" title="ToyBricks简介以及原理分析" itemprop="url">ToyBricks简介以及原理分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-03T13:03:51.000Z" itemprop="datePublished"> 发表于 2017-05-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="ToyBricks背景"><a href="#ToyBricks背景" class="headerlink" title="ToyBricks背景"></a>ToyBricks背景</h2><p>我始终认为，在高内聚，低耦合的原则下，进行组件化，模块化，插件化都是移动应用开发的趋势。</p>
+<p>为什么这么说呢？下面我们举个栗子：<br>大家都知道，以前Android应用开发中，可以使用HttpClient或者HttpUrlConnection来进行http访问。这里假设有一个耦合严重，但代码量巨大的项目，使用了基于HttpClient封装的<a href="https://github.com/loopj/android-async-http" target="_blank" rel="noopener">loopj/android-async-http</a>来进行http访问。但是，后来，Google明确支持使用HttpUrlConnection。此时，经过调研，你们觉得<a href="https://github.com/square/okhttp" target="_blank" rel="noopener">square/okhttp</a>基于HttpUrlConnection，符合你们的要求。</p>
+<p>现在，不管是否将HttpClient替换成okhttp，你们都可能面临以下困境：</p>
+<ol>
+<li>需求都做不完，根本没有排期做这个替换。于是，你们面临离google的支持越来越远，离风险越来越近的困境；</li>
+<li>辛辛苦苦耗费人力将HttpClient替换成okhttp。但由于两者变化很大，需要投入很多测试资源，来重新确认这些接口是否正常访问。一旦出现问题，还需要安排研发资源，去一一排查。</li>
+<li>替换的工作量太大。替换一部分之后，发现没有足够人力去继续完成。于是，替换终止。整个工程又变得混乱和臃肿，同时包含了两种http的封装库和调用。</li>
+</ol>
+<p><strong>模块化可以有效解决这些问题。通用的做法，是按照业务，功能等将整个项目分成不同的模块，由不同的研发测试小组负责。<br>每个模块又分为接口和实现两个部分。接口部分提供给模块外部调用，而实现部分则禁止来自外部的调用。</strong></p>
+<img src="/2017/05/03/ToyBricks-Introduction/apt.svg" title="[apt]">
+<p>那么，如何将模块的接口和实现部分关联起来呢？通过APT工具，可以轻松地将接口部分和实现部分关联起来。</p>
+<p>APT，即Annotation Processing Tool,可以理解为“编译时注解处理器工具”。</p>
+<p>官方说明：<br>“The apt tool is a command-line utility for annotation processing. It includes a set of reflective APIs and supporting infrastructure to process program annotations (JSR 175). These reflective APIs provide a build-time, source-based, read-only view of program structure. They are designed to cleanly model the Java programming language’s type system after the addition of generics (JSR 14).”</p>
+<p>简单理解如下：<br>apt工具是javac工具的一部分。在编译时，apt工具首先会扫描工程下Java源码中的编译时注解，再根据预先定义的编译时注解处理工具，生成指定的Java源码文件。紧接着，生成的Java源码文件和之前项目下的Java源码一起，由javac工具来编译成class。</p>
+<p><strong>但是，APT有一个局限性，就是只会扫描Java源码，不会扫描jar ，aar 和class 。也就是说，所有模块需要以源码形式存在。而现在通用的做法是，将模块打包成jar或者aar，发布到Maven库，再由其他模块自行引用。</strong></p>
+<p>有没有办法将APT的这种功能和特性延伸到jar和aar呢？<br>于是，ToyBricks应运而生。</p>
+<h2 id="ToyBricks简介"><a href="#ToyBricks简介" class="headerlink" title="ToyBricks简介"></a>ToyBricks简介</h2><h3 id="ToyBricks简介-1"><a href="#ToyBricks简介-1" class="headerlink" title="ToyBricks简介"></a>ToyBricks简介</h3><p>ToyBricks是一个Android项目模块化的解决方案，主要包括四个部分，APT注解，APT注解处理器，ToyBricks插件（Gradle Plugin）,ToyBricks库。</p>
+<img src="/2017/05/03/ToyBricks-Introduction/ToyBricks.svg" title="[ToyBricks]">
+<p>其中：</p>
+<ol>
+<li>APT注解，主要定义了两个注解：Interface（接口，例如：IText）,Implementation （实现，例如：TextImpl）</li>
+<li>APT注解处理器，在javac编译java源码之前。APT注解处理器会扫描Java源码中带有上面两个注解的接口和类，并且生成一个json文件， ToyBricks.json.</li>
+<li>ToyBricks插件（Gradle Plugin）,负责ToyBricks.json的打包，合并，生成Java源文件等工作</li>
+<li>ToyBricks，提供对外调用方法。通过参数传入接口，返回相应的实现。</li>
+</ol>
+<h2 id="ToyBricks原理分析"><a href="#ToyBricks原理分析" class="headerlink" title="ToyBricks原理分析"></a>ToyBricks原理分析</h2><p>下面以接口IText和实现TextImpl为例，简单介绍下ToyBricks原理。</p>
+<p>主要分为两个部分：</p>
+<h3 id="Android-Library（最终可能打包成jar，aar，并发布到maven库）"><a href="#Android-Library（最终可能打包成jar，aar，并发布到maven库）" class="headerlink" title="Android Library（最终可能打包成jar，aar，并发布到maven库）"></a>Android Library（最终可能打包成jar，aar，并发布到maven库）</h3><p>如果工程是Android库模块，则主要流程如下：<br>1.在javac编译java源码之前，由APT注解处理器扫描Java源码中带有上面两个注解的接口和类，生成ToyBricks.json。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"interfaceList"</span> : [ <span class="string">"com.github.snowdream.toybricks.app.IText"</span> ],</span><br><span class="line">  <span class="attr">"globalImplementation"</span> : &#123;</span><br><span class="line">    <span class="attr">"com.github.snowdream.toybricks.app.IText"</span> : <span class="string">"com.github.snowdream.toybricks.app.impl.NewTextGobalImpl"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"defaultImplementation"</span> : &#123;</span><br><span class="line">    <span class="attr">"com.github.snowdream.toybricks.app.IText"</span> : <span class="string">"com.github.snowdream.toybricks.app.impl.TextImpl"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"singletonImplementation"</span> : [ <span class="string">"com.github.snowdream.toybricks.app.impl.NewTextGobalImpl"</span> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.在打包jar，aar的时候，由ToyBricks插件（Gradle Plugin）提前处理，保证ToyBricks.json能被拷贝进去jar包或者aar包的根目录下，并随同一起分布到maven仓库。</p>
+<h3 id="Android-Application"><a href="#Android-Application" class="headerlink" title="Android Application"></a>Android Application</h3><p>如果工程是Android应用模块，则主要流程如下：      </p>
+<ol>
+<li>第一步，和Android Library第一步一致。</li>
+<li>Javac编译Java源代码</li>
+<li>扫描所有依赖的库文件，过滤出所有包含ToyBricks.json文件的jar包或者aar包，并且提取出来。提取完毕后，合并所有的ToyBricks.json文件，成为一个ToyBricks.json。</li>
+<li>将最终的ToyBricks.json按照预定规则生成一个Java源码文件.文件名为： InterfaceLoaderImpl.java</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.github.snowdream.toybricks.annotation.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.github.snowdream.toybricks.annotation.InterfaceLoader;</span><br><span class="line"><span class="keyword">import</span> java.lang.Class;</span><br><span class="line"><span class="keyword">import</span> java.lang.Override;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Created by snowdream</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This file is automatically generated by apt(Annotation Processing Tool)</span></span><br><span class="line"><span class="comment"> * Do not modify this file -- YOUR CHANGES WILL BE ERASED!</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This file should *NOT* be checked into Version Control Systems,</span></span><br><span class="line"><span class="comment"> * as it contains information specific to your local configuration.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">InterfaceLoaderImpl</span> <span class="keyword">implements</span> <span class="title">InterfaceLoader</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;Class, Object&gt; sSingletonMap = <span class="keyword">new</span> HashMap&lt;Class, Object&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;Class, Class&gt; sGlobalMap = <span class="keyword">new</span> HashMap&lt;Class, Class&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;Class, Class&gt; sDefaultMap = <span class="keyword">new</span> HashMap&lt;Class, Class&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">InterfaceLoaderImpl</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    addGlobalMap();</span><br><span class="line">    addDefaultMap();</span><br><span class="line">    addSingletonMap();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addGlobalMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sGlobalMap.put(com.github.snowdream.toybricks.app.IText.class,com.github.snowdream.toybricks.app.impl.NewTextGobalImpl.class);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addDefaultMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sDefaultMap.put(com.github.snowdream.toybricks.app.IText.class,com.github.snowdream.toybricks.app.impl.TextImpl.class);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addSingletonMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sSingletonMap.put(com.github.snowdream.toybricks.app.impl.NewTextGobalImpl.class,<span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">getImplementation</span><span class="params">(Class&lt;T&gt; clazz)</span> </span>&#123;</span><br><span class="line">    T implementation = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> isSingleton = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    Class implClass;</span><br><span class="line"></span><br><span class="line">    implClass = sGlobalMap.get(clazz);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (implClass == <span class="keyword">null</span>) &#123;</span><br><span class="line">      implClass = sDefaultMap.get(clazz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (implClass != <span class="keyword">null</span>) &#123;</span><br><span class="line">      isSingleton = sSingletonMap.containsKey(implClass);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (isSingleton) &#123;</span><br><span class="line">        implementation = (T) sSingletonMap.get(implClass);</span><br><span class="line">        <span class="keyword">if</span> (implementation != <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> implementation;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        implementation = (T) implClass.newInstance();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (isSingleton &amp;&amp; implementation != <span class="keyword">null</span>) &#123;</span><br><span class="line">        sSingletonMap.put(implClass, implementation);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> implementation;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>5.再次使用Javac工具编译InterfaceLoaderImpl.java文件。<br>6.这个文件就类似字典索引，通过这个文件，就可以通过传入接口，来查找对应的实现类。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>与APT工具相比，ToyBricks能够将接口和实现之间的关系进行持久化，存储在jar和aar中，并随之发布到Maven仓库，实现接口和实现的彻底分离。</p>
+<p>如果您对ToyBricks有什么问题或者建议，欢迎通过后面的联系方式联系我。</p>
+<h2 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h2><ol>
+<li><a href="https://github.com/SnowdreamFramework/ToyBricks" target="_blank" rel="noopener">SnowdreamFramework/ToyBricks</a></li>
+<li><a href="http://docs.oracle.com/javase/7/docs/technotes/guides/apt/" target="_blank" rel="noopener">Annotation Processing Tool (apt)</a></li>
+<li><a href="http://hannesdorfmann.com/annotation-processing/annotationprocessing101" target="_blank" rel="noopener">ANNOTATION PROCESSING 101</a></li>
+<li><a href="http://www.open-open.com/lib/view/open1470735314518.html" target="_blank" rel="noopener">Annotation-Processing-Tool详解</a></li>
+<li><a href="https://race604.com/annotation-processing/" target="_blank" rel="noopener">Java注解处理器</a></li>
+<li><a href="http://www.cnblogs.com/robnetcn/archive/2012/04/15/2449008.html" target="_blank" rel="noopener">什么是高内聚、低耦合？</a></li>
+</ol>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/05/03/ToyBricks-Introduction/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/05/03/ToyBricks-Introduction/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/14/gradle-goodness-enable-build-cache-for/" title="Gradle精选: 为所有的构建启用构建缓存" itemprop="url">Gradle精选: 为所有的构建启用构建缓存</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-14T14:07:57.000Z" itemprop="datePublished"> 发表于 2017-04-14</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>原文：<a href="http://mrhaki.blogspot.com/2017/04/gradle-goodness-enable-build-cache-for.html" target="_blank" rel="noopener">http://mrhaki.blogspot.com/2017/04/gradle-goodness-enable-build-cache-for.html</a></p>
+<p>Gradle 3.5 引入了构建缓存特性。通过构建缓存，我们可以在不同的电脑之间，不同的builds之间，共享Task输出结果。举个例子，持续集成服务器上构建的输出，可以在开发者的电脑上复用。要启用这项特性，我们只需要添加命令行选项<code>--build-cache</code>。或者，我们还可以我们工程下的<code>gradle.properties</code>文件中，将<code>org.gradle.caching</code>属性设置为true。为了对所有工程都启用构建缓存特性，我们可以在Gradle主目录下的<code>gradle.properties</code>文件（ USER_HOME/.gradle/gradle.properties）中设置这个属性。</p>
+<p>在下面的例子中，我们在<code>~/.gradle/gradle.properties</code>文件中设置<code>org.gradle.caching</code>属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># File: ~/.gradle/gradle.properties</span><br><span class="line">org.gradle.caching=true</span><br></pre></td></tr></table></figure></p>
+<p>如果我们想禁用这项特性，我们可以添加命令行选项<code>--no-build-cache</code>。</p>
+<p>基于 Gradle 3.5 编写。</p>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/gradle/">gradle</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/04/14/gradle-goodness-enable-build-cache-for/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/04/14/gradle-goodness-enable-build-cache-for/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/11/gradle-goodness-run-task-ignoring-up-to/" title="Gradle精选: 忽略Up-to-date检查，强制执行Task" itemprop="url">Gradle精选: 忽略Up-to-date检查，强制执行Task</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-11T13:01:48.000Z" itemprop="datePublished"> 发表于 2017-04-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>原文：<a href="http://mrhaki.blogspot.com/2016/12/gradle-goodness-run-task-ignoring-up-to.html" target="_blank" rel="noopener">http://mrhaki.blogspot.com/2016/12/gradle-goodness-run-task-ignoring-up-to.html</a></p>
+<p>Gradle构建很快，是因为支持增量任务。简单来说，Gradle可以在运行Task前，就知道Task的输入和输出是否改变。如果什么都没有改变，那么这个Task将会被标记为up-to-date，并且不会被执行，否则则会被执行。如果不管一个Task是否是up-to-date，我们都希望能够运行它，此时我们需要增加一个命令行选项<code>--rerun-tasks</code>。</p>
+<p>在下面的例子中，我们为一个简单的Java工程，运行assemble任务，可以看到所有的task都运行了。当我们再次运行此Task的时候，我们看到所有的task都提示“up-to-date”：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ gradle assemble</span><br><span class="line"> </span><br><span class="line">:compileJava</span><br><span class="line">:processResources</span><br><span class="line">:classes</span><br><span class="line">:jar</span><br><span class="line">:assemble</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 1.765 secs</span><br><span class="line">$ gradle assemble</span><br><span class="line"> </span><br><span class="line">:compileJava UP-TO-DATE</span><br><span class="line">:processResources UP-TO-DATE</span><br><span class="line">:classes UP-TO-DATE</span><br><span class="line">:jar UP-TO-DATE</span><br><span class="line">:assemble UP-TO-DATE</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 0.715 secs</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<p>为了忽略up-to-date检查，强制执行所有task，我们需要添加这个选项 –rerun-tasks：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ gradle --rerun-tasks assemble</span><br><span class="line">:compileJava</span><br><span class="line">:processResources</span><br><span class="line">:classes</span><br><span class="line">:jar</span><br><span class="line">:assemble</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 1.037 secs</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<p>基于Gradle 3.2.1编写。</p>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/gradle/">gradle</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/04/11/gradle-goodness-run-task-ignoring-up-to/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/04/11/gradle-goodness-run-task-ignoring-up-to/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/09/gradle-goodness-check-operating-system/" title="Gradle精选: 在构建脚本中检测操作系统" itemprop="url">Gradle精选: 在构建脚本中检测操作系统</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-09T16:15:27.000Z" itemprop="datePublished"> 发表于 2017-04-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>原文： <a href="http://mrhaki.blogspot.com/2017/02/gradle-goodness-check-operating-system.html" target="_blank" rel="noopener">http://mrhaki.blogspot.com/2017/02/gradle-goodness-check-operating-system.html</a></p>
+<p>有时候，我们想检测下构建脚本在哪个操作系统上执行。举个例子，比如我们有一些Task，需要在Windows操作系统上执行，但是不在其他操作系统上执行。Gradle有一个内部的类<code>org.gradle.nativeplatform.platform.internal.DefaultOperatingSystem</code>，但是我们不应该在构建脚本中使用这个类。Gradle在内部使用这个类，并且可能毫无警告地修改它。如果我们依赖这个类，一旦这个类被修改了，我们的构建脚本可能无法正常运行。但是，我们可以使用一个来自Ant的类（<code>org.apache.tools.ant.taskdefs.condition.Os</code>）。这个类包含各种方法和变量，来检测操作系统名称，版本和架构。 这些取值都基于Java的系统变量，包括os.name, os.version 和 os.arch.</p>
+<p>在下面的例子中，为了我们稍后能够直接调用这个类的方法和引用这个类的常量，我们在构建脚本中静态引入这个Os类。 我们添加了几个基于onlyif条件的Task。只有当onlyif条件为true时，Task才会被执行。Task osInfo则简单显示了当前操作系统的一些属性值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">// File: build.gradle</span><br><span class="line">import static org.apache.tools.ant.taskdefs.condition.Os.*</span><br><span class="line"> </span><br><span class="line">task os &#123;</span><br><span class="line">    description &apos;Run all conditional os tasks&apos;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// Create 3 tasks that simply print</span><br><span class="line">// the task name that is executed</span><br><span class="line">// if the build scripts runs on the</span><br><span class="line">// recognized operating system.</span><br><span class="line">[FAMILY_WINDOWS, FAMILY_UNIX, FAMILY_MAC].each &#123; osName -&gt;</span><br><span class="line"> </span><br><span class="line">    // Create task.</span><br><span class="line">    tasks.create(osName) &#123;</span><br><span class="line">        description &quot;Run when OS is $&#123;osName&#125;&quot;</span><br><span class="line"> </span><br><span class="line">        // Add condition to check operating system.</span><br><span class="line">        onlyIf &#123; isFamily(osName) &#125;</span><br><span class="line"> </span><br><span class="line">        doLast &#123;</span><br><span class="line">            println &quot;Execute task &apos;$&#123;it.name&#125;&apos;&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    // Add task as dependency for the os task.</span><br><span class="line">    os.dependsOn osName</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">task osInfo &#123;</span><br><span class="line">    description &apos;Show information about the operating system&apos;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println &quot;Family:       $&#123;OS_NAME&#125;&quot;</span><br><span class="line">        println &quot;Version:      $&#123;OS_VERSION&#125;&quot;</span><br><span class="line">        println &quot;Architecture: $&#123;OS_ARCH&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，让我们在MacOS上运行这些Task： os and osInfo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ gradle os osInfo</span><br><span class="line">mac</span><br><span class="line">Execute task &apos;mac&apos;</span><br><span class="line">:unix</span><br><span class="line">Execute task &apos;unix&apos;</span><br><span class="line">:windows SKIPPED</span><br><span class="line">:os</span><br><span class="line">:osInfo</span><br><span class="line">Family:       mac os x</span><br><span class="line">Version:      10.12.3</span><br><span class="line">Architecture: x86_64</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 0.697 secs</span><br></pre></td></tr></table></figure></p>
+<p>基于Gradle 3.3编写。</p>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/gradle/">gradle</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/04/09/gradle-goodness-check-operating-system/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/04/09/gradle-goodness-check-operating-system/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/09/gradle-goodness-skip-task-when-input/" title="Gradle精选: 当输入为空时，使用注解@SkipWhenEmpty来跳过Task" itemprop="url">Gradle精选: 当输入为空时，使用注解@SkipWhenEmpty来跳过Task</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-09T15:39:37.000Z" itemprop="datePublished"> 发表于 2017-04-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>原文： <a href="http://mrhaki.blogspot.com/2017/02/gradle-goodness-skip-task-when-input.html" target="_blank" rel="noopener">http://mrhaki.blogspot.com/2017/02/gradle-goodness-skip-task-when-input.html</a></p>
+<p>Gradle 能够很好的支持增量构建。这就是说，Gradle可以根据Task的输入和输出来决定一个Task是否需要被执行。举个例子，假如输入和输出文件没有任何改变，那么这个Task将会被跳过。通过定义Task的输入和输出，可以让我们自定义的Task也支持增量构建。我们还可以定义一个Task，当它的输入文件集合／文件夹不存在或者为空时，跳过不执行。Gradle提供了一个注解@SkipWhenEmpty，我们可以应用于Task的输入。</p>
+<p>下面的例子，我们将会定义一个DisplayTask，用于打印一个文件夹下所有文件的内容。当这个文件夹为空时，我们希望跳过这个Task，不执行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">task display(type:DisplayTask) &#123;</span><br><span class="line">    contentDir = file(&apos;src/content&apos;)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">class DisplayTask extends DefaultTask &#123;</span><br><span class="line"> </span><br><span class="line">    @SkipWhenEmpty</span><br><span class="line">    @InputDirectory</span><br><span class="line">    File contentDir</span><br><span class="line"> </span><br><span class="line">    DisplayTask() &#123;</span><br><span class="line">        description = &apos;Show contents of files&apos;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    @TaskAction</span><br><span class="line">    void printMessages() &#123;</span><br><span class="line">        contentDir.eachFile &#123; file -&gt;</span><br><span class="line">            println file.text</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当输入文件夹下没有任何文件时，我们运行这个Task，将会在终端看到 NO-SOURCE 字样。如果我们不添加这个注解@SkipWhenEmpty，这个构建任务将会失败。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ gradle display</span><br><span class="line">:display NO-SOURCE</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 0.866 secs</span><br></pre></td></tr></table></figure>
+<p>接下来，我们在这个文件夹（src/content）下添加一个文件，然后再次运行这个Task：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ gradle display</span><br><span class="line">:display</span><br><span class="line">Gradle rocks!</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 0.866 secs</span><br></pre></td></tr></table></figure></p>
+<p>使用Gradle 3.4编写。</p>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/gradle/">gradle</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/04/09/gradle-goodness-skip-task-when-input/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/04/09/gradle-goodness-skip-task-when-input/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/28/gradle-goodness-create-shortcut-key-to/" title="Gradle精选: 在IntellIJ IDEA中创建快捷方式，用于刷新Gradle工程" itemprop="url">Gradle精选: 在IntellIJ IDEA中创建快捷方式，用于刷新Gradle工程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-28T14:36:20.000Z" itemprop="datePublished"> 发表于 2017-03-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>翻译自： <a href="http://mrhaki.blogspot.com/2017/03/gradle-goodness-create-shortcut-key-to.html" target="_blank" rel="noopener">http://mrhaki.blogspot.com/2017/03/gradle-goodness-create-shortcut-key-to.html</a></p>
+<p>我们可以在IntelliJ IDEA中打开一个Gradle工程，并且获得IntelliJ对Gradle的原生支持。当我们在Gradle build文件中添加一个新的依赖或者插件时，需要在 IntelliJ IDEA中刷新工程。我们需要刷新这个Gradle工程，来保证IntelliJ IDEA 能够同步这些改变。Gradle工具栏有一个Icon，点击它可以刷新所有Gradle工程。但是这样做，意味着我们需要移动鼠标，而我们现在需要一个快捷键来完成这些操作，这样，我们就不需要把手移开键盘。</p>
+<p>刷新所有Gradle项目的操作，实际上是刷新所有外部功能的操作。我们可以通过  Preferences | Keymap 来添加键盘快捷键。我们在搜索栏搜索“refresh all external”来找到这个动作。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/66954-210d8142097b28fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="idea-refresh-gradle-keymap.png"></p>
+<p>我们可以右键点击这个Action，然后选择“Keyboard Shortcut”来定义新的键盘快捷键。</p>
+<p>现在当我们修改Gradle build文件时，我们可以简单的使用快捷键来刷新Gradle工程。</p>
+<p>下面我们介绍如何将这个刷新Gradle工程的Action添加到工具栏。右键点击工具栏，并且选择“option Customize Menus and Toolbars…. ”。现在可以将”Refresh all external projects”添加到工具栏：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/66954-6ec3b83690e2f4ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="idea-refresh-gradle-keymap-assign.png"></p>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/gradle/">gradle</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/03/28/gradle-goodness-create-shortcut-key-to/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/03/28/gradle-goodness-create-shortcut-key-to/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/27/gradle-goodness-running-single-test/" title="Gradle精选: 运行单个单元测试" itemprop="url">Gradle精选: 运行单个单元测试</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-27T13:53:17.000Z" itemprop="datePublished"> 发表于 2017-03-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在Gradle下，我们可以通过由Java插件添加的测试任务，来运行单元测试代码。默认情况下，项目下的所有单元测试代码都会执行。但是，如果我们只想运行一个简单的单元测试，我们可以通过Java系统属性test.single来制定这个单元测试的名字。实际上，系统属性的样式是<code>taskName.single</code>. 其中<code>taskName</code>是项目下测试类任务的名称。下面我们将展示在构建中如何实践的：</p>
+<p>首先，我们创建一个简单的build.gradle文件，用来运行单元测试。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// File: build.gradle</span><br><span class="line">apply plugin: &apos;java&apos;</span><br><span class="line"> </span><br><span class="line">repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">dependencies &#123;</span><br><span class="line">    testCompile &apos;junit:junit:[4,)&apos;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">test &#123;</span><br><span class="line">    testLogging &#123;</span><br><span class="line">        // Show that tests are run in the command-line output</span><br><span class="line">        events &apos;started&apos;, &apos;passed&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下一步，我们创建两个测试类，每个测试类包含一个简单的单元测试方法。稍后，我们会演示，如何运行其中的一个单元测试。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// File: src/test/java/com/mrhaki/gradle/SampleTest.java</span><br><span class="line">package com.mrhaki.gradle;</span><br><span class="line"> </span><br><span class="line">import static org.junit.Assert.*;</span><br><span class="line">import org.junit.*;</span><br><span class="line"> </span><br><span class="line">public class SampleTest &#123;</span><br><span class="line"> </span><br><span class="line">    @Test public void sample() &#123;</span><br><span class="line">        assertEquals(&quot;Gradle is gr8&quot;, &quot;Gradle is gr8&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// File: src/test/java/com/mrhaki/gradle/AnotherSampleTest.java</span><br><span class="line">package com.mrhaki.gradle;</span><br><span class="line"> </span><br><span class="line">import static org.junit.Assert.*;</span><br><span class="line">import org.junit.*;</span><br><span class="line"> </span><br><span class="line">public class AnotherSampleTest &#123;</span><br><span class="line"> </span><br><span class="line">    @Test public void anotherSample() &#123;</span><br><span class="line">        assertEquals(&quot;Gradle is great&quot;, &quot;Gradle is great&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了只运行SampleTest，我们需要在终端执行test任务的时候，添加一个Java系统属性 <code>-Dtest.single=Sample</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ gradle -Dtest.single=Sample test</span><br><span class="line">:compileJava UP-TO-DATE</span><br><span class="line">:processResources UP-TO-DATE</span><br><span class="line">:classes UP-TO-DATE</span><br><span class="line">:compileTestJava</span><br><span class="line">:processTestResources UP-TO-DATE</span><br><span class="line">:testClasses</span><br><span class="line">:test</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.SampleTest &gt; sample STARTED</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.SampleTest &gt; sample PASSED</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 11.404 secs</span><br></pre></td></tr></table></figure></p>
+<p>请注意，现在只有一个单元测试执行了。Gradle将会获取Sample的值，并且按照下面的样式 <code>**/&lt;Java system property value=Sample&gt;*.class</code>去查找单元测试类。因此，我们不需要输入单元测试的完整包名和类名。而为了仅仅执行AnotherSampleTest单元测试类，我们可以通过改变这个Java系统属性（test.single）来实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ gradle -Dtest.single=AnotherSample test</span><br><span class="line">:compileJava UP-TO-DATE</span><br><span class="line">:processResources UP-TO-DATE</span><br><span class="line">:classes UP-TO-DATE</span><br><span class="line">:compileTestJava</span><br><span class="line">:processTestResources UP-TO-DATE</span><br><span class="line">:testClasses UP-TO-DATE</span><br><span class="line">:test</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.AnotherSampleTest &gt; anotherSample STARTED</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.AnotherSampleTest &gt; anotherSample PASSED</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 5.62 secs</span><br></pre></td></tr></table></figure>
+<p>我们还可以使用Java系统样式来执行多个单元测试。例如：我们可以使用<code>*Sample</code>来同时运行 SampleTest 和A notherSampleTest。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ gradle -Dtest.single=*Sample test</span><br><span class="line">:compileJava UP-TO-DATE</span><br><span class="line">:processResources UP-TO-DATE</span><br><span class="line">:classes UP-TO-DATE</span><br><span class="line">:compileTestJava</span><br><span class="line">:processTestResources UP-TO-DATE</span><br><span class="line">:testClasses UP-TO-DATE</span><br><span class="line">:test</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.AnotherSampleTest &gt; anotherSample STARTED</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.AnotherSampleTest &gt; anotherSample PASSED</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.SampleTest &gt; sample STARTED</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.SampleTest &gt; sample PASSED</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 5.605 secs</span><br></pre></td></tr></table></figure>
+<p>为了展示对于其他类型的测试任务，这种Java系统属性都有效。我们在build.gradle 文件中添加了一个新的任务。我们命名这个测试任务为sampleTest，包含了我们所有的测试类。我们同样应用了和之前一样的testLogging设置，方便跟踪单元测试输出结果。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// File: build.gradle</span><br><span class="line">apply plugin: &apos;java&apos;</span><br><span class="line"> </span><br><span class="line">repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">dependencies &#123;</span><br><span class="line">    testCompile &apos;junit:junit:[4,)&apos;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">task sampleTest(type: Test, dependsOn: testClasses) &#123;</span><br><span class="line">    include &apos;**/*Sample*&apos;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">tasks.withType(Test) &#123;</span><br><span class="line">    testLogging &#123;</span><br><span class="line">        events &apos;started&apos;, &apos;passed&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面我们值运行SampleTest测试类，但是我们换一种方式使用Java系统属性 <code>-DsampleTest.single=S*</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ gradle -DsampleTest.single=S* sampleTest</span><br><span class="line">:compileJava UP-TO-DATE</span><br><span class="line">:processResources UP-TO-DATE</span><br><span class="line">:classes UP-TO-DATE</span><br><span class="line">:compileTestJava UP-TO-DATE</span><br><span class="line">:processTestResources UP-TO-DATE</span><br><span class="line">:testClasses UP-TO-DATE</span><br><span class="line">:sampleTest</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.SampleTest &gt; sample STARTED</span><br><span class="line"> </span><br><span class="line">com.mrhaki.gradle.SampleTest &gt; sample PASSED</span><br><span class="line"> </span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line"> </span><br><span class="line">Total time: 10.677 secs</span><br></pre></td></tr></table></figure></p>
+<p>实例使用 Gradle 1.6 编写。</p>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/gradle/">gradle</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/03/27/gradle-goodness-running-single-test/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/03/27/gradle-goodness-running-single-test/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

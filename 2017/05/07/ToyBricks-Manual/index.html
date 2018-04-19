@@ -1,0 +1,698 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>ToyBricks用户手册 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="注：阅读本文之前，建议先阅读一下：ToyBricks简介以及原理分析 ToyBricks简介ToyBricks是一个Android项目模块化的解决方案，主要包括四个部分，APT注解，APT注解处理器，ToyBricks插件（Gradle Plugin）,ToyBricks库。  其中：  APT注解，主要定义了两个注解：Interface（接口，例如：IText）,Implementation （">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ToyBricks用户手册">
+<meta property="og:url" content="http://www.snowdream.tech/2017/05/07/ToyBricks-Manual/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="注：阅读本文之前，建议先阅读一下：ToyBricks简介以及原理分析 ToyBricks简介ToyBricks是一个Android项目模块化的解决方案，主要包括四个部分，APT注解，APT注解处理器，ToyBricks插件（Gradle Plugin）,ToyBricks库。  其中：  APT注解，主要定义了两个注解：Interface（接口，例如：IText）,Implementation （">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/66954-57bf455f0fdee874.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/66954-3c4fa19a7bfca742.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.007Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ToyBricks用户手册">
+<meta name="twitter:description" content="注：阅读本文之前，建议先阅读一下：ToyBricks简介以及原理分析 ToyBricks简介ToyBricks是一个Android项目模块化的解决方案，主要包括四个部分，APT注解，APT注解处理器，ToyBricks插件（Gradle Plugin）,ToyBricks库。  其中：  APT注解，主要定义了两个注解：Interface（接口，例如：IText）,Implementation （">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/66954-57bf455f0fdee874.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/05/07/ToyBricks-Manual/" title="ToyBricks用户手册" itemprop="url">ToyBricks用户手册</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-07T12:32:22.000Z" itemprop="datePublished"> 发表于 2017-05-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ToyBricks简介"><span class="toc-number">1.</span> <span class="toc-text">ToyBricks简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ToyBricks特性"><span class="toc-number">2.</span> <span class="toc-text">ToyBricks特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ToyBricks局限性"><span class="toc-number">3.</span> <span class="toc-text">ToyBricks局限性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ToyBricks规则"><span class="toc-number">4.</span> <span class="toc-text">ToyBricks规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ToyBricks使用方法"><span class="toc-number">5.</span> <span class="toc-text">ToyBricks使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Gradle主工程"><span class="toc-number">5.1.</span> <span class="toc-text">Gradle主工程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-Library模块"><span class="toc-number">5.2.</span> <span class="toc-text">Android Library模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-Application模块"><span class="toc-number">5.3.</span> <span class="toc-text">Android Application模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ToyBricks使用方法-1"><span class="toc-number">5.4.</span> <span class="toc-text">ToyBricks使用方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ToyBricks最佳实践"><span class="toc-number">5.5.</span> <span class="toc-text">ToyBricks最佳实践</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考资料："><span class="toc-number">6.</span> <span class="toc-text">参考资料：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#联系方式"><span class="toc-number">7.</span> <span class="toc-text">联系方式</span></a></li></ol>
+		
+		</div>
+		
+		<p>注：阅读本文之前，建议先阅读一下：<br><a href="https://mp.weixin.qq.com/s?__biz=MzIyNTczOTYwMA==&amp;mid=2247483911&amp;idx=1&amp;sn=16a661bee016146fa7ee83f15a0ea615&amp;chksm=e87a5438df0ddd2e847a742fca7c5e31538350a1585158ee72a31f83cf4dc549aff13080c5f7#rd" target="_blank" rel="noopener">ToyBricks简介以及原理分析</a></p>
+<h3 id="ToyBricks简介"><a href="#ToyBricks简介" class="headerlink" title="ToyBricks简介"></a>ToyBricks简介</h3><p>ToyBricks是一个Android项目模块化的解决方案，主要包括四个部分，APT注解，APT注解处理器，ToyBricks插件（Gradle Plugin）,ToyBricks库。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/66954-57bf455f0fdee874.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ToyBricks简介"></p>
+<p>其中：</p>
+<ol>
+<li>APT注解，主要定义了两个注解：Interface（接口，例如：IText）,Implementation （实现，例如：TextImpl）</li>
+<li>APT注解处理器，在javac编译java源码之前。APT注解处理器会扫描Java源码中带有上面两个注解的接口和类，并且生成一个json文件， ToyBricks.json.</li>
+<li>ToyBricks插件（Gradle Plugin）,负责ToyBricks.json的打包，合并，生成Java源文件等工作</li>
+<li>ToyBricks，提供对外调用方法。通过参数传入接口，返回相应的实现。</li>
+</ol>
+<h3 id="ToyBricks特性"><a href="#ToyBricks特性" class="headerlink" title="ToyBricks特性"></a>ToyBricks特性</h3><ol>
+<li>同时支持Kotlin，Java</li>
+<li>支持Android Build Variants</li>
+<li>Proguard免配置</li>
+</ol>
+<h3 id="ToyBricks局限性"><a href="#ToyBricks局限性" class="headerlink" title="ToyBricks局限性"></a>ToyBricks局限性</h3><p>ToyBricks具有传染性。<br>任何Android Application 或者 Android Library 使用包含ToyBricks.json的jar包或者aar包作为依赖，都必须继续使用ToyBricks，否则无法保证代码能正确运行。</p>
+<h3 id="ToyBricks规则"><a href="#ToyBricks规则" class="headerlink" title="ToyBricks规则"></a>ToyBricks规则</h3><p><strong>每个模块分为接口和实现两个部分。接口部分提供给模块外部调用，而实现部分则禁止来自外部的调用。</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/66954-3c4fa19a7bfca742.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="模块划分"></p>
+<p><strong>接口</strong> 以@Interface进行注解，示例如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Interface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IText</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">getText</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>实现</strong> 以@Implementation进行注解，示例如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Implementation</span>(IText.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewTextImpl</span> <span class="keyword">implements</span> <span class="title">IText</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getText</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"NewTextImpl Implementation from "</span>+ getClass().getCanonicalName();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>@Implementation更详细的使用方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Implementation</span>(value = IText.class,global = <span class="keyword">true</span>,singleton = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NewTextGobalImpl</span> <span class="keyword">implements</span> <span class="title">IText</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getText</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"NewTextImpl Implementation from "</span>+ getClass().getCanonicalName() ;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参数说明如下：</p>
+<ol>
+<li>value后面应该填写接口的class</li>
+<li>global代表这个实现拥有高优先级。如果没有设置，默认取值为false。</li>
+<li>singleton代表这个实现将会以单例形式存在。如果没有设置，默认取值为false。由于单例会一直存在于APP的整个生命周期，因此，不应该滥用单例。</li>
+</ol>
+<p>使用ToyBricks应该遵守以下规则：</p>
+<ol>
+<li>接口命令强烈建议以I开头，例如：IText</li>
+<li>每一个接口都必须至少有一个相应实现，否则编译出错。</li>
+<li>每个实现类必须是public的。</li>
+<li>每个实现类必须实现注解中标明的接口。</li>
+<li>每个实现类必须拥有一个默认无参数的构造函数。</li>
+<li>每个实现类不可以是abstract抽象类。</li>
+<li>实现一共分成三类，全局实现（global=true）,普通实现(global=false),替补实现(按照默认的包名和类名进行加载)。它们的优先级从前往后一直降低。<strong>每一类只能同时存在一个实现，否则编译出错。</strong></li>
+<li>替补实现遵循以下规则：<br>假如接口为：com.github.snowdream.toybricks.app.IText,<br>则替补实现为：com.github.snowdream.toybricks.app.impl.TextImpl<br>实现的包名为接口的包名+”.impl”,实现的类名为接口名去掉第一个字母，第二个字母大写，然后加上”Impl”。</li>
+<li>任何发布到Maven仓库的库，都应该将global设置为false。global设置为true，只适合Android Application测试新实现，或者替换默认实现。</li>
+</ol>
+<h3 id="ToyBricks使用方法"><a href="#ToyBricks使用方法" class="headerlink" title="ToyBricks使用方法"></a>ToyBricks使用方法</h3><p>由于ToyBricks对Android的Gradle编译流程稍微进行了修改，因此，请注意按照下面的说明进行详细操作。<br>对于编译流程的修改如下：</p>
+<ol>
+<li>Android Application模块：首先按照上面的步骤生成ToyBricks.json，然后和依赖库中的ToyBricks.json进行合并，校验，最后按照预定规则，生成InterfaceLoaderImpl.java源代码，并参与编译。</li>
+<li>Android Library: 通过APT生成Json文件（ToyBricks.json，生成目录在“build/generated/source/apt”或者“build/generated/source/kapt”），然后打包到aar。如果你需要打包成jar包，并发布到maven仓库，请参考下面代码:         </li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">task <span class="title">androidReleaseJar</span><span class="params">(type: Jar,dependsOn: <span class="string">"assembleRelease"</span>)</span> </span>&#123;</span><br><span class="line">    from <span class="string">"$buildDir/intermediates/classes/release/"</span></span><br><span class="line">    from <span class="string">"$buildDir/generated/source/kapt/release/ToyBricks.json"</span></span><br><span class="line">    from <span class="string">"$buildDir/generated/source/apt/release/ToyBricks.json"</span></span><br><span class="line">    exclude <span class="string">'**/BuildConfig.class'</span></span><br><span class="line">    exclude <span class="string">'**/R.class'</span></span><br><span class="line">    exclude <span class="string">'**/R$*.class'</span></span><br><span class="line">    includeEmptyDirs <span class="keyword">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">task <span class="title">androidJavadocsJar</span><span class="params">(type: Jar)</span> </span>&#123;</span><br><span class="line">    classifier = <span class="string">'javadoc'</span></span><br><span class="line">    from <span class="string">"generateReleaseJavadoc.destinationDir"</span></span><br><span class="line">    includeEmptyDirs <span class="keyword">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">task <span class="title">androidSourcesJar</span><span class="params">(type: Jar)</span> </span>&#123;</span><br><span class="line">    classifier = <span class="string">'sources'</span></span><br><span class="line">    from android.sourceSets.main.java.srcDirs</span><br><span class="line">    from <span class="string">"$buildDir/generated/source/kapt/release/ToyBricks.json"</span></span><br><span class="line">    from <span class="string">"$buildDir/generated/source/apt/release/ToyBricks.json"</span></span><br><span class="line">    includeEmptyDirs <span class="keyword">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Gradle主工程"><a href="#Gradle主工程" class="headerlink" title="Gradle主工程"></a>Gradle主工程</h4><p>在主工程的build.gradle文件中添加ToyBricks的gradle插件。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:2.2.2'</span></span><br><span class="line">        </span><br><span class="line">        classpath <span class="string">'com.github.snowdream.toybricks:android-toybricks-gradle-plugin:0.9.10'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Android-Library模块"><a href="#Android-Library模块" class="headerlink" title="Android Library模块"></a>Android Library模块</h4><p>在Library模块的build.gradle文件中添加ToyBricks的相关库依赖。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kapt &#123;</span><br><span class="line">    generateStubs = <span class="keyword">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile <span class="string">"com.github.snowdream:toybricks:0.9.10@aar"</span></span><br><span class="line">    compile <span class="string">"com.github.snowdream.toybricks:annotation:0.9.10"</span></span><br><span class="line"></span><br><span class="line">    kapt <span class="string">"com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">    <span class="comment">//annotationProcessor "com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: <span class="string">'com.github.snowdream.toybricks'</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>注：</strong> 有两种引用方式，一种是kotlin的kapt方式，需要配置上面的generateStubs。另外一种，是Android默认支持的annotationProcessor方式。</p>
+<p><strong>如果你的工程中包含任何Kotlin源文件，则必须选择kapt的方式，否则，可以选择annotationProcessor方式。</strong></p>
+<h4 id="Android-Application模块"><a href="#Android-Application模块" class="headerlink" title="Android Application模块"></a>Android Application模块</h4><p>在Application模块的build.gradle文件中添加ToyBricks的相关库依赖。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kapt &#123;</span><br><span class="line">    generateStubs = <span class="keyword">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile <span class="string">'com.github.snowdream:annotation:0.7@aar'</span></span><br><span class="line"></span><br><span class="line">    compile <span class="string">"com.github.snowdream:toybricks:0.9.10@aar"</span></span><br><span class="line">    compile <span class="string">"com.github.snowdream.toybricks:annotation:0.9.10"</span></span><br><span class="line"></span><br><span class="line">    kapt <span class="string">"com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">    <span class="comment">//annotationProcessor "com.github.snowdream.toybricks:processor:0.9.10"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: <span class="string">'com.github.snowdream.toybricks'</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="ToyBricks使用方法-1"><a href="#ToyBricks使用方法-1" class="headerlink" title="ToyBricks使用方法"></a>ToyBricks使用方法</h4><p>通过上面的方式，开发好接口和实现模块后。只需要引用接口，就可以通过下面方式获取接口的实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IText text = ToyBricks.getImplementation(IText.class);</span><br></pre></td></tr></table></figure></p>
+<p>其中，IText为接口。</p>
+<h4 id="ToyBricks最佳实践"><a href="#ToyBricks最佳实践" class="headerlink" title="ToyBricks最佳实践"></a>ToyBricks最佳实践</h4><p>按照替补实现的命名规则，来开发接口的实现类。</p>
+<p>如果您对ToyBricks有什么问题或者建议，欢迎通过后面的联系方式联系我。</p>
+<h3 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h3><ol>
+<li><a href="https://github.com/SnowdreamFramework/ToyBricks" target="_blank" rel="noopener">SnowdreamFramework/ToyBricks</a></li>
+<li><a href="https://github.com/SnowdreamFramework/log" target="_blank" rel="noopener">SnowdreamFramework/log</a></li>
+</ol>
+<h3 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h3><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/06/06/full-kotlin-docs/" title="学 Kotlin，看这一篇就够了。">
+  <strong>上一篇：</strong><br/>
+  <span>
+  学 Kotlin，看这一篇就够了。</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/05/03/ToyBricks-Introduction/"  title="ToyBricks简介以及原理分析">
+ <strong>下一篇：</strong><br/> 
+ <span>ToyBricks简介以及原理分析
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/05/07/ToyBricks-Manual/" data-title="ToyBricks用户手册" data-url="http://www.snowdream.tech/2017/05/07/ToyBricks-Manual/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

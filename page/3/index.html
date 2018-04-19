@@ -1,0 +1,1639 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="android,java,nodejs">
+<meta name="keywords" content="Android,Nodejs,Java">
+<meta property="og:type" content="website">
+<meta property="og:title" content="snowdream - Impossible is nothing!">
+<meta property="og:url" content="http://www.snowdream.tech/page/3/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="android,java,nodejs">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="snowdream - Impossible is nothing!">
+<meta name="twitter:description" content="android,java,nodejs">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/02/android-develop-xposed-module/" title="Xposed模块的开发" itemprop="url">Xposed模块的开发</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-02T06:21:56.000Z" itemprop="datePublished"> 发表于 2016-09-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a><br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/09/02/android-develop-xposed-module/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/09/02/android-develop-xposed-module/</a></p>
+</blockquote>
+<p>注： 根据<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial" target="_blank" rel="noopener">Development tutorial</a> 整理完成</p>
+<h2 id="创建Android项目"><a href="#创建Android项目" class="headerlink" title="创建Android项目"></a>创建Android项目</h2><p>如果准备从零开始创建Xposed模块,首先应该创建一个Android应用工程。</p>
+<h2 id="引入-Xposed-Framework-API"><a href="#引入-Xposed-Framework-API" class="headerlink" title="引入 Xposed Framework API"></a>引入 Xposed Framework API</h2><p>在 <code>app/build.gradle</code>文件中声明Xposed Framework API 的jar包依赖。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">    jcenter();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">  provided &apos;de.robv.android.xposed:api:82&apos;</span><br><span class="line">  //如果需要引入文档，方便查看的话</span><br><span class="line">  provided &apos;de.robv.android.xposed:api:82:sources&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>说明：   </p>
+<ol>
+<li>请留意，这个82是Xposed Framework API的版本号，叫做xposedminversion。 </li>
+<li>xposedminversion可以在这里进行查询：<br><a href="https://bintray.com/rovo89/de.robv.android.xposed/api" target="_blank" rel="noopener">https://bintray.com/rovo89/de.robv.android.xposed/api</a></li>
+<li>Xposed Framework API文档请参考：<a href="http://api.xposed.info/reference/packages.html" target="_blank" rel="noopener">http://api.xposed.info/reference/packages.html</a></li>
+</ol>
+<h2 id="修改AndroidManifest-xml"><a href="#修改AndroidManifest-xml" class="headerlink" title="修改AndroidManifest.xml"></a>修改AndroidManifest.xml</h2><p>在AndroidManifest.xml文件中添加以下代码。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    package=&quot;de.robv.android.xposed.mods.tutorial&quot;</span><br><span class="line">    android:versionCode=&quot;1&quot;</span><br><span class="line">    android:versionName=&quot;1.0&quot; &gt;</span><br><span class="line"></span><br><span class="line">    &lt;uses-sdk android:minSdkVersion=&quot;15&quot; /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;application</span><br><span class="line">        android:icon=&quot;@drawable/ic_launcher&quot;</span><br><span class="line">        android:label=&quot;@string/app_name&quot; &gt;</span><br><span class="line">        &lt;meta-data</span><br><span class="line">            android:name=&quot;xposedmodule&quot;</span><br><span class="line">            android:value=&quot;true&quot; /&gt;</span><br><span class="line">        &lt;meta-data</span><br><span class="line">            android:name=&quot;xposeddescription&quot;</span><br><span class="line">            android:value=&quot;Easy example which makes the status bar clock red and adds a smiley&quot; /&gt;</span><br><span class="line">        &lt;meta-data</span><br><span class="line">            android:name=&quot;xposedminversion&quot;</span><br><span class="line">            android:value=&quot;53&quot; /&gt;</span><br><span class="line">    &lt;/application&gt;</span><br><span class="line">&lt;/manifest&gt;</span><br></pre></td></tr></table></figure></p>
+<p>说明：     </p>
+<ol>
+<li>xposedmodule： 一般设置为true,表示这是一个xposed模块</li>
+<li>xposeddescription: 一句话描述该模块的用途，可以引用string.xml中的字符串</li>
+<li>xposedminversion： 没错，这个就是上面提到的xposedminversion。我理解为要求支持的Xposed Framework最低版本。</li>
+</ol>
+<h2 id="模块实现"><a href="#模块实现" class="headerlink" title="模块实现"></a>模块实现</h2><p>创建一个或者几个类，并实现IXposedHookLoadPackage,IXposedHookZygoteInit或者其他IXposedMod的子接口。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package de.robv.android.xposed.mods.tutorial;</span><br><span class="line"></span><br><span class="line">import de.robv.android.xposed.IXposedHookLoadPackage;</span><br><span class="line">import de.robv.android.xposed.XposedBridge;</span><br><span class="line">import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;</span><br><span class="line"></span><br><span class="line">public class Tutorial implements IXposedHookLoadPackage &#123;</span><br><span class="line">    public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable &#123;</span><br><span class="line">        XposedBridge.log(&quot;Loaded app: &quot; + lpparam.packageName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>注： XposedBridge.log会将日志输出到logcat，并写入日志文件”/data/data/de.robv.android.xposed.installer/log/debug.log”.</p>
+<p>好了，现在可以开始Hook了。<br>大部分的Hook工作，主要通过XposedHelpers类的一些辅助函数来实现。比如：<code>findAndHookMethod</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package de.robv.android.xposed.mods.tutorial;</span><br><span class="line"></span><br><span class="line">import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;</span><br><span class="line">import de.robv.android.xposed.IXposedHookLoadPackage;</span><br><span class="line">import de.robv.android.xposed.XC_MethodHook;</span><br><span class="line">import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;</span><br><span class="line"></span><br><span class="line">public class Tutorial implements IXposedHookLoadPackage &#123;</span><br><span class="line">    public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable &#123;</span><br><span class="line">        if (!lpparam.packageName.equals(&quot;com.android.systemui&quot;))</span><br><span class="line">            return;</span><br><span class="line"></span><br><span class="line">        findAndHookMethod(&quot;com.android.systemui.statusbar.policy.Clock&quot;, lpparam.classLoader, &quot;updateClock&quot;, new XC_MethodHook() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            protected void beforeHookedMethod(MethodHookParam param) throws Throwable &#123;</span><br><span class="line">                // this will be called before the clock was updated by the original method</span><br><span class="line">            &#125;</span><br><span class="line">            @Override</span><br><span class="line">            protected void afterHookedMethod(MethodHookParam param) throws Throwable &#123;</span><br><span class="line">                // this will be called after the clock was updated by the original method</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注：根据名称不难发现，beforeHookedMethod/afterHookedMethod会在被Hook函数之前/之后执行。</p>
+<p>关于使用Xposed来进行Hook的更多知识，这里就不展开了。大家可以参考以下两篇文章：</p>
+<ol>
+<li><a href="https://github.com/rovo89/XposedBridge/wiki/Helpers" target="_blank" rel="noopener">Helpers</a></li>
+<li><a href="http://www.droidsec.cn/android-hook%E6%A1%86%E6%9E%B6xposed%E7%AF%87/" target="_blank" rel="noopener">android-hook框架xposed篇</a></li>
+</ol>
+<h2 id="声明实现"><a href="#声明实现" class="headerlink" title="声明实现"></a>声明实现</h2><p>在assets目录下创建一个空文件，命名为xposed_init。<br>在这个文件中，每一行记录一个类的完整路径，来声明实现类。<br>在这里，我们声明 “de.robv.android.xposed.mods.tutorial.Tutorial”</p>
+<p>好了，到这里，一个简单的Xposed模块应用项目就构建好了。</p>
+<h2 id="模块安装与使用"><a href="#模块安装与使用" class="headerlink" title="模块安装与使用"></a>模块安装与使用</h2><ol>
+<li>将这个工程，编译，打包，安装到已经支持Xposed的手机中。    </li>
+<li>打开Xposed Installer应用，切换到模块界面，你可以看到你开发的Xposed模块。  </li>
+<li>通过勾选/取消，来启用/禁用模块。然后，重启手机，进行生效。</li>
+</ol>
+<h2 id="模块发布"><a href="#模块发布" class="headerlink" title="模块发布"></a>模块发布</h2><p>Xposed模块开发完成后，你可以按照以下步骤发布分享。</p>
+<ol>
+<li>你首先需要一个XDA论坛帐号。如果没有，请前往论坛注册：<br><a href="http://forum.xda-developers.com/" target="_blank" rel="noopener">http://forum.xda-developers.com/</a></li>
+<li>使用XDA论坛帐号,登录xposed官网，按照操作提示进行发布。<br><a href="http://repo.xposed.info/" target="_blank" rel="noopener">http://repo.xposed.info/</a></li>
+</ol>
+<h2 id="Xposed模块开发优势和不足"><a href="#Xposed模块开发优势和不足" class="headerlink" title="Xposed模块开发优势和不足"></a>Xposed模块开发优势和不足</h2><h3 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h3><ol>
+<li>功能强大，既可以修改系统应用，也可以修改其他应用。hook android,hook everything.</li>
+<li>使用灵活，既可以针对一款应用进行Hook，也可以针对所有应用进行Hook。</li>
+</ol>
+<h3 id="不足"><a href="#不足" class="headerlink" title="不足"></a>不足</h3><ol>
+<li>无法调试。只能通过打印日志进行跟踪。（例如：XposedBridge.log）</li>
+<li>无法即时生效。启用/禁用模块，你需要重启手机。</li>
+<li>multidex支持不足。详见<a href="https://github.com/rovo89/XposedBridge/issues/30#issuecomment-68488797" target="_blank" rel="noopener">Multidex support</a></li>
+</ol>
+<h2 id="Xposed模块开发实例"><a href="#Xposed模块开发实例" class="headerlink" title="Xposed模块开发实例"></a>Xposed模块开发实例</h2><p>在<a href="https://github.com/giuliomvr/Xposed-Keylogger/" target="_blank" rel="noopener">Xposed-Keylogger</a>的基础上，我稍作修改，制作了一个Xposed模块开发实例。<br>这个模块的作用就是监听键盘按键，记录所有你设置到EditText控件的字符串。</p>
+<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><p>Xposed是如此的强大，因此，建议重视手机安全的用户，坚决不要root，不要安装xposed，发烧友，土豪随意。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://repo.xposed.info/" target="_blank" rel="noopener">Xposed 官网</a></li>
+<li><a href="http://forum.xda-developers.com/xposed" target="_blank" rel="noopener">Xposed XDA论坛</a></li>
+<li><a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial" target="_blank" rel="noopener">Development tutorial</a></li>
+<li><a href="https://github.com/rovo89/XposedBridge/wiki/Helpers" target="_blank" rel="noopener">Helpers</a></li>
+<li><a href="https://github.com/rovo89/XposedBridge/wiki/Replacing-resources" target="_blank" rel="noopener">Replacing resources</a></li>
+<li><a href="https://github.com/rovo89/XposedBridge/wiki/Using-the-Xposed-Framework-API" target="_blank" rel="noopener">Using the Xposed Framework API</a></li>
+<li><a href="https://github.com/veryyoung/DingDingUnrecalled" target="_blank" rel="noopener">DingDingUnrecalled</a></li>
+<li><a href="https://github.com/qdk0901/FakeXX" target="_blank" rel="noopener">FakeXX</a></li>
+<li><a href="https://github.com/veryyoung/WechatLuckyMoney" target="_blank" rel="noopener">WechatLuckyMoney</a></li>
+<li><a href="http://api.xposed.info/reference/packages.html" target="_blank" rel="noopener">Xposed Framework API</a></li>
+<li><a href="https://bintray.com/rovo89/de.robv.android.xposed/api" target="_blank" rel="noopener">Xposed Framework API in bintray</a></li>
+<li><a href="http://www.droidsec.cn/android-hook%E6%A1%86%E6%9E%B6xposed%E7%AF%87/" target="_blank" rel="noopener">android-hook框架xposed篇</a></li>
+<li><a href="https://github.com/TheCjw/JustTrustMe" target="_blank" rel="noopener">JustTrustMe</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/xposed/">xposed</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/02/android-develop-xposed-module/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/02/android-develop-xposed-module/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/02/android-install-xposed-framework/" title="Xposed框架的安装" itemprop="url">Xposed框架的安装</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-02T01:25:43.000Z" itemprop="datePublished"> 发表于 2016-09-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a><br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/</a></p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>提到Xposed框架时，人们总会用到一个词“神器”。<br>是的，安装Xposed后，我们似乎脑洞大开，以前不能干的事件，现在都能干了。<br>对此，我的理解是：hook android，hook everything</p>
+<p>Xposed框架是什么？？？    </p>
+<p>官方对此的解释是这样的：<br>“Xposed是一个适用于Android的框架。基于这个框架开发的模块可以改变系统和app应用的行为，而不需要修改APK。这是一个很棒的特性，意味着Xposed模块可以不经过任何修改，安装在各种不同的ROM上。Xposed模块可以很容易的开启和关闭。你只需要激活或者禁用Xposed模块，然后重启手机即可。”</p>
+<img src="/2016/09/02/android-install-xposed-framework/xposed1.png" title="[xposed1]">
+<p>在手机发烧友的眼中，Xposed是这样子的： </p>
+<p>修改手机主题，权限控制，阻止广告，禁用各种APP滥用权限，微信，游戏等相关的各种外挂…</p>
+<p>在开发者的眼中，Xposed是这样子的：    </p>
+<p>渗透测试，测试数据构造,环境监控,动态埋点,热补丁,自动化录制…</p>
+<p>关于Xposed框架的基本原理以及更多介绍，请参考文末链接，或者自行百度。</p>
+<h2 id="风险声明"><a href="#风险声明" class="headerlink" title="风险声明"></a>风险声明</h2><img src="/2016/09/02/android-install-xposed-framework/xposed2.jpg" title="[xposed2]">
+<p>在安装Xposed框架之前，我必须把风险告诉你：</p>
+<ol>
+<li>软变砖</li>
+<li>无限重启</li>
+</ol>
+<p>简单解释下：</p>
+<ol>
+<li>软砖： 手机能启动，但是进不去桌面</li>
+<li>硬砖/黑砖:  手机在按电源键，或者连接电脑没反应，一直黑屏。</li>
+<li>软砖可以救 硬砖只能修。</li>
+<li>无限重启： 就是手机快要进入桌面的时候，又自动重启。周而复始，无限重启。</li>
+</ol>
+<p>根据<a href="http://forum.xda-developers.com/showthread.php?t=3034811" target="_blank" rel="noopener">官方的警示</a>和网友的反馈， <strong>三星的手机，以及索尼，戴尔的部分手机</strong> 容易导致以上风险。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Xposed框架的安装需要经过root，安装第三方Recovery，安装Xposed框架，安装Xposed Installer等几个步骤。这些步骤都是依次进行的，任何步骤的失败，都会导致Xposed框架的安装过程中止。</p>
+<p>因此，建议在 <strong>国际国内的主流Android机型</strong> 上进行安装。</p>
+<h3 id="Root"><a href="#Root" class="headerlink" title="Root"></a>Root</h3><p>根据我的个人实践，这里我推荐使用 <strong>KingRoot</strong> 这款工具进行Root。     </p>
+<p>官方网址： <a href="https://kingroot.net/?myLocale=zh_CN]" target="_blank" rel="noopener">https://kingroot.net/?myLocale=zh_CN</a></p>
+<p>Root之前，我建议你查询下，你的机型是否被支持： <a href="https://kingroot.net/model" target="_blank" rel="noopener">https://kingroot.net/model</a></p>
+<h3 id="TWRP"><a href="#TWRP" class="headerlink" title="TWRP"></a>TWRP</h3><p>对于Android 5.0以上的手机，官方提示，必须要先刷入第三方Recovery, 比如: TWRP</p>
+<p>官方网址： <a href="https://twrp.me/" target="_blank" rel="noopener">https://twrp.me/</a></p>
+<p>刷机之前，请先查询下，你的机型是否被支持：<br><a href="https://twrp.me/Devices/" target="_blank" rel="noopener">https://twrp.me/Devices/</a></p>
+<p>以Nexus 5 为例， 网站有详细的操作指南。<a href="https://twrp.me/devices/lgnexus5.html" target="_blank" rel="noopener">https://twrp.me/devices/lgnexus5.html</a></p>
+<p>当然有些非主流手机，也可以在相关论坛找到TWRP的修改版本。  </p>
+<p>比如我的手机，中兴 Blade A1(C880U) 16G 灵动白 移动4G手机 双卡双待</p>
+<p>我就是参考：<a href="中兴小鲜3中兴Blade a1移动版全网通版本TWRP刷写教程@root">中兴小鲜3中兴Blade a1移动版全网通版本TWRP刷写教程@root</a></p>
+<p>按照 <a href="https://twrp.me/devices/ztebladeapex2.html" target="_blank" rel="noopener">TWRP for ZTE Blade Apex 2</a> 强行刷入的。</p>
+<p>刷机完成后，重启可以进入Recovery界面。</p>
+<h3 id="Xposed-Framework"><a href="#Xposed-Framework" class="headerlink" title="Xposed Framework"></a>Xposed Framework</h3><h4 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h4><p>Xposed Framework下载地址：<a href="http://dl-xda.xposed.info/framework/" target="_blank" rel="noopener">http://dl-xda.xposed.info/framework/</a></p>
+<p>其中，sdk21，sdk22，sdk23，分别对应Android 5.0，5.1， 6.0.<br>根据，手机ROM版本和处理器类型选择Xposed Framework刷机包。</p>
+<p>比如，中兴Blade a1移动版(5.1, arm64)，我选择了刷机包<a href="http://dl-xda.xposed.info/framework/sdk22/arm64/xposed-v86-sdk22-arm64.zip" target="_blank" rel="noopener">xposed-v86-sdk22-arm64.zip</a> 和卸载包<a href="http://dl-xda.xposed.info/framework/uninstaller/xposed-uninstaller-20150831-arm64.zip" target="_blank" rel="noopener">xposed-uninstaller-20150831-arm64.zip</a></p>
+<p>下载之后，将这两个压缩包，拷贝到SD卡根目录下。</p>
+<h4 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h4><ol>
+<li>重启手机,进入Recovery界面。(adb reboot recovery)</li>
+<li>选择【安装刷机包】进入下级页面，选择【从SD卡选择ZIP文件】</li>
+<li>在SD卡根目录找到Xposed Framework刷机包(xposed-v86-sdk22-arm64.zip)，并选择。</li>
+<li>滑动底部的滑动条，确认刷入，等待提示刷机完成。</li>
+<li>重启手机，等待进入桌面。</li>
+</ol>
+<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><p>如果刷入Xposed Framework刷机包之后，无限重启，进不去桌面怎么办？<br>那就按照下面提示，卸载掉Xposed Framework。</p>
+<ol>
+<li>重启手机,进入Recovery界面。(adb reboot recovery)</li>
+<li>选择【安装刷机包】进入下级页面，选择【从SD卡选择ZIP文件】</li>
+<li>在SD卡根目录找到Xposed Framework卸载刷机包(xposed-uninstaller-20150831-arm64.zip)，并选择。</li>
+<li>滑动底部的滑动条，确认刷入，等待提示刷机完成。</li>
+<li>重启手机，等待进入桌面。</li>
+</ol>
+<h3 id="Xposed-Installer"><a href="#Xposed-Installer" class="headerlink" title="Xposed Installer"></a>Xposed Installer</h3><p>这是一个管理Xposed模块的官方应用。通过它，你可以随时禁用或者启用Xposed模块，然后重启手机。</p>
+<p>对于Android 5.0以上的手机，请前往XDA论坛主题贴下载附件    XposedInstaller_3.0_alpha4.apk，并安装。</p>
+<p>下载地址：<a href="http://forum.xda-developers.com/showthread.php?t=3034811" target="_blank" rel="noopener">http://forum.xda-developers.com/showthread.php?t=3034811</a></p>
+<p>如果你看到以下界面，恭喜你，Xposed Framework安装完成。</p>
+<img src="/2016/09/02/android-install-xposed-framework/xposed3.png" title="[xposed3]">
+<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><ol>
+<li><a href="http://forum.xda-developers.com/xposed/xposed-faq-issues-t2735540" target="_blank" rel="noopener">Xposed FAQ / Known issues</a></li>
+<li><a href="https://www.zhihu.com/search?type=content&amp;q=xposed" target="_blank" rel="noopener">Xposed in zhihu</a></li>
+<li><a href="http://stackoverflow.com/search?q=xposed" target="_blank" rel="noopener">Xposed in Stackoverflow</a></li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://repo.xposed.info/" target="_blank" rel="noopener">Xposed 官网</a></li>
+<li><a href="http://forum.xda-developers.com/xposed" target="_blank" rel="noopener">Xposed XDA论坛</a></li>
+<li><a href="http://forum.xda-developers.com/showthread.php?t=3034811" target="_blank" rel="noopener">[OFFICIAL] Xposed for Lollipop/Marshmallow [Android 5.0/5.1/6.0, v86, 2016/07/08]</a></li>
+<li><a href="http://xposed.appkg.com/1159.html" target="_blank" rel="noopener">Xposed framework 作者rovo89 原文（xda）介绍大译</a></li>
+<li><a href="http://www.jianshu.com/p/fee6c8a808d5" target="_blank" rel="noopener">Xposed:不得不说的 Android 神器</a></li>
+<li><a href="https://www.zhihu.com/question/22063862/answer/31085624" target="_blank" rel="noopener">Android 系统上的 Xposed 框架中都有哪些值得推荐的模块？</a></li>
+<li><a href="https://www.b521.net/archives/139.html" target="_blank" rel="noopener">xposed模块整理</a></li>
+<li><a href="http://blog.csdn.net/chenhao0428/article/details/51436837" target="_blank" rel="noopener">基于Xposed修改微信运动步数</a></li>
+<li><a href="https://testerhome.com/topics/3819" target="_blank" rel="noopener">用黑客思维做测试——神器 Xposed 框架介绍</a></li>
+<li><a href="http://blog.idhyt.com/2015/09/25/android-injection-xposed/" target="_blank" rel="noopener">安卓注入框架Xposed分析与简单应用</a></li>
+<li><a href="http://www.yangyanxing.com/article/first-use-Xposed.html" target="_blank" rel="noopener">Xposed框架初体验</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/xposed/">xposed</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/02/android-install-xposed-framework/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/02/android-install-xposed-framework/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/24/android-incremental-update-solutions-flowchart/" title="Android 应用增量升级方案之流程篇" itemprop="url">Android 应用增量升级方案之流程篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-24T08:44:31.000Z" itemprop="datePublished"> 发表于 2016-08-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a><br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/08/24/android-incremental-update-solutions-flowchart/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/08/24/android-incremental-update-solutions-flowchart/</a></p>
+</blockquote>
+<p>今天，我对Android 应用增量升级方案的流程进行了一个梳理，简单画了一个流程图。</p>
+<p>流程图源文件： <a href="/2016/08/24/android-incremental-update-solutions-flowchart/update.graphml" title="[update.graphml]">[update.graphml]</a></p>
+<p>请使用yEd工具打开浏览。<a href="https://www.yworks.com/products/yed/download" target="_blank" rel="noopener">https://www.yworks.com/products/yed/download</a></p>
+<img src="/2016/08/24/android-incremental-update-solutions-flowchart/update.svg" title="[Android 应用增量升级方案之流程图]">
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/24/android-incremental-update-solutions-flowchart/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/24/android-incremental-update-solutions-flowchart/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/23/android-incremental-update-solutions/" title="Android 应用增量升级方案之实践篇" itemprop="url">Android 应用增量升级方案之实践篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-23T08:30:30.000Z" itemprop="datePublished"> 发表于 2016-08-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/08/23/android-incremental-update-solutions/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/08/23/android-incremental-update-solutions/</a></p>
+</blockquote>
+<h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><h3 id="全量升级"><a href="#全量升级" class="headerlink" title="全量升级"></a>全量升级</h3><p>每次下载完整的新安装包，进行覆盖安装。</p>
+<h3 id="增量升级"><a href="#增量升级" class="headerlink" title="增量升级"></a>增量升级</h3><p>将新安装包和已经安装的旧安装包进行比对，生成一个差分升级包（Patch包）。用户下载patch包后，和已经安装的旧安装包进行合并，生成新安装包，再进行覆盖安装。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在早期的Android应用开发中，由于android应用普遍比较小，因此，普遍采用了全量升级方案。简单粗暴，却行之有效。<br>但是，随着Android的发展，Android应用功能越来越多，体积越来越大，再综合以下几个因素考虑，全量升级方案逐渐无法满足我们的需求。</p>
+<ol>
+<li>在国内，随着2G,3G,4G的逐步演进，手机网络越来越快，但有一点事实仍然没有改变：流量很贵，非常不够用。(这个因素不适合WIFI用户和土豪用户)   <img src="/2016/08/23/android-incremental-update-solutions/beijingmobile.png" title="[北京移动流量套餐]">
+以北京移动为例，最基础套餐，5元30M流量。而最新的微信APK安装包35M。也就是说，如果你选了最基础套餐，你一个月内使用全量升级方案，升级一次微信，流量都不够用。</li>
+<li>在敏捷开发大行其道的今天，开发者希望尽快将新开发的功能推送到用户面前，并及时得到用户的反馈。恨不能三天一小版，一周一大版。</li>
+</ol>
+<p>综合以上因素，开发者必须为用户考虑：省流量，省流量，省流量。</p>
+<p>显然，全量升级这种土豪做法已经不再适用，于是，增量升级应运而生。</p>
+<h2 id="增量升级原理"><a href="#增量升级原理" class="headerlink" title="增量升级原理"></a>增量升级原理</h2><p>首先，两句话简单概括增量升级原理:</p>
+<ol>
+<li>服务端通过比对最新升级包，和当前应用包，生成差分升级包；</li>
+<li>客户端将差分升级包和当前应用包合并，生成最新升级包。</li>
+</ol>
+<p>接下来，简单介绍下增量升级的原理：</p>
+<ol>
+<li>首先，客户端获取当前应用的Version Code和应用APK文件的MD5值，发送给服务器；</li>
+<li>服务器根据既定策略，给用户返回更新包信息。<ol>
+<li>通过MD5值没有查询到旧有APK应用信息，返回全量升级包网址，全量升级包MD5值;</li>
+<li>需要返回patch包,但还没有生成patch包时，后台去生成patch包，并返回全量升级包网址，全量升级包MD5值;</li>
+<li>需要返回patch包,并且已经生成patch包时，返回patch包网址，patch包MD5值，全量升级包网址，全量升级包MD5值;</li>
+<li>不需要返回patch包,则返回全量升级包网址，全量升级包MD5值;</li>
+</ol>
+</li>
+<li>客户端根据返回信息进行更新操作。<ol>
+<li>如果只有全量升级包相关信息，则下载全量升级包，并在校验MD5值后，安装更新包;</li>
+<li>如果有差分升级包（patch包）,则下载差分升级包。校验差分升级包的MD5值。如果校验失败，走上面一个步骤。如果校验成功，则将差分升级包和当前版本的APK进行合并操作，生成新的应用包。校验新的应用包MD5值。校验通过，这安装这个生成的新应用包。如果校验失败，则走上面一个步骤。</li>
+</ol>
+</li>
+</ol>
+<p>以上只是简单介绍了增量升级的原理，实际应用中还需要细化，考虑更多的场景。</p>
+<p>注意： 下载过程中，必须支持断点续传策略。防止网络不畅时，不断重试，造成的流量浪费。</p>
+<h2 id="增量升级方案"><a href="#增量升级方案" class="headerlink" title="增量升级方案"></a>增量升级方案</h2><p>增量升级方案的核心就是使用Diff/Patch算法来对新旧APK进行diff/patch操作。<br>目前主流的Diff/Patch算法是bsdiff/bspatch，来自：<a href="http://www.daemonology.net/bsdiff/" target="_blank" rel="noopener">http://www.daemonology.net/bsdiff/</a>   </p>
+<p>另外，我了解到，国内有人开源了另外一种Diff/Patch算法,名字叫做HDiffPatch，来自：<a href="https://github.com/sisong/HDiffPatch" target="_blank" rel="noopener">https://github.com/sisong/HDiffPatch</a></p>
+<p>据说，比bsdiff/bspatch更高效呢？详见<a href="http://blog.csdn.net/housisong/article/details/9037743" target="_blank" rel="noopener">《HDiff1.0和BSDiff4.3的对比测试》</a></p>
+<p>我将bsdiff/bspatch和HDiffPatch，使用jni封装成so库，供android调用。项目地址： <a href="https://github.com/snowdream/android-diffpatch" target="_blank" rel="noopener">https://github.com/snowdream/android-diffpatch</a><br>在封装HDiffPatch过程中遇到问题，得到作者@sisong的支持和帮助，在此表示感谢。</p>
+<p>bsdiff/bspatch和HDiffPatch算法都是开源的，服务端可以根据源文件来进行编译集成。<br>这里我主要在Android客户端的角度，介绍下bsdiff/bspatch和HDiffPatch怎么使用。</p>
+<h3 id="BsDiffPatch"><a href="#BsDiffPatch" class="headerlink" title="BsDiffPatch"></a>BsDiffPatch</h3><ol>
+<li><p>在build.gradle文件中自定义jnilib目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        jniLibs.srcDirs = [&apos;libs&apos;]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 <code>app/libs/armeabi-v7a/libbsdiffpatch.so</code> 拷贝到你的工程对应目录下。</p>
+</li>
+<li>将 <code>app/src/main/java/com/github/snowdream/bsdiffpatch</code> 和 <code>app/src/main/java/com/github/snowdream/diffpatch</code> 拷贝到你的工程对应目录下，包名和文件名都不能改变。</li>
+<li>在Java文件中参考以下代码进行调用。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDiffPatch bsDiffPatch = new BSDiffPatch();</span><br><span class="line">bsDiffPatch.init(getApplicationContext()); </span><br><span class="line">//diff</span><br><span class="line">bsDiffPatch.diff(oldFilePath, newFilePath, diffFilePath);</span><br><span class="line">//patch</span><br><span class="line">bsDiffPatch.patch(oldFilePath, diffFilePath, gennewFilePath);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="HDiffPatch"><a href="#HDiffPatch" class="headerlink" title="HDiffPatch"></a>HDiffPatch</h3><ol>
+<li><p>在build.gradle文件中自定义jnilib目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        jniLibs.srcDirs = [&apos;libs&apos;]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 <code>app/libs/armeabi-v7a/libhdiffpatch.so</code> 拷贝到你的工程对应目录下。</p>
+</li>
+<li>将<code>app/src/main/java/com/github/snowdream/hdiffpatch</code> 和 <code>app/src/main/java/com/github/snowdream/diffpatch</code> 拷贝到你的工程对应目录下，包名和文件名都不能改变。</li>
+<li>在Java文件中参考以下代码进行调用。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDiffPatch hDiffPatch = new HDiffPatch();</span><br><span class="line">hDiffPatch.init(getApplicationContext()); </span><br><span class="line">//diff</span><br><span class="line">hDiffPatch.diff(oldFilePath, newFilePath, diffFilePath);</span><br><span class="line">//patch</span><br><span class="line">hDiffPatch.patch(oldFilePath, diffFilePath, gennewFilePath);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="BsDiffPatch-vs-HDiffPatch"><a href="#BsDiffPatch-vs-HDiffPatch" class="headerlink" title="BsDiffPatch vs HDiffPatch"></a>BsDiffPatch vs HDiffPatch</h3><p>这里我选择高德地图Android客户端的两个版本来进行测试。</p>
+<ul>
+<li>测试来源：<a href="http://www.autonavi.com/" target="_blank" rel="noopener">http://www.autonavi.com/</a></li>
+<li>测试版本： Amap_Android_V7.7.4.2128_GuanWang.apk 和 Amap_Android_V7.3.0.2036_GuanWang.apk (注：版本跨度大，差异大)</li>
+<li>对比算法： BsDiffPatch vs HDiffPatch</li>
+<li>测试结果：（详见下图）<ol>
+<li>BsDiffPatch生成的patch包稍小。</li>
+<li>两者的diff操作都非常耗资源，耗时间，无法忍受。（当然diff操作一般在服务端进行）</li>
+<li>两者的patch操作都比较快。通过大概五次测试，BsDiffPatch的patch操作需要13s左右，而HDiffPatch的patch操作仅仅需要1s左右。</li>
+</ol>
+</li>
+</ul>
+<p>以上结果仅供参考。</p>
+<ul>
+<li>测试结论： <ol>
+<li>BsDiffPatch应用更广泛</li>
+<li>HDiffPatch看起来更高效</li>
+</ol>
+</li>
+</ul>
+<img src="/2016/08/23/android-incremental-update-solutions/test.png" title="[test]">
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>以上算是比较成熟的增量升级方案了，但是仔细想想，可能还存在一些问题：</p>
+<ol>
+<li>由于多渠道，多版本造成非常多Patch包</li>
+<li>bs diff/patch算法性能和内存开销太高<br>第一个问题可以通过服务器策略进行限制。比如，只有最新版5个版本内的升级采用增量升级，其他的仍然采用全量升级。<br>据说，还有一种更强大的算法，可以解决以上问题。大家有兴趣的话，可以自己去了解。<br><a href="https://gist.github.com/9468305/fa8f1307ea4738225fca" target="_blank" rel="noopener">crsync-基于rsync rolling算法的文件增量更新.md</a></li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://bbs.umeng.com/thread-19-1-1.html" target="_blank" rel="noopener">友盟增量更新的原理是什么</a></li>
+<li><a href="http://my.oschina.net/liucundong/blog/160436" target="_blank" rel="noopener">Android应用增量更新库（Smart App Updates）</a></li>
+<li><a href="http://blog.csdn.net/yyh352091626/article/details/50579859" target="_blank" rel="noopener">Android实现应用的增量更新\升级</a></li>
+<li><a href="https://github.com/smuyyh/IncrementallyUpdate" target="_blank" rel="noopener">https://github.com/smuyyh/IncrementallyUpdate</a></li>
+<li><a href="http://blog.csdn.net/hmg25/article/details/8100896" target="_blank" rel="noopener">浅析android应用增量升级</a></li>
+<li><a href="https://github.com/cundong/SmartAppUpdates" target="_blank" rel="noopener">https://github.com/cundong/SmartAppUpdates</a></li>
+<li><a href="https://gist.github.com/9468305/fa8f1307ea4738225fca" target="_blank" rel="noopener">crsync-基于rsync rolling算法的文件增量更新.md</a></li>
+<li><a href="https://github.com/sisong/HDiffPatch" target="_blank" rel="noopener">https://github.com/sisong/HDiffPatch</a></li>
+<li><a href="http://www.daemonology.net/bsdiff/" target="_blank" rel="noopener">http://www.daemonology.net/bsdiff/</a></li>
+<li><a href="https://github.com/snowdream/android-diffpatch" target="_blank" rel="noopener">https://github.com/snowdream/android-diffpatch</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/jni/">jni</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/23/android-incremental-update-solutions/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/23/android-incremental-update-solutions/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/13/android-develop-with-kotlin/" title="使用Kotlin开发Android应用" itemprop="url">使用Kotlin开发Android应用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-13T08:46:06.000Z" itemprop="datePublished"> 发表于 2016-08-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/08/13/android-develop-with-kotlin/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/08/13/android-develop-with-kotlin/</a></p>
+</blockquote>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>本文旨在引导开发者使用Kotlin来开发Android应用。   </p>
+<p>至于Kotlin语言的语法和教程等，不在本文讨论范围，请参考以下官网文档和网上的开发教程。</p>
+<ol>
+<li><a href="https://kotlinlang.org/docs/tutorials/kotlin-android.html" target="_blank" rel="noopener">kotlin-android</a></li>
+<li><a href="https://wangjiegulu.gitbooks.io/kotlin-for-android-developers-zh/content/" target="_blank" rel="noopener">《Kotlin for android Developers》中文翻译</a></li>
+<li><a href="https://huanglizhuo.gitbooks.io/kotlin-in-chinese/content/" target="_blank" rel="noopener">Kotlin-in-Chinese</a></li>
+<li><a href="https://hltj.gitbooks.io/kotlin-reference-chinese/content/" target="_blank" rel="noopener">Kotlin 官方参考文档 中文版</a></li>
+<li><a href="https://drakeet.gitbooks.io/the-kotlin-programming-language/content/" target="_blank" rel="noopener">Kotlin 官方文档中文翻译版</a></li>
+</ol>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h3><h4 id="Kotlin"><a href="#Kotlin" class="headerlink" title="Kotlin"></a>Kotlin</h4><p>Kotlin 是一个基于 JVM 的新的编程语言，由 JetBrains 开发。<br>Kotlin可以编译成Java字节码，也可以编译成JavaScript，方便在没有JVM的设备上运行。<br>JetBrains，作为目前广受欢迎的Java IDE IntelliJ 的提供商，在 Apache 许可下已经开源其Kotlin 编程语言。 </p>
+<p>官方网站：<a href="http://kotlinlang.org/" target="_blank" rel="noopener">http://kotlinlang.org/</a></p>
+<p>Github仓库: <a href="https://github.com/JetBrains/kotlin" target="_blank" rel="noopener">https://github.com/JetBrains/kotlin</a></p>
+<h2 id="教程"><a href="#教程" class="headerlink" title="教程"></a>教程</h2><p>本节介绍如何使用Kotlin开发android应用。</p>
+<p>以下几点需要谨记：</p>
+<ol>
+<li>所有Kotlin类文件，以.kt为后缀。</li>
+<li>Kotlin的源码目录规则和默认的是一样的。分别放在src/main/kotlin, src/test/kotlin, src/androidTest/kotlin 和任意的src/${buildVariant}/kotlin。</li>
+</ol>
+<h3 id="Kotlin-and-Java"><a href="#Kotlin-and-Java" class="headerlink" title="Kotlin and Java"></a>Kotlin and Java</h3><p>使用Kotlin来开发android，需要经过以下几个步骤进行配置。<br>1.在项目根目录下的build.gradle文件中添加以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    ext.kotlin_version = &apos;1.0.1-2&apos;</span><br><span class="line"></span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath &apos;com.android.tools.build:gradle:2.1.2&apos;</span><br><span class="line">        classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>2.在模块目录下的build.gradle文件中添加以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &apos;kotlin-android&apos;</span><br><span class="line">apply plugin: &apos;kotlin-android-extensions&apos;</span><br><span class="line">dependencies &#123;</span><br><span class="line">  compile &quot;org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>3.配置完成，你可以在src/main/kotlin目录下愉快地使用Kotlin来写Android应用了。</p>
+<p>实例展示：</p>
+<ol>
+<li><a href="https://github.com/JetBrains/kotlin-examples" target="_blank" rel="noopener">https://github.com/JetBrains/kotlin-examples</a></li>
+<li><a href="https://github.com/snowdream/test/tree/master/android/kotlin/HelloWorld" target="_blank" rel="noopener">https://github.com/snowdream/test/tree/master/android/kotlin/HelloWorld</a></li>
+</ol>
+<h3 id="Java-2-Kotlin"><a href="#Java-2-Kotlin" class="headerlink" title="Java 2 Kotlin"></a>Java 2 Kotlin</h3><p>上面是手动给android项目增加kotlin支持。<br>其实还有一种自动转换的方法，也可以添加kotlin支持。</p>
+<ol>
+<li>通过菜单“ Help | Find Action”或者快捷键“Ctrl+Shift+A”调出动作查询窗口</li>
+<li>输入”Configure Kotlin in Project”,回车，按照提示操作，即可添加Kotlin配置。</li>
+<li>重复第一步，调出动作查询窗口。输入“Convert Java File to Kotlin File”。即可将现有的Java文件自动转换成Kotlin文件。当然，如果只想转换某一个java文件，方法就是，打开改Java文件，然后选择菜单“ Code | Convert Java File to Kotlin File”，即可将当前打开的Java文件自动转换成Kotlin文件。 </li>
+<li>转换完成。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>根据Kotlin官网描述，Kotlin是一种适用于JVM，Android<br>根据个人的开发实践，总结出使用Kotlin开发Android应用的优缺点：</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>和Java相比，更简洁，更安全。</li>
+<li>和Java无缝集成，官网宣称kotlin可以100%和java混合使用。</li>
+<li>由jetbrains推出，Idea可以更好的进行支持。</li>
+</ol>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>会将支持kotlin的相关jar包打散，打包到apk中。这部分内容最终会给apk增加700k左右的大小。这个和前面的groovy相比，情况要好很多，勉强还是可以接受的。</li>
+<li>和java相比，使用Kotlin的开发者还太少。</li>
+<li>诞生时间较晚，有待时间的检验。</li>
+</ol>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><ol>
+<li>使用Kotlin是可以更快，更有效地开发Android应用的。</li>
+<li>在应用于生产实践之前，还需要更多的评估，包括稳定性，运行效率，耗电量，兼容性，研发的接受程度等。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://baike.baidu.com/view/9189237.htm" target="_blank" rel="noopener">Kotlin名词解释</a></li>
+<li><a href="https://kotlinlang.org" target="_blank" rel="noopener">Kotlin官网</a></li>
+<li><a href="https://blog.jetbrains.com/kotlin/2016/03/kotlins-android-roadmap/" target="_blank" rel="noopener">kotlins-android-roadmap</a></li>
+<li><a href="https://kotlinlang.org/docs/tutorials/kotlin-android.html" target="_blank" rel="noopener">Getting started with Android and Kotlin</a></li>
+<li><a href="https://kotlinlang.org/docs/tutorials/android-plugin.html" target="_blank" rel="noopener">Kotlin Android Extensions</a></li>
+<li><a href="https://github.com/JetBrains/kotlin-examples" target="_blank" rel="noopener">kotlin-examples</a></li>
+<li><a href="https://github.com/snowdream/test/tree/master/android/kotlin/HelloWorld" target="_blank" rel="noopener">HelloWorld</a></li>
+<li><a href="http://www.zhihu.com/question/25289041" target="_blank" rel="noopener">如何评价 Kotlin 语言</a></li>
+<li><a href="http://www.infoq.com/cn/news/2015/06/Android-JVM-JetBrains-Kotlin" target="_blank" rel="noopener">Kotlin：Android世界的Swift</a></li>
+<li><a href="http://www.2gua.info/post/53" target="_blank" rel="noopener">初见Kotlin</a></li>
+<li><a href="http://www.zhihu.com/question/36735834" target="_blank" rel="noopener">Android开发中使用kotlin你遇到过哪些坑？</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kotlin/">kotlin</a><a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/13/android-develop-with-kotlin/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/13/android-develop-with-kotlin/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/12/android-develop-with-groovy/" title="使用Groovy开发Android应用" itemprop="url">使用Groovy开发Android应用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-12T01:52:50.000Z" itemprop="datePublished"> 发表于 2016-08-12</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/08/12/android-develop-with-groovy/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/08/12/android-develop-with-groovy/</a></p>
+</blockquote>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>本文旨在引导开发者使用Groovy来开发Android应用。</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h3><h4 id="Groovy"><a href="#Groovy" class="headerlink" title="Groovy"></a>Groovy</h4><p>Groovy是一种基于JVM（Java虚拟机）的敏捷开发语言，它结合了Python、Ruby和Smalltalk的许多强大的特性，Groovy 代码能够与 Java 代码很好地结合，也能用于扩展现有代码。由于其运行在 JVM 上的特性，Groovy 可以使用其他 Java 语言编写的库。  </p>
+<p>官方网站：<a href="http://www.groovy-lang.org/" target="_blank" rel="noopener">http://www.groovy-lang.org/</a></p>
+<p>Github仓库:<a href="https://github.com/apache/groovy" target="_blank" rel="noopener">https://github.com/apache/groovy</a></p>
+<h4 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h4><p>Gradle是一个开源的自动化构建工具，主要用于持续发布（Continuous Delivery）。<br>Gradle主要基于Java和Groovy开发,用于支持多种开发语言和开发平台的自动化构建，包括Java, Scala, Android, C/C++, 和 Groovy, 并且可以无缝集成在Eclipse, IntelliJ, and Jenkins等开发工具和持续集成服务中。</p>
+<p>官方网站：<a href="https://gradle.org/" target="_blank" rel="noopener">https://gradle.org/</a></p>
+<p>Github仓库:<a href="https://github.com/gradle/gradle" target="_blank" rel="noopener">https://github.com/gradle/gradle</a></p>
+<h4 id="Groovy-with-Android"><a href="#Groovy-with-Android" class="headerlink" title="Groovy with Android"></a>Groovy with Android</h4><p>groovy-android-gradle-plugin是一款由groovy推出的插件，主要用于支持使用groovy来开发android应用。</p>
+<p>Github仓库: <a href="https://github.com/groovy/groovy-android-gradle-plugin" target="_blank" rel="noopener">groovy-android-gradle-plugin</a></p>
+<p>实例展示:<br><a href="https://github.com/snowdream/test/tree/master/android/groovy/HelloWorld" target="_blank" rel="noopener">https://github.com/snowdream/test/tree/master/android/groovy/HelloWorld</a></p>
+<h2 id="教程"><a href="#教程" class="headerlink" title="教程"></a>教程</h2><p>本节介绍使用Groovy开发android应用，主要分两种：<br>一种是只使用Groovy来开发，另外一种是混合使用Groovy和Java来开发。</p>
+<p>至于Groovy语言的语法和教程等，不在本文讨论范围，请参考官网文档和网上的开发教程。</p>
+<p>以下几点需要谨记：</p>
+<ol>
+<li>所有Groovy类文件，以.groovy为后缀。</li>
+<li>任何新建的Groovy类，请在类的头部加上注解：@CompileStatic .具体原因请移步：<a href="http://melix.github.io/blog/2014/06/grooid.html" target="_blank" rel="noopener">Melix’s blog </a>和 <a href="http://melix.github.io/blog/2014/06/grooid2.html" target="_blank" rel="noopener">here for more technical details
+</a></li>
+<li>Groovy的源码目录规则和默认的是一样的。分别放在src/main/groovy, src/test/groovy, src/androidTest/groovy 和任意的src/${buildVariant}/groovy。</li>
+<li>Groovy的源码目录可以在build.gradle文件中自定义，定义规则如下：<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">androidGroovy &#123;</span><br><span class="line">  sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">      groovy &#123;</span><br><span class="line">        srcDirs += <span class="string">'src/main/java'</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>为了让Android Studio识别这些自定义目录为源码目录，可能还需要在android插件的sourceSets中再添加一遍。</p>
+<h3 id="Groovy-1"><a href="#Groovy-1" class="headerlink" title="Groovy"></a>Groovy</h3><p>仅仅使用Groovy来开发android，步骤比较简单。<br>1.在项目根目录下的build.gradle文件中添加以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath &apos;com.android.tools.build:gradle:2.1.2&apos;</span><br><span class="line">        classpath &apos;org.codehaus.groovy:groovy-android-gradle-plugin:1.0.0&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>2.在模块目录下的build.gradle文件中添加以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &apos;groovyx.android&apos;</span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile &apos;org.codehaus.groovy:groovy:2.4.6:grooid&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>3.配置完成，你可以在src/main/groovy目录下愉快地使用Groovy来写Android应用了。</p>
+<p>实例展示：<a href="https://github.com/groovy/groovy-android-gradle-plugin/tree/master/groovy-android-sample-app" target="_blank" rel="noopener">https://github.com/groovy/groovy-android-gradle-plugin/tree/master/groovy-android-sample-app</a></p>
+<h3 id="Groovy-and-Java"><a href="#Groovy-and-Java" class="headerlink" title="Groovy and Java"></a>Groovy and Java</h3><p>仅仅使用Groovy来开发android，步骤也比较简单。</p>
+<p>1.这一步，和上面的一样。<br>2.在模块目录下的build.gradle文件中添加以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &apos;groovyx.android&apos;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">androidGroovy &#123;</span><br><span class="line">    skipJavaC = true</span><br><span class="line"></span><br><span class="line">    sourceSets &#123;</span><br><span class="line">        main &#123;</span><br><span class="line">            groovy &#123;</span><br><span class="line">                srcDirs += &apos;src/main/java&apos;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    options &#123;</span><br><span class="line">        configure(groovyOptions) &#123;</span><br><span class="line">            encoding = &apos;UTF-8&apos;</span><br><span class="line">            forkOptions.jvmArgs = [&apos;-noverify&apos;] // maybe necessary if you use Google Play Services</span><br><span class="line">            javaAnnotationProcessing = true</span><br><span class="line">        &#125;</span><br><span class="line">        sourceCompatibility = &apos;1.7&apos; // as of 0.3.9 these are automatically set based off the android plugin&apos;s</span><br><span class="line">        targetCompatibility = &apos;1.7&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile &apos;org.codehaus.groovy:groovy:2.4.6:grooid&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.配置完成，你既可以在src/main/groovy下写Groovy类，也可以在src/main/java下写Java类。</p>
+<p>实例展示：<a href="https://github.com/snowdream/test/tree/master/android/groovy/HelloWorld" target="_blank" rel="noopener">https://github.com/snowdream/test/tree/master/android/groovy/HelloWorld</a></p>
+<h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4><p>1.引用使用groovy开发的lib时，需要排除groovy的jar包。       </p>
+<p>例如：引用groovy-xml库，操作如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">compile (&apos;org.codehaus.groovy:groovy-xml:2.4.3&apos;) &#123;</span><br><span class="line">    exclude group: &apos;org.codehaus.groovy&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.Groovy编译选项在androidGroovy块下的options块进行编写。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">androidGroovy &#123;</span><br><span class="line">  options &#123;</span><br><span class="line">    configure(groovyOptions) &#123;</span><br><span class="line">      encoding = &apos;UTF-8&apos;</span><br><span class="line">      forkOptions.jvmArgs = [&apos;-noverify&apos;] // maybe necessary if you use Google Play Services</span><br><span class="line">    &#125;</span><br><span class="line">    sourceCompatibility = &apos;1.7&apos; // as of 0.3.9 these are automatically set based off the android plugin&apos;s</span><br><span class="line">    targetCompatibility = &apos;1.7&apos;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.如果需要在java文件中引用Groovy文件内容，需要将所有源码文件使用groovyc来编译，而不要通过javac编译。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">androidGroovy &#123;</span><br><span class="line">  skipJavaC = true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.如果需要用到注解(annoation)，还需要作如下设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">androidGroovy &#123;</span><br><span class="line">  options &#123;</span><br><span class="line">    configure(groovyOptions) &#123;</span><br><span class="line">      javaAnnotationProcessing = true</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注： 这一步，首先要确保第三步已经设置skipJavaC = true.</p>
+<p>5.如果需要用到Data Binding，需要用到一个插件<a href="https://bitbucket.org/hvisser/android-apt" target="_blank" rel="noopener">https://bitbucket.org/hvisser/android-apt</a></p>
+<p>更多配置，请参考： <a href="https://github.com/groovy/groovy-android-gradle-plugin" target="_blank" rel="noopener">groovy-android-gradle-plugin</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>根据个人的开发实践，总结出使用Groovy开发Android应用的优缺点：</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>引入Groovy的诸多特性，包括闭包，函数式编程，静态编译，DSL等。</li>
+<li>和Java无缝集成，可以平滑过渡。</li>
+</ol>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>会将支持Groovy的相关jar包打散，打包到apk中。这部分内容最终会给apk增加2～3M的大小。这个目前看来是硬伤，希望以后能够精简一下。</li>
+<li>会将一些License文件打包到apk中，这个可以通过android开发插件的packagingOptions进行过滤，问题不大。</li>
+<li>和java相比，使用Groovy的开发者还太少。</li>
+<li>中文文档少，主要是官方英文文档。</li>
+</ol>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><ol>
+<li>使用Groovy是可以开发Android应用的。</li>
+<li>在应用于生产实践之前，还需要更多的评估，包括稳定性，运行效率，耗电量，兼容性，研发的接受程度等。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://www.infoq.com/cn/news/2014/06/groovy-android" target="_blank" rel="noopener">Groovy现在可运行于Android平台</a></li>
+<li><a href="https://github.com/groovy/groovy-android-gradle-plugin" target="_blank" rel="noopener">groovy-android-gradle-plugin</a></li>
+<li><a href="https://github.com/snowdream/test/tree/master/android/groovy/HelloWorld" target="_blank" rel="noopener">groovy-android-helloworld</a></li>
+<li><a href="http://www.groovy-lang.org/" target="_blank" rel="noopener">Groovy官网</a></li>
+<li><a href="http://baike.baidu.com/view/707298.htm" target="_blank" rel="noopener">Groovy名词解释</a></li>
+<li><a href="http://www.infoq.com/cn/news/2008/01/scala_or_groovy" target="_blank" rel="noopener">Java之外，选择Scala还是Groovy？</a></li>
+<li><a href="http://www.groovy-lang.org/" target="_blank" rel="noopener">http://www.groovy-lang.org/</a></li>
+<li><a href="https://gradle.org/" target="_blank" rel="noopener">https://gradle.org/</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/groovy/">groovy</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/12/android-develop-with-groovy/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/12/android-develop-with-groovy/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/10/gradle-android-task-graph-visteg/" title="Android项目中的Gradle Task流程可视化" itemprop="url">Android项目中的Gradle Task流程可视化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-10T11:23:54.000Z" itemprop="datePublished"> 发表于 2016-08-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>大家在用Gradle开发Android项目的时候，想必都知道构建过程是由一个一个的任务（Task）组成的。<br>那么项目中到底有那些Task呢？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle tasks --all</span><br></pre></td></tr></table></figure></p>
+<p>执行上面的命令，你会看到项目中定义的所有Task。</p>
+<p>这些Task是怎样依赖的，构建过程中又是怎样的流程？</p>
+<p>在实践过程中，我找到两个gradle插件，可以帮助我们实现流程的可视化。</p>
+<h2 id="gradle-task-tree"><a href="#gradle-task-tree" class="headerlink" title="gradle-task-tree"></a><a href="https://github.com/dorongold/gradle-task-tree" target="_blank" rel="noopener">gradle-task-tree</a></h2><p>gradle-task-tree可以将项目下的task依赖关系以树的形式，输出到终端。</p>
+<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">  repositories &#123;</span><br><span class="line">    maven &#123;</span><br><span class="line">      url &quot;https://plugins.gradle.org/m2/&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  dependencies &#123;</span><br><span class="line">    classpath &quot;gradle.plugin.com.dorongold.plugins:task-tree:1.2.2&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &quot;com.dorongold.task-tree&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>gradle <task 1="">…<task n=""> taskTree –no-repeat</task></task></p>
+<h3 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h3><p>结果会打印在终端。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">:build</span><br><span class="line">+--- :assemble</span><br><span class="line">|    \--- :jar</span><br><span class="line">|         \--- :classes</span><br><span class="line">|              +--- :compileJava</span><br><span class="line">|              \--- :processResources</span><br><span class="line">\--- :check</span><br><span class="line">     \--- :test</span><br><span class="line">          +--- :classes</span><br><span class="line">          |    +--- :compileJava</span><br><span class="line">          |    \--- :processResources</span><br><span class="line">          \--- :testClasses</span><br><span class="line">               +--- :compileTestJava</span><br><span class="line">               |    \--- :classes</span><br><span class="line">               |         +--- :compileJava</span><br><span class="line">               |         \--- :processResources</span><br><span class="line">               \--- :processTestResources</span><br></pre></td></tr></table></figure></p>
+<h2 id="gradle-visteg"><a href="#gradle-visteg" class="headerlink" title="gradle-visteg"></a><a href="https://github.com/mmalohlava/gradle-visteg" target="_blank" rel="noopener">gradle-visteg</a></h2><p>gradle-visteg可以将项目下的task依赖关系以图的形式，输出到文件。<br>默认是输出到.dot文件中，通过Graphviz工具可以将.dot文件转换成.png文件。   </p>
+<h3 id="引入-1"><a href="#引入-1" class="headerlink" title="引入"></a>引入</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath &apos;cz.malohlava:visteg:1.0.0&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &apos;cz.malohlava.visteg&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">visteg &#123;</span><br><span class="line">    enabled        = true</span><br><span class="line">    colouredNodes  = true</span><br><span class="line">    colouredEdges  = true</span><br><span class="line">    destination    = &apos;build/reports/visteg.dot&apos;</span><br><span class="line">    exporter       = &apos;dot&apos;</span><br><span class="line">    colorscheme    = &apos;spectral11&apos;</span><br><span class="line">    nodeShape      = &apos;box&apos;</span><br><span class="line">    startNodeShape = &apos;hexagon&apos;</span><br><span class="line">    endNodeShape   = &apos;doubleoctagon&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>详细配置请参考：<a href="https://github.com/mmalohlava/gradle-visteg" target="_blank" rel="noopener">https://github.com/mmalohlava/gradle-visteg</a></p>
+<h3 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h3><p>执行正常的task。<br>默认会生成build/reports/visteg.dot文件。<br>在ubuntu下，可以通过xdot，直接打开该文件。</p>
+<p>通过以下命令可以转换成png图片</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd build/reports/</span><br><span class="line">dot -Tpng ./visteg.dot -o ./visteg.dot.png</span><br></pre></td></tr></table></figure>
+<h3 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h3><p>task流程图<br><img src="/2016/08/10/gradle-android-task-graph-visteg/visteg.dot.png" title="[task流程图]"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://github.com/dorongold/gradle-task-tree" target="_blank" rel="noopener">https://github.com/dorongold/gradle-task-tree</a></li>
+<li><a href="https://github.com/mmalohlava/gradle-visteg" target="_blank" rel="noopener">https://github.com/mmalohlava/gradle-visteg</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/10/gradle-android-task-graph-visteg/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/10/gradle-android-task-graph-visteg/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/03/android-mock-test/" title="Android最佳Mock单元测试方案:Junit + Mockito + Powermock" itemprop="url">Android最佳Mock单元测试方案:Junit + Mockito + Powermock</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-03T03:34:09.000Z" itemprop="datePublished"> 发表于 2016-08-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>本文旨在从实践出发，引导开发者在Android项目中进行Mock单元测试。</p>
+<h2 id="什么是单元测试"><a href="#什么是单元测试" class="headerlink" title="什么是单元测试"></a>什么是单元测试</h2><p>单元测试由一组独立的测试构成，每个测试针对软件中的一个单独的程序单元。单元测试并非检查程序单元之间是否能够合作良好，而是检查单个程序单元行为是否正确。</p>
+<h2 id="为什么要进行单元测试"><a href="#为什么要进行单元测试" class="headerlink" title="为什么要进行单元测试"></a>为什么要进行单元测试</h2><p>在敏捷开发大行其道的今天，由于时间紧，任务重，过分依赖测试工程师以及下列原因，导致单元测试不被重视，在开发流程中处于一个可有可无的尴尬境地。</p>
+<ol>
+<li>浪费的时间太多</li>
+<li>软件开发人员不应参与单元测试</li>
+<li>我是很棒的程序员，不需要进行单元测试</li>
+<li>不管怎样，集成测试将会抓住所有的Bug</li>
+<li>单元测试效率不高</li>
+</ol>
+<p>那么单元测试是否正的可有可无呢？No! No! No! </p>
+<ol>
+<li>作为android客户端研发，在一个开发周期内，你负责的需求需要Web服务（API），和本地代码（JNI，Native Code）的支持，而你们的工作是同时进行的。</li>
+<li>你的需求开发完成了，但是由于需要在特定条件下才能触发，而这些条件在开发过程中很难去模拟，导致需求无法在所有场景下进行充分测试。举个例子，假设你在室内开发一个地图导航的Android应用，你需要在导航过程中，前方出现车祸，积水，施工等多种状况，怎么办？</li>
+<li>总结你过去的BUG，你会发现有些你以为写的很完善的逻辑，却在最后被发现有场景未覆盖，或者逻辑错误等问题。</li>
+<li>测试工程师给你报了一个BUG，你改完提交了，但是之后由于Merge失误导致代码丢失，或者其他人的修改导致你的BUG再次出现。直到测试工程师再次发现该BUG，并再次给你提出。</li>
+<li>你的开发进度很快，但是开发完成后，你会被BUG淹没。你持续不断的修改BUG，持续不断的加班，直至发布版本，身心俱疲。</li>
+<li>以前明明很正常的功能，在本次开发周期内，突然不能正常使用了。<br>…</li>
+</ol>
+<p>如果你也经常碰到以上问题，或者困扰，那么你需要持续不断的对项目进行<strong>单元测试</strong>。</p>
+<h2 id="Android单元测试简介"><a href="#Android单元测试简介" class="headerlink" title="Android单元测试简介"></a>Android单元测试简介</h2><p>Android的单元测试分为两大类：  </p>
+<p>1.Instrumentation</p>
+<p>通过Android系统的Instrumentation测试框架，我们可以编写测试代码，并且打包成APK，运行在Android手机上。</p>
+<p><strong>优点</strong>： 逼真<br><strong>缺点</strong>： 很慢</p>
+<p><strong>代表框架</strong>：JUnit(Android自带),espresso</p>
+<p>2.JUnit / Mock</p>
+<p>通过JUnit，以及第三方测试框架，我们可以编写测试代码，生成class文件，直接运行在JVM虚拟机中。</p>
+<p><strong>优点</strong>： 很快。使用简单，方便。<br><strong>缺点</strong>： 不够逼真。比如有些硬件相关的问题，无法通过这些测试出来。</p>
+<p><strong>代表框架</strong>： JUnit(标准),Robolectric, mockito, powermock</p>
+<h2 id="Android最佳Mock单元测试方案"><a href="#Android最佳Mock单元测试方案" class="headerlink" title="Android最佳Mock单元测试方案"></a>Android最佳Mock单元测试方案</h2><p>我通过对比前辈们对各种单元测试框架的实践，总结出Android最佳Mock单元测试方案: Junit + Mockito + Powermock.（自己认证的…）</p>
+<h3 id="Junit-Mockito-Powermock-简介"><a href="#Junit-Mockito-Powermock-简介" class="headerlink" title="Junit + Mockito + Powermock 简介"></a>Junit + Mockito + Powermock 简介</h3><p>众所周知，Junit是一个简单的单元测试框架。<br>Mockito，则是一个简单的用于Mock的单元测试框架。   </p>
+<p>那么为什么还需要Powermock呢？<br><strong>EasyMock和Mockito等框架，对static, final, private方法均是不能mock的。</strong><br>这些框架普遍是通过创建Proxy的方式来实现的mock。 而PowerMock是使用CGLib来操纵字节码而实现的mock，所以它能实现对上面方法的mock。</p>
+<h3 id="Junit-Mockito-Powermock-引入"><a href="#Junit-Mockito-Powermock-引入" class="headerlink" title="Junit + Mockito + Powermock 引入"></a>Junit + Mockito + Powermock 引入</h3><p>由于PowerMock对Mockito有较强依赖，因此需要按照以下表格采用对应的版本。</p>
+<table>
+<thead>
+<tr>
+<th>Mockito</th>
+<th style="text-align:center">PowerMock</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.0.0-beta - 2.0.42-beta</td>
+<td style="text-align:center">1.6.5+</td>
+</tr>
+<tr>
+<td>1.10.8 - 1.10.x</td>
+<td style="text-align:center">1.6.2+</td>
+</tr>
+<tr>
+<td>1.9.5-rc1 - 1.9.5</td>
+<td style="text-align:center">1.5.0 - 1.5.6</td>
+</tr>
+<tr>
+<td>1.9.0-rc1 &amp; 1.9.0</td>
+<td style="text-align:center">1.4.10 - 1.4.12</td>
+</tr>
+<tr>
+<td>1.8.5</td>
+<td style="text-align:center">1.3.9 - 1.4.9</td>
+</tr>
+<tr>
+<td>1.8.4</td>
+<td style="text-align:center">1.3.7 &amp; 1.3.8</td>
+</tr>
+<tr>
+<td>1.8.3</td>
+<td style="text-align:center">1.3.6</td>
+</tr>
+<tr>
+<td>1.8.1 &amp; 1.8.2</td>
+<td style="text-align:center">1.3.5</td>
+</tr>
+<tr>
+<td>1.8</td>
+<td style="text-align:center">1.3</td>
+</tr>
+<tr>
+<td>1.7</td>
+<td style="text-align:center">1.2.5</td>
+</tr>
+</tbody>
+</table>
+<p>建议方案：<br>在项目依赖文件build.gradle中添加以下依赖。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">testCompile <span class="string">'junit:junit:4.11'</span></span><br><span class="line"><span class="comment">// required if you want to use Mockito for unit tests</span></span><br><span class="line">testCompile <span class="string">'org.mockito:mockito-core:1.9.5'</span></span><br><span class="line"><span class="comment">// required if you want to use Powermock for unit tests</span></span><br><span class="line">testCompile <span class="string">'org.powermock:powermock-module-junit4:1.5.6'</span></span><br><span class="line">testCompile <span class="string">'org.powermock:powermock-module-junit4-rule:1.5.6'</span></span><br><span class="line">testCompile <span class="string">'org.powermock:powermock-api-mockito:1.5.6'</span></span><br></pre></td></tr></table></figure>
+<h3 id="Junit-Mockito-Powermock-配置"><a href="#Junit-Mockito-Powermock-配置" class="headerlink" title="Junit + Mockito + Powermock 配置"></a>Junit + Mockito + Powermock 配置</h3><ol>
+<li>默认的测试代码位置<br>对于通过gradle构建的android项目，在默认的项目结构中，Instrumentation的测试代码放在<br>src/androidTest/ 目录，而JUnit / Mock的测试代码放在 src/test/ 目录。</li>
+<li>自定义测试代码位置<br>有些项目是由Eclipse构建迁移到由Gradle构建，需要自定义测试代码位置。<br>举个例子，androidTest和test目录都在项目的根文件夹下。我们需要这样配置：<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">android &#123;  </span><br><span class="line">  sourceSets &#123;</span><br><span class="line">    test &#123;</span><br><span class="line">      java.srcDir <span class="string">'test'</span></span><br><span class="line">    &#125;</span><br><span class="line">    androidTest &#123;</span><br><span class="line">      java.srcDir <span class="string">'androidTest'</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果在单元测试中遇到类似”Method … not mocked.”的问题，请添加以下设置：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  testOptions &#123; </span><br><span class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Junit-Mockito-Powermock-使用"><a href="#Junit-Mockito-Powermock-使用" class="headerlink" title="Junit + Mockito + Powermock 使用"></a>Junit + Mockito + Powermock 使用</h3><p>强烈建议你熟读以下内容，来熟悉Junit + Mockito + Powermock的使用。</p>
+<ol>
+<li><a href="https://github.com/hehonghui/mockito-doc-zh" target="_blank" rel="noopener">Mockito 中文文档 ( 2.0.26 beta )</a></li>
+<li><a href="http://site.mockito.org/mockito/docs/current/org/mockito/Mockito.html" target="_blank" rel="noopener">Mockito reference documentation</a></li>
+<li><a href="https://github.com/jayway/powermock/wiki" target="_blank" rel="noopener">powermock wiki</a></li>
+<li><a href="http://www.vogella.com/tutorials/Mockito/article.html" target="_blank" rel="noopener">Unit tests with Mockito - Tutorial</a></li>
+</ol>
+<p>下面通过举例来简单说明Junit + Mockito + Powermock 使用，更多详情清参考Demo项目：<br><a href="https://github.com/snowdream/test/tree/master/android/test/mocktest" target="_blank" rel="noopener">https://github.com/snowdream/test/tree/master/android/test/mocktest</a></p>
+<p>源码： <a href="https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/main/java/snowdream/github/com/mocktest/Calc.java" target="_blank" rel="noopener">https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/main/java/snowdream/github/com/mocktest/Calc.java</a></p>
+<p>测试代码：<a href="https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/test/java/snowdream/github/com/mocktest/CalcUnitTest.java" target="_blank" rel="noopener">https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/test/java/snowdream/github/com/mocktest/CalcUnitTest.java</a></p>
+<p>1.验证某些行为,主要是验证某些函数是否被调用，以及被调用的具体次数。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//using mock</span></span><br><span class="line">mockedList.add(<span class="string">"once"</span>);</span><br><span class="line"></span><br><span class="line">mockedList.add(<span class="string">"twice"</span>);</span><br><span class="line">mockedList.add(<span class="string">"twice"</span>);</span><br><span class="line"></span><br><span class="line">mockedList.add(<span class="string">"three times"</span>);</span><br><span class="line">mockedList.add(<span class="string">"three times"</span>);</span><br><span class="line">mockedList.add(<span class="string">"three times"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//following two verifications work exactly the same - times(1) is used by default</span></span><br><span class="line"><span class="comment">// 下面的两个验证函数效果一样,因为verify默认验证的就是times(1)</span></span><br><span class="line">verify(mockedList).add(<span class="string">"once"</span>);</span><br><span class="line">verify(mockedList, times(<span class="number">1</span>)).add(<span class="string">"once"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//exact number of invocations verification</span></span><br><span class="line"><span class="comment">// 验证具体的执行次数</span></span><br><span class="line">verify(mockedList, times(<span class="number">2</span>)).add(<span class="string">"twice"</span>);</span><br><span class="line">verify(mockedList, times(<span class="number">3</span>)).add(<span class="string">"three times"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//verification using never(). never() is an alias to times(0)</span></span><br><span class="line"><span class="comment">// 使用never()进行验证,never相当于times(0)</span></span><br><span class="line">verify(mockedList, never()).add(<span class="string">"never happened"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//verification using atLeast()/atMost()</span></span><br><span class="line"><span class="comment">// 使用atLeast()/atMost()</span></span><br><span class="line">verify(mockedList, atLeastOnce()).add(<span class="string">"three times"</span>);</span><br><span class="line">verify(mockedList, atLeast(<span class="number">2</span>)).add(<span class="string">"five times"</span>);</span><br><span class="line">verify(mockedList, atMost(<span class="number">5</span>)).add(<span class="string">"three times"</span>);</span><br></pre></td></tr></table></figure>
+<p>2.验证执行顺序，主要验证某些函数是否按照预定顺序执行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A. Single mock whose methods must be invoked in a particular order</span></span><br><span class="line"><span class="comment">// A. 验证mock一个对象的函数执行顺序</span></span><br><span class="line">List singleMock = mock(List.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">//using a single mock</span></span><br><span class="line">singleMock.add(<span class="string">"was added first"</span>);</span><br><span class="line">singleMock.add(<span class="string">"was added second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//create an inOrder verifier for a single mock</span></span><br><span class="line"><span class="comment">// 为该mock对象创建一个inOrder对象</span></span><br><span class="line">InOrder inOrder = inOrder(singleMock);</span><br><span class="line"></span><br><span class="line"><span class="comment">//following will make sure that add is first called with "was added first, then with "was added second"</span></span><br><span class="line"><span class="comment">// 确保add函数首先执行的是add("was added first"),然后才是add("was added second")</span></span><br><span class="line">inOrder.verify(singleMock).add(<span class="string">"was added first"</span>);</span><br><span class="line">inOrder.verify(singleMock).add(<span class="string">"was added second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// B. Multiple mocks that must be used in a particular order</span></span><br><span class="line"><span class="comment">// B .验证多个mock对象的函数执行顺序</span></span><br><span class="line">List firstMock = mock(List.class);</span><br><span class="line">List secondMock = mock(List.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">//using mocks</span></span><br><span class="line">firstMock.add(<span class="string">"was called first"</span>);</span><br><span class="line">secondMock.add(<span class="string">"was called second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//create inOrder object passing any mocks that need to be verified in order</span></span><br><span class="line"><span class="comment">// 为这两个Mock对象创建inOrder对象</span></span><br><span class="line">InOrder inOrder = inOrder(firstMock, secondMock);</span><br><span class="line"></span><br><span class="line"><span class="comment">//following will make sure that firstMock was called before secondMock</span></span><br><span class="line"><span class="comment">// 验证它们的执行顺序</span></span><br><span class="line">inOrder.verify(firstMock).add(<span class="string">"was called first"</span>);</span><br><span class="line">inOrder.verify(secondMock).add(<span class="string">"was called second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Oh, and A + B can be mixed together at will</span></span><br></pre></td></tr></table></figure></p>
+<p>3.使用powermock必须使用两个annotation：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(PowerMockRunner.class)</span><br><span class="line"><span class="meta">@PrepareForTest</span>(&#123;Calc.class&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalcUnitTest</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//PrepareForTest 后面要加准备被mock或stub的类，单个class直接()起来即可，多个用&#123;&#125;，并用逗号隔开。</span></span><br></pre></td></tr></table></figure></p>
+<p>4.测试公开成员变量<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPublicField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    assertEquals(mCalc.mPublicField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(mCalc.mPublicFinalField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(Calc.mPublicStaticField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(Calc.mPublicStaticFinalField, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    mCalc.mPublicField = <span class="number">1</span>;</span><br><span class="line">    Calc.mPublicStaticField = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    assertEquals(mCalc.mPublicField, <span class="number">1</span>);</span><br><span class="line">    assertEquals(mCalc.mPublicFinalField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(Calc.mPublicStaticField, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>5.测试公开成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPublicMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    when(mCalc.addPublic(anyInt(), anyInt()))</span><br><span class="line">            .thenReturn(<span class="number">0</span>)</span><br><span class="line">            .thenReturn(<span class="number">1</span>)</span><br><span class="line">            .thenReturn(<span class="number">2</span>)</span><br><span class="line">            .thenReturn(<span class="number">3</span>)</span><br><span class="line">            .thenReturn(<span class="number">4</span>)</span><br><span class="line">            .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//call method</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//verify</span></span><br><span class="line">        assertEquals(mCalc.addPublic(i, i), i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//verify</span></span><br><span class="line">    verify(mCalc, times(<span class="number">6</span>)).addPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atLeast(<span class="number">1</span>)).addPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atLeastOnce()).addPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atMost(<span class="number">6</span>)).addPublic(anyInt(), anyInt());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>6.测试公开无返回值成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPublicVoidMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    doNothing().when(mCalc).voidPublic(anyInt(), anyInt());</span><br><span class="line"></span><br><span class="line">    mCalc.voidPublic(anyInt(), anyInt());</span><br><span class="line">    mCalc.voidPublic(anyInt(), anyInt());</span><br><span class="line"></span><br><span class="line">    verify(mCalc, atLeastOnce()).voidPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atLeast(<span class="number">2</span>)).voidPublic(anyInt(), anyInt());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>7.测试公开静态成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPublicStaicMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">    PowerMockito.when(Calc.class, <span class="string">"addPublicStatic"</span>, anyInt(), anyInt())</span><br><span class="line">            .thenReturn(<span class="number">0</span>)</span><br><span class="line">            .thenReturn(<span class="number">1</span>)</span><br><span class="line">            .thenReturn(<span class="number">2</span>)</span><br><span class="line">            .thenReturn(<span class="number">3</span>)</span><br><span class="line">            .thenReturn(<span class="number">4</span>)</span><br><span class="line">            .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//call method</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//verify</span></span><br><span class="line">        assertEquals(Calc.addPublicStatic(i, i), i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//verify static</span></span><br><span class="line">    PowerMockito.verifyStatic(times(<span class="number">6</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>8.测试私有成员变量<br>Powermock提供了一个Whitebox的class，可以方便的绕开权限限制，可以get/set private属性，实现注入。也可以调用private方法。也可以处理static的属性/方法，根据不同需求选择不同参数的方法即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPrivateField</span><span class="params">()</span> <span class="keyword">throws</span> IllegalAccessException </span>&#123;</span><br><span class="line">    PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateField"</span>).getInt(mCalc), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateFinalField"</span>).getInt(mCalc), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticField"</span>).getInt(<span class="keyword">null</span>), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticFinalField"</span>).getInt(<span class="keyword">null</span>), <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    Whitebox.setInternalState(mCalc, <span class="string">"mPrivateField"</span>, <span class="number">1</span>);</span><br><span class="line">    Whitebox.setInternalState(Calc.class, <span class="string">"mPrivateStaticField"</span>, <span class="number">1</span>, Calc.class);</span><br><span class="line"></span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateField"</span>).getInt(mCalc), <span class="number">1</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateFinalField"</span>).getInt(mCalc), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticField"</span>).getInt(<span class="keyword">null</span>), <span class="number">1</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticFinalField"</span>).getInt(<span class="keyword">null</span>), <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>9.测试私有成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPrivateMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//when</span></span><br><span class="line">        PowerMockito.when(mCalc,<span class="string">"addPrivate"</span>,anyInt(),anyInt())</span><br><span class="line">                .thenReturn(<span class="number">0</span>)</span><br><span class="line">                .thenReturn(<span class="number">1</span>)</span><br><span class="line">                .thenReturn(<span class="number">2</span>)</span><br><span class="line">                .thenReturn(<span class="number">3</span>)</span><br><span class="line">                .thenReturn(<span class="number">4</span>)</span><br><span class="line">                .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//call method</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//verify</span></span><br><span class="line">            assertEquals(Whitebox.invokeMethod(mCalc,<span class="string">"addPrivate"</span>,i,i), i);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//verify static</span></span><br><span class="line">        PowerMockito.verifyPrivate(mCalc,times(<span class="number">6</span>)).invoke(<span class="string">"addPrivate"</span>,anyInt(),anyInt());</span><br><span class="line">        PowerMockito.verifyPrivate(mCalc,atLeast(<span class="number">1</span>)).invoke(<span class="string">"addPrivate"</span>,anyInt(),anyInt());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>10.测试私有静态成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPrivateStaicMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">      PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">      PowerMockito.when(Calc.class, <span class="string">"addPrivateStatic"</span>, anyInt(), anyInt())</span><br><span class="line">              .thenReturn(<span class="number">0</span>)</span><br><span class="line">              .thenReturn(<span class="number">1</span>)</span><br><span class="line">              .thenReturn(<span class="number">2</span>)</span><br><span class="line">              .thenReturn(<span class="number">3</span>)</span><br><span class="line">              .thenReturn(<span class="number">4</span>)</span><br><span class="line">              .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="comment">//call method</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">          <span class="comment">//verify</span></span><br><span class="line">          assertEquals(Whitebox.invokeMethod(Calc.class,<span class="string">"addPrivateStatic"</span>,i, i), i);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="comment">//verify static</span></span><br><span class="line">      PowerMockito.verifyStatic(times(<span class="number">6</span>));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过以上介绍，相信你对Android项目的Mock单元测试有一定的了解。<br>如果你有任何相关疑问，请通过以下方式联系我：</p>
+<blockquote>
+<p>Email：yanghui1986527#gmail.com<br>QQ 群: 529327615</p>
+</blockquote>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://developer.51cto.com/art/201106/268749.htm" target="_blank" rel="noopener">详细讲解单元测试的内容</a></li>
+<li><a href="http://developer.51cto.com/art/201106/268752.htm" target="_blank" rel="noopener">浅谈单元测试的意义</a></li>
+<li><a href="http://blog.csdn.net/ruisheng_412/article/details/7997936" target="_blank" rel="noopener">敏捷开发之测试</a></li>
+<li><a href="http://tools.android.com/tech-docs/unit-testing-support" target="_blank" rel="noopener">Unit testing support</a></li>
+<li><a href="http://junit.org/junit4/" target="_blank" rel="noopener">junit4</a></li>
+<li><a href="http://mockito.org/" target="_blank" rel="noopener">mockito</a></li>
+<li><a href="https://github.com/jayway/powermock" target="_blank" rel="noopener">powermock</a></li>
+<li><a href="https://github.com/snowdream/test/tree/master/android/test/mocktest" target="_blank" rel="noopener">mocktest</a></li>
+<li><a href="http://www.jianshu.com/p/03118c11c199" target="_blank" rel="noopener">在Android Studio中进行单元测试和UI测试</a></li>
+<li><a href="http://stackoverflow.com/a/23048" target="_blank" rel="noopener">whats-the-best-mock-framework-for-java</a></li>
+<li><a href="http://baike.baidu.com/view/2445748.htm" target="_blank" rel="noopener">mock测试</a></li>
+<li><a href="http://asialee.iteye.com/blog/981176" target="_blank" rel="noopener">使用PowerMock来Mock静态函数</a></li>
+<li><a href="http://blog.csdn.net/jackiehff/article/details/14000779" target="_blank" rel="noopener">PowerMock介绍</a></li>
+<li><a href="http://blog.danlew.net/2015/11/02/sharing-code-between-unit-tests-and-instrumentation-tests-on-android/" target="_blank" rel="noopener">Sharing code between unit tests and instrumentation tests on Android</a></li>
+<li><a href="http://www.vogella.com/tutorials/Mockito/article.html" target="_blank" rel="noopener">Unit tests with Mockito - Tutorial</a></li>
+<li><a href="http://hlong.xyz/2016/06/16/Android%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E4%B9%8BMockito%E6%B5%85%E6%9E%90/" target="_blank" rel="noopener">Android单元测试之Mockito浅析</a></li>
+<li><a href="http://waylau.com/mockito-quick-start/" target="_blank" rel="noopener">Mockito 简明教程</a></li>
+<li><a href="http://blog.csdn.net/sdyy321/article/details/38757135/" target="_blank" rel="noopener"> mockito简单教程</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/test/">test</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/03/android-mock-test/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/03/android-mock-test/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/07/26/gradle-repositories-issues/" title="Gradle源仓库相关问题总结" itemprop="url">Gradle源仓库相关问题总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-07-26T06:37:12.000Z" itemprop="datePublished"> 发表于 2016-07-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="一-Gradle源仓库（repositories）是什么东西，有什么用？"><a href="#一-Gradle源仓库（repositories）是什么东西，有什么用？" class="headerlink" title="一. Gradle源仓库（repositories）是什么东西，有什么用？"></a>一. Gradle源仓库（repositories）是什么东西，有什么用？</h2><p>Gradle 源仓库（repositories）实际上复用了Maven的 源仓库（repositories）。</p>
+<p>源仓库，主要用于托管项目构建输出和依赖组件的一个软件仓库。</p>
+<p>这样说可能太抽象了。。。</p>
+<p>举个例子：<br>开发者A，通过一个Android 库项目，构建出一个依赖aar包，然后上传至源仓库。<br>开发者B，通过在一个Android应用项目的build.gradle文件中声明依赖开发者A的库项目。构建过程中，gradle会自动去源仓库拉取改aar依赖包到本地，参与构建。（本地有缓存机制。如果上次拉取了，这次会使用本地缓存。）</p>
+<h2 id="二-默认的仓库不可用？"><a href="#二-默认的仓库不可用？" class="headerlink" title="二. 默认的仓库不可用？"></a>二. 默认的仓库不可用？</h2><p>对于Android应用，以前默认的官方仓库是mavenCentral()，后来修改成了jcenter()。</p>
+<p>这两个官方仓库默认是通过https来访问的。很可能在国内无法正常使用。</p>
+<p>如果你无法正常从源仓库拉取依赖包，有几个办法:<br>1.改用http访问<br>        maven { url “<a href="http://oss.sonatype.org/content/repositories/snapshots&quot;" target="_blank" rel="noopener">http://oss.sonatype.org/content/repositories/snapshots&quot;</a> }<br>        jcenter { url “<a href="http://jcenter.bintray.com/&quot;}" target="_blank" rel="noopener">http://jcenter.bintray.com/&quot;}</a><br>        maven { url “<a href="http://repo1.maven.org/maven2&quot;}" target="_blank" rel="noopener">http://repo1.maven.org/maven2&quot;}</a><br>        maven { url “<a href="https://jitpack.io&quot;" target="_blank" rel="noopener">https://jitpack.io&quot;</a> }<br>其中，<br>     jcenter { url “<a href="http://jcenter.bintray.com/&quot;}" target="_blank" rel="noopener">http://jcenter.bintray.com/&quot;}</a> 替换  jcenter()<br>     maven { url “<a href="http://repo1.maven.org/maven2&quot;}" target="_blank" rel="noopener">http://repo1.maven.org/maven2&quot;}</a> 替换 mavenCentral()<br>     如果你需要用到snapshots包，建议添加         maven { url “<a href="http://oss.sonatype.org/content/repositories/snapshots&quot;" target="_blank" rel="noopener">http://oss.sonatype.org/content/repositories/snapshots&quot;</a> }<br>    而另外一些包被托管在jitpack.io网站，你可以通过maven { url “<a href="https://jitpack.io&quot;" target="_blank" rel="noopener">https://jitpack.io&quot;</a> }仓库进行访问。</p>
+<p>2.采用国内Maven仓库镜像<br>最早是oschina做了maven镜像，不过很遗憾，稳定性太差，目前处于基本不可用的状态。<br>目前的做法是：<br>推荐阿里云的maven镜像:<br>        maven { url ‘<a href="http://maven.aliyun.com/mvn/repository/&#39;" target="_blank" rel="noopener">http://maven.aliyun.com/mvn/repository/&#39;</a> }</p>
+<p>3.通过vpn或者其他工具fq</p>
+<h2 id="三-Maven-搜索查询"><a href="#三-Maven-搜索查询" class="headerlink" title="三. Maven 搜索查询"></a>三. Maven 搜索查询</h2><p>比如：android插件<br>        classpath ‘com.android.tools.build:gradle:1.3.1’<br>有哪些版本，最新版本号是多少？</p>
+<p>你可以通过以下Maven网站/镜像进行查询。<br><a href="http://maven.aliyun.com/nexus/#welcome" target="_blank" rel="noopener">http://maven.aliyun.com/nexus/#welcome</a><br><a href="http://search.maven.org/" target="_blank" rel="noopener">http://search.maven.org/</a><br><a href="https://oss.sonatype.org/" target="_blank" rel="noopener">https://oss.sonatype.org/</a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/gradle/">gradle</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/07/26/gradle-repositories-issues/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/07/26/gradle-repositories-issues/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/07/16/android-ci-gitlab-docker/" title="Android项目持续集成实践之Gitlab CI（Docker版本）" itemprop="url">Android项目持续集成实践之Gitlab CI（Docker版本）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-07-16T03:43:33.000Z" itemprop="datePublished"> 发表于 2016-07-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>接上一篇 <a href="https://snowdream.github.io/blog/2016/07/02/android-ci-gitlab/" target="_blank" rel="noopener">Android项目持续集成实践之Gitlab CI</a>.</p>
+<p>在我看来，.gitlab-ci.yml 配置还是有些复杂，写的脚本还是有点多，有没有办法更精简一点呢？</p>
+<p>有，那就是Android环境Docker化。（注：对Docker感兴趣的同学，请参考这本书<a href="https://yeasy.gitbooks.io/docker_practice/content/" target="_blank" rel="noopener">《Docker —— 从入门到实践》</a>）。</p>
+<p>我在这本书的指导下封装了一个包含Android开发环境的Docker镜像。</p>
+<ol>
+<li><a href="https://github.com/snowdream/docker-android" target="_blank" rel="noopener">https://github.com/snowdream/docker-android</a></li>
+<li><a href="https://hub.docker.com/r/snowdream/docker-android/" target="_blank" rel="noopener">https://hub.docker.com/r/snowdream/docker-android/</a></li>
+</ol>
+<p>现在有了合适的Docker镜像，.gitlab-ci.yml 将会变得非常简单:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">image: snowdream/docker-android:1.0</span><br><span class="line"></span><br><span class="line">build:</span><br><span class="line">  script:</span><br><span class="line">    - gradle assembleRelease</span><br><span class="line">  artifacts:</span><br><span class="line">    paths:</span><br><span class="line">    - app/build/outputs/</span><br></pre></td></tr></table></figure></p>
+<p>第一行的意思是，采用标签为1.0，名称为snowdream/docker-android的Docker镜像，用于本工程的CI环境。</p>
+<p>是不是很简单呢？</p>
+<p>详细的构建过程日志太长，我就不贴了。链接如下：<br><a href="https://gitlab.com/snowdream/Citest/builds/2155883" target="_blank" rel="noopener">https://gitlab.com/snowdream/Citest/builds/2155883</a></p>
+<p>如果你在使用过程中，碰到什么问题，可以通过以下方式联系我：</p>
+<ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>QQ Group: 529327615 </li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/ci/">ci</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/07/16/android-ci-gitlab-docker/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/07/16/android-ci-gitlab-docker/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

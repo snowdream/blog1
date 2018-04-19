@@ -1,0 +1,710 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android优化系列一： 日志清理 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="作者：snowdreamEmail：yanghui1986527#gmail.comGithub: https://github.com/snowdreamQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/10/22/android-optimalize-series-log/  简介在Android应用开发过程中，通过Log类输">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android优化系列一： 日志清理">
+<meta property="og:url" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="作者：snowdreamEmail：yanghui1986527#gmail.comGithub: https://github.com/snowdreamQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/10/22/android-optimalize-series-log/  简介在Android应用开发过程中，通过Log类输">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case1-a.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case1-b.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case2-a.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case2-b.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case1-b.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case3.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case1-b.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case4.png">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.023Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android优化系列一： 日志清理">
+<meta name="twitter:description" content="作者：snowdreamEmail：yanghui1986527#gmail.comGithub: https://github.com/snowdreamQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/10/22/android-optimalize-series-log/  简介在Android应用开发过程中，通过Log类输">
+<meta name="twitter:image" content="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/case1-a.png">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/22/android-optimalize-series-log/" title="Android优化系列一： 日志清理" itemprop="url">Android优化系列一： 日志清理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-22T14:19:41.000Z" itemprop="datePublished"> 发表于 2016-10-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#验证Proguard配置清理日志的有效性"><span class="toc-number">2.</span> <span class="toc-text">验证Proguard配置清理日志的有效性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CASE"><span class="toc-number">2.1.</span> <span class="toc-text">CASE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结果"><span class="toc-number">2.2.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">2.3.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#验证封装过的Log工具类，是否有必要进行而外配置"><span class="toc-number">3.</span> <span class="toc-text">验证封装过的Log工具类，是否有必要进行而外配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CASE-1"><span class="toc-number">3.1.</span> <span class="toc-text">CASE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结果-1"><span class="toc-number">3.2.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论-1"><span class="toc-number">3.3.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#验证移除日志后，字符串拼接是否还存在？"><span class="toc-number">4.</span> <span class="toc-text">验证移除日志后，字符串拼接是否还存在？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CASE-2"><span class="toc-number">4.1.</span> <span class="toc-text">CASE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结果-2"><span class="toc-number">4.2.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论-2"><span class="toc-number">4.3.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#验证日志中使用函返回值的情况"><span class="toc-number">5.</span> <span class="toc-text">验证日志中使用函返回值的情况</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CASE-3"><span class="toc-number">5.1.</span> <span class="toc-text">CASE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结果-3"><span class="toc-number">5.2.</span> <span class="toc-text">结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论-3"><span class="toc-number">5.3.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#经过大量实践后的结论"><span class="toc-number">6.</span> <span class="toc-text">经过大量实践后的结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#优化建议"><span class="toc-number">6.1.</span> <span class="toc-text">优化建议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a><br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/10/22/android-optimalize-series-log/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/10/22/android-optimalize-series-log/</a></p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>在Android应用开发过程中，通过Log类输出日志是一种很重要的调试手段。<br>大家对于Log类的使用，一般会形成几点共识：</p>
+<ol>
+<li>在Debug模式下打印日志，在Release模式下不打印日志</li>
+<li>避免滥用Log类进行输出日志。因为这样可能造成日志刷屏，淹没真正有用的日志。</li>
+<li>封装Log类，以提供同时输出日志到文件等功能</li>
+</ol>
+<p>具体细化为以下几点建议：</p>
+<ol>
+<li>禁用System.out.println<br>Android应用中，一般通过封装过的Log类来输出日志，方便控制。而System.out.println是标准的Java输出方法，使用不当，可能造成Release模式下输出日志的结果。</li>
+<li><p>禁用e.printStackTrace<br>禁用理由同上<br>建议通过封装过的Log类来输出异常堆栈信息</p>
+</li>
+<li><p>Debug模式下，通过一个静态变量，控制日志的显示隐藏。<br>我一般习惯直接使用BuildConfig.DEBUG，当然，你也可以自己定义一个。 </p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private static final boolean isDebug = BuildConfig.DEBUG;</span><br><span class="line"></span><br><span class="line">public static void i(String tag, String msg) &#123;</span><br><span class="line">    if (isDebug) &#123;</span><br><span class="line">        Log.i(tag, msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.Release模式下，通过Proguard配置来移除日志<br>在Proguard配置文件中，确保没有添加 –dontoptimize选项 来禁用优化的前提下，<br>添加以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-assumenosideeffects class android.util.Log &#123;</span><br><span class="line">        public static *** d(...);</span><br><span class="line">        public static *** e(...);</span><br><span class="line">        public static *** i(...);</span><br><span class="line">        public static *** v(...);</span><br><span class="line">        public static *** println(...);</span><br><span class="line">        public static *** w(...);</span><br><span class="line">        public static *** wtf(...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么，是否我们按照上面的做，就真的一劳永逸呢？<br>我的脑海中浮现出几个相关问题：</p>
+<ol>
+<li>Proguard配置中添加的配置，真的可以在Release模式下，移除日志吗？</li>
+<li>如果我们用的是封装过的Log工具类，应该怎么配置？</li>
+<li>移除日志后，原来在日志方法中的拼接字符串参数，是否还会申请/占用内存？<br>…</li>
+</ol>
+<p>本着大胆假设，小心求证的原则，下面我们通过实践来探索上面的问题答案。</p>
+<p>本文基于以下项目进行测试实践：<br><a href="https://github.com/snowdream/test/tree/master/android/test/logtest" target="_blank" rel="noopener">https://github.com/snowdream/test/tree/master/android/test/logtest</a><br>反编译工具：<a href="http://jd.benow.ca/" target="_blank" rel="noopener">JD-GUI</a></p>
+<h2 id="验证Proguard配置清理日志的有效性"><a href="#验证Proguard配置清理日志的有效性" class="headerlink" title="验证Proguard配置清理日志的有效性"></a>验证Proguard配置清理日志的有效性</h2><h3 id="CASE"><a href="#CASE" class="headerlink" title="CASE"></a>CASE</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Log.i(TAG,&quot;这样使用，得到的LOGTAG的值就是DroidSettings，&quot; +</span><br><span class="line">        &quot;然而并非如此，当DroidSettings这个类进行了混淆之后，类名变成了类似a,b,c这样的名称，&quot; +</span><br><span class="line">        &quot;LOGTAG则不再是DroidSettings这个值了。这样可能造成的问题就是，内部混淆有日志的包，我们去过滤DroidSettings &quot; +</span><br><span class="line">        &quot;却永远得不到任何信息。&quot;);</span><br></pre></td></tr></table></figure>
+<p>在添加上述Proguard配置前后，编译打包Release模式的正式包，使用JD-GUI进行反编译，对比上述代码的编译后代码。</p>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>添加配置前<br><img src="/2016/10/22/android-optimalize-series-log/case1-a.png" title="[case1-a]"></p>
+<p>添加配置后<br><img src="/2016/10/22/android-optimalize-series-log/case1-b.png" title="[case1-b]"></p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>通过比对结果，我们可以得出结论：<br>通过添加Proguard配置，可以在Release模式下，移除掉日志。</p>
+<h2 id="验证封装过的Log工具类，是否有必要进行而外配置"><a href="#验证封装过的Log工具类，是否有必要进行而外配置" class="headerlink" title="验证封装过的Log工具类，是否有必要进行而外配置"></a>验证封装过的Log工具类，是否有必要进行而外配置</h2><h3 id="CASE-1"><a href="#CASE-1" class="headerlink" title="CASE"></a>CASE</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LogUtil.i(TAG,&quot;这样使用，得到的LOGTAG的值就是DroidSettings，&quot; +</span><br><span class="line">        &quot;然而并非如此，当DroidSettings这个类进行了混淆之后，类名变成了类似a,b,c这样的名称，&quot; +</span><br><span class="line">        &quot;LOGTAG则不再是DroidSettings这个值了。这样可能造成的问题就是，内部混淆有日志的包，我们去过滤DroidSettings &quot; +</span><br><span class="line">        &quot;却永远得不到任何信息。&quot;);</span><br></pre></td></tr></table></figure>
+<p>在添加上述Proguard配置前后，编译打包Release模式的正式包，使用JD-GUI进行反编译，对比上述代码的编译后代码。</p>
+<h3 id="结果-1"><a href="#结果-1" class="headerlink" title="结果"></a>结果</h3><p>添加配置前<br><img src="/2016/10/22/android-optimalize-series-log/case2-a.png" title="[case2-a]"></p>
+<p>添加配置后<br><img src="/2016/10/22/android-optimalize-series-log/case2-b.png" title="[case2-b]"></p>
+<h3 id="结论-1"><a href="#结论-1" class="headerlink" title="结论"></a>结论</h3><p>通过比对结果，我们可以得出结论：<br>在这种简单封装的情况下，我们不需要额外的配置，也可以将封装过的Log工具类调用日志一起移除。</p>
+<p>当然，实际使用过程中，可能封装更复杂。为了保险起见，可以也添加上Log工具类的配置。示例如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-assumenosideeffects class com.github.snowdream.logtest.LogUtil &#123;</span><br><span class="line">        public static *** d(...);</span><br><span class="line">        public static *** e(...);</span><br><span class="line">        public static *** i(...);</span><br><span class="line">        public static *** v(...);</span><br><span class="line">        public static *** w(...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="验证移除日志后，字符串拼接是否还存在？"><a href="#验证移除日志后，字符串拼接是否还存在？" class="headerlink" title="验证移除日志后，字符串拼接是否还存在？"></a>验证移除日志后，字符串拼接是否还存在？</h2><h3 id="CASE-2"><a href="#CASE-2" class="headerlink" title="CASE"></a>CASE</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Log.i(TAG,&quot;这样使用，得到的LOGTAG的值就是DroidSettings，&quot; +</span><br><span class="line">        &quot;然而并非如此，当DroidSettings这个类进行了混淆之后，类名变成了类似a,b,c这样的名称，&quot; +</span><br><span class="line">        &quot;LOGTAG则不再是DroidSettings这个值了。这样可能造成的问题就是，内部混淆有日志的包，我们去过滤DroidSettings &quot; +</span><br><span class="line">        &quot;却永远得不到任何信息。&quot;);</span><br><span class="line"></span><br><span class="line">Log.i(TAG, &quot;这样使用，得到的LOGTAG的值就是DroidSettings，&quot; +</span><br><span class="line">        &quot;然而并非如此，当DroidSettings这个类进行了混淆之后，类名变成了类似a,b,c这样的名称，&quot; +</span><br><span class="line">        &quot;LOGTAG则不再是DroidSettings这个值了。这样可能造成的问题就是，内部混淆有日志的包，我们去过滤DroidSettings &quot; +</span><br><span class="line">        &quot;却永远得不到任何信息。&quot; + index ++);</span><br></pre></td></tr></table></figure>
+<p>上面代码的区别是：<br>前面是简单的字符串相加，而后面是字符串和变量的相加<br>在添加上述Proguard配置的前提下，分别针对以上两段代码，编译打包Release模式的正式包，使用JD-GUI进行反编译，对比上述代码的编译后代码。</p>
+<h3 id="结果-2"><a href="#结果-2" class="headerlink" title="结果"></a>结果</h3><p>简单字符串相加<br><img src="/2016/10/22/android-optimalize-series-log/case1-b.png" title="[case1-b]"></p>
+<p>字符串和变量相加<br><img src="/2016/10/22/android-optimalize-series-log/case3.png" title="[case3.png]"></p>
+<h3 id="结论-2"><a href="#结论-2" class="headerlink" title="结论"></a>结论</h3><p>通过比对结果，我们可以得出结论：<br>如果只是简单字符串相加，是会彻底移除的，并且字符串拼接也不见了，不会占用内存。<br>而如果是字符串和变量相加，日志会移除，但是字符串拼接还在，还会占用内存。</p>
+<h2 id="验证日志中使用函返回值的情况"><a href="#验证日志中使用函返回值的情况" class="headerlink" title="验证日志中使用函返回值的情况"></a>验证日志中使用函返回值的情况</h2><h3 id="CASE-3"><a href="#CASE-3" class="headerlink" title="CASE"></a>CASE</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LogUtil.i(TAG, getMessage());</span><br><span class="line"></span><br><span class="line">LogUtil.i(TAG, &quot;FROM FUNCTION &quot; + getMessage());</span><br><span class="line"></span><br><span class="line">private String getMessage() &#123;</span><br><span class="line">    return  &quot;这样使用，得到的LOGTAG的值就是DroidSettings，&quot; +</span><br><span class="line">        &quot;然而并非如此，当DroidSettings这个类进行了混淆之后，类名变成了类似a,b,c这样的名称，&quot; +</span><br><span class="line">        &quot;LOGTAG则不再是DroidSettings这个值了。这样可能造成的问题就是，内部混淆有日志的包，我们去过滤DroidSettings &quot; +</span><br><span class="line">        &quot;却永远得不到任何信息。&quot;；</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码的区别是：<br>前面是直接使用函数返回值，而后面是字符串和函数返回值的相加<br>在添加上述Proguard配置的前提下，分别针对以上两段代码，编译打包Release模式的正式包，使用JD-GUI进行反编译，对比上述代码的编译后代码。</p>
+<h3 id="结果-3"><a href="#结果-3" class="headerlink" title="结果"></a>结果</h3><p>直接使用函数返回值<br><img src="/2016/10/22/android-optimalize-series-log/case1-b.png" title="[case1-b]"></p>
+<p>字符串和函数返回值相加<br><img src="/2016/10/22/android-optimalize-series-log/case4.png" title="[case4.png]"></p>
+<h3 id="结论-3"><a href="#结论-3" class="headerlink" title="结论"></a>结论</h3><p>通过比对结果，我们可以得出结论：<br>以上两种场景下，日志移除，拼接字符串不在了，也不会占用内存。</p>
+<h2 id="经过大量实践后的结论"><a href="#经过大量实践后的结论" class="headerlink" title="经过大量实践后的结论"></a>经过大量实践后的结论</h2><p>如果你以为上面就是全部真相的话，就错了。<br>经过大量的测试实践，实际上真相更复杂。</p>
+<p>以下是开启Proguard前提下，各种情况下的测试结论：</p>
+<ol>
+<li>Log.i（简单字符串）</li>
+<li>Log.i（局部变量）</li>
+<li>Log.i（成员变量）</li>
+<li>Log.i（简单字符串+局部变量）<br>以上四种情况，日志被彻底移除，不会额外增加内存。</li>
+<li>Log.i（简单字符串+成员变量）<br>日志被移除，但是字符串拼接会存在，并占用内存。</li>
+<li>Log.i（成员函数） 其中，成员函数返回值为： 简单字符串</li>
+<li>Log.i（成员函数） 其中，成员函数返回值为： 简单字符串+局部变量<br>以上两种情况，日志被彻底移除，不会额外增加内存。</li>
+<li>Log.i（成员函数） 其中，成员函数返回值为： 简单字符串+成员变量<br>日志被移除，但是字符串拼接会存在，并占用内存。  </li>
+</ol>
+<p>注：以上所有情况,参数都是指第二个或者后面的参数。第一个参数，我都使用了静态成员变量：<br>private static final String TAG = MainActivity.class.getSimpleName();</p>
+<h3 id="优化建议"><a href="#优化建议" class="headerlink" title="优化建议"></a>优化建议</h3><ol>
+<li><p>确保没有开启 –dontoptimize选项的前提下，添加Proguard优化日志配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-assumenosideeffects class android.util.Log &#123;</span><br><span class="line">        public static *** d(...);</span><br><span class="line">        public static *** e(...);</span><br><span class="line">        public static *** i(...);</span><br><span class="line">        public static *** v(...);</span><br><span class="line">        public static *** println(...);</span><br><span class="line">        public static *** w(...);</span><br><span class="line">        public static *** wtf(...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>针对这种情况“Log.i（成员函数） 其中，成员函数返回值为： 简单字符串+成员变量”<br>目前并没有办法规避，不建议这么使用。</p>
+</li>
+<li>针对这种情况”Log.i（简单字符串+成员变量)”<br>我们的解决方案是，在封装的Log工具类方法中，使用变长参数。<br>下面是一个简单的示例：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">package com.github.snowdream.logtest;</span><br><span class="line"></span><br><span class="line">import android.text.TextUtils;</span><br><span class="line">import android.util.Log;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by snowdream on 16-10-22.</span><br><span class="line"> */</span><br><span class="line">public class LogUtil &#123;</span><br><span class="line">    private static final boolean isDebug = BuildConfig.DEBUG;</span><br><span class="line"></span><br><span class="line">    public static void i(String tag, String... args) &#123;</span><br><span class="line">        if (isDebug) &#123;</span><br><span class="line">            Log.i(tag, getLog(tag,args));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void d(String tag, String... args) &#123;</span><br><span class="line">        if (isDebug) &#123;</span><br><span class="line">            Log.i(tag, getLog(tag,args));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void v(String tag, String... args) &#123;</span><br><span class="line">        if (isDebug) &#123;</span><br><span class="line">            Log.i(tag, getLog(tag,args));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void w(String tag, String... args) &#123;</span><br><span class="line">        if (isDebug) &#123;</span><br><span class="line">            Log.i(tag, getLog(tag,args));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void e(String tag, String... args) &#123;</span><br><span class="line">        if (isDebug) &#123;</span><br><span class="line">            Log.i(tag, getLog(tag,args));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static String getLog(String tag, String... args)&#123;</span><br><span class="line">        StringBuilder builder = new StringBuilder();</span><br><span class="line">        for (String arg : args)&#123;</span><br><span class="line">            if (TextUtils.isEmpty(arg)) continue;</span><br><span class="line"></span><br><span class="line">            builder.append(arg);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return builder.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://weishu.me/2015/10/19/how-to-log-safely-in-android/" target="_blank" rel="noopener">如何安全地打印日志</a></li>
+<li><a href="http://droidyue.com/blog/2015/11/01/thinking-about-android-log/" target="_blank" rel="noopener">关于Android Log的一些思考</a></li>
+<li><a href="http://www.jianshu.com/p/4b61391a665f" target="_blank" rel="noopener">Androrid应用打包release版时关闭log日志输出</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/10/26/gradle-goodness-changing-name-of/" title="Gradle精选: 修改默认的Build配置文件名">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Gradle精选: 修改默认的Build配置文件名</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/10/20/mobile-app-develop-flow/"  title="移动应用开发流程探索">
+ <strong>下一篇：</strong><br/> 
+ <span>移动应用开发流程探索
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/10/22/android-optimalize-series-log/" data-title="Android优化系列一： 日志清理" data-url="http://www.snowdream.tech/2016/10/22/android-optimalize-series-log/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

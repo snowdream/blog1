@@ -1,0 +1,659 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android项目持续集成实践之Gitlab CI | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="简介持续集成（Continuous integration）是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。 入门下面我们来简单介绍，如果通过Gitlab CI来对Android项目持续集成。 一言不合，先甩给你一个项目链接：https://">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android项目持续集成实践之Gitlab CI">
+<meta property="og:url" content="http://www.snowdream.tech/2016/07/02/android-ci-gitlab/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="简介持续集成（Continuous integration）是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。 入门下面我们来简单介绍，如果通过Gitlab CI来对Android项目持续集成。 一言不合，先甩给你一个项目链接：https://">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.011Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android项目持续集成实践之Gitlab CI">
+<meta name="twitter:description" content="简介持续集成（Continuous integration）是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。 入门下面我们来简单介绍，如果通过Gitlab CI来对Android项目持续集成。 一言不合，先甩给你一个项目链接：https://">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/07/02/android-ci-gitlab/" title="Android项目持续集成实践之Gitlab CI" itemprop="url">Android项目持续集成实践之Gitlab CI</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-07-02T03:39:29.000Z" itemprop="datePublished"> 发表于 2016-07-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#入门"><span class="toc-number">2.</span> <span class="toc-text">入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践"><span class="toc-number">3.</span> <span class="toc-text">实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>持续集成（Continuous integration）是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。</p>
+<h2 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h2><p>下面我们来简单介绍，如果通过Gitlab CI来对Android项目持续集成。</p>
+<p>一言不合，先甩给你一个项目链接：<br><a href="https://gitlab.com/snowdream/Citest" target="_blank" rel="noopener">https://gitlab.com/snowdream/Citest</a></p>
+<p>项目很简单，就是一个默认创建的Android项目，然后上传至Gitlab。</p>
+<p>如果给项目添加持续集成功能呢？<br>按照文档的说法，你需要给项目添加一个名称为.gitlab-ci.yml的配置文件。</p>
+<p>.gitlab-ci.yml文件怎么写？？此处省略108个字。<br>通读下面两篇文章，大概就清楚了。<br><a href="http://doc.gitlab.com/ce/ci/quick_start/README.html" target="_blank" rel="noopener">http://doc.gitlab.com/ce/ci/quick_start/README.html</a><br><a href="http://doc.gitlab.com/ce/ci/yaml/README.html" target="_blank" rel="noopener">http://doc.gitlab.com/ce/ci/yaml/README.html</a></p>
+<p>当然，也许你读完了，还是感觉蒙了。那你还需要参考下别人怎么实践的。</p>
+<ol>
+<li><a href="http://doc.gitlab.com/ce/ci/quick_start/README.html" target="_blank" rel="noopener">http://doc.gitlab.com/ce/ci/quick_start/README.html</a></li>
+<li><a href="http://doc.gitlab.com/ce/ci/yaml/README.html" target="_blank" rel="noopener">http://doc.gitlab.com/ce/ci/yaml/README.html</a></li>
+<li><a href="http://www.greysonparrelli.com/setting-up-android-builds-in-gitlab-ci/" target="_blank" rel="noopener">http://www.greysonparrelli.com/setting-up-android-builds-in-gitlab-ci/</a></li>
+<li><a href="https://github.com/asura-app/android/blob/master/.gitlab-ci.yml" target="_blank" rel="noopener">https://github.com/asura-app/android/blob/master/.gitlab-ci.yml</a></li>
+<li><a href="https://github.com/lfuelling/android-sdk-docker" target="_blank" rel="noopener">https://github.com/lfuelling/android-sdk-docker</a></li>
+<li><a href="https://hub.docker.com/r/jangrewe/gitlab-ci-android/" target="_blank" rel="noopener">https://hub.docker.com/r/jangrewe/gitlab-ci-android/</a></li>
+<li><a href="http://blog.goddchen.de/2016/04/configuration-for-gitlab-ci-android-projects/" target="_blank" rel="noopener">http://blog.goddchen.de/2016/04/configuration-for-gitlab-ci-android-projects/</a></li>
+<li><a href="http://stackoverflow.com/questions/35916233/gitlab-com-ci-shared-runner-for-android-projects" target="_blank" rel="noopener">http://stackoverflow.com/questions/35916233/gitlab-com-ci-shared-runner-for-android-projects</a></li>
+</ol>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p><strong> 下面是重点:</strong><br>基本流程是：</p>
+<ol>
+<li>Gitlab Ci通过Docker来拉取包括openjdk-8-jdk的容器</li>
+<li>下载Android SDK</li>
+<li>通过Gradle Wrapper运行编译工程</li>
+</ol>
+<p><strong> 下面是主菜： </strong><br>适用于Android项目的 .gitlab-ci.yml 文件<br>当然，在实际过程中，你可以需要做一些调整，比如android sdk 中的版本号等。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">image: java:openjdk-8-jdk</span><br><span class="line"> </span><br><span class="line">before_script:</span><br><span class="line">  - apt-get --quiet update --yes</span><br><span class="line">  - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1</span><br><span class="line">  - wget --quiet --output-document=android-sdk.tgz https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz</span><br><span class="line">  - tar --extract --gzip --file=android-sdk.tgz</span><br><span class="line">  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter android-23</span><br><span class="line">  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter platform-tools</span><br><span class="line">  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter build-tools-23.0.3</span><br><span class="line">  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-android-m2repository</span><br><span class="line">  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-google-google_play_services</span><br><span class="line">  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-google-m2repository</span><br><span class="line">  - export ANDROID_HOME=$PWD/android-sdk-linux</span><br><span class="line">  - chmod u+x ./gradlew</span><br><span class="line"> </span><br><span class="line">build:</span><br><span class="line">  script:</span><br><span class="line">    - ./gradlew assembleRelease</span><br><span class="line">  artifacts:</span><br><span class="line">    paths:</span><br><span class="line">    - app/build/outputs/</span><br></pre></td></tr></table></figure></p>
+<p>好了。将.gitlab-ci.yml 添加到你的Android项目中，然后上传至Gitlab系列的Git服务器，就开始持续集成了。</p>
+<p>详细的构建过程日志太长，我就不贴了。链接如下：<br><a href="https://gitlab.com/snowdream/Citest/builds/2140420" target="_blank" rel="noopener">https://gitlab.com/snowdream/Citest/builds/2140420</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>与Travis Ci相比，Gitlab CI更灵活，可定制性高，但也意味着用起来并不是那么容易。<br>Travis Ci 更倾向于提供一个开箱即用的 CI服务。<br>而 Gitlab CI 更倾向于提供一个定制化的CI服务，比如支持Docker。<br>以上只是对于通过Gitlab CI对Android项目进行持续集成的简单实践。<br>如果感兴趣，大家可以思考下下面的问题：</p>
+<ol>
+<li>怎么通过Gitlab CI进行持续发布？</li>
+<li>怎么在Gitlab CI 加密字符串和文件，比如keystore文件？</li>
+<li>怎么在Gitlab CI中进行交互性操作，比如输入密码？</li>
+<li>怎么在过Gitlab CI中使用缓存？</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/07/16/android-ci-gitlab-docker/" title="Android项目持续集成实践之Gitlab CI（Docker版本）">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Android项目持续集成实践之Gitlab CI（Docker版本）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/05/06/ubuntu-16-04-configure/"  title="Ubuntu 16.04 安装配置指南">
+ <strong>下一篇：</strong><br/> 
+ <span>Ubuntu 16.04 安装配置指南
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/07/02/android-ci-gitlab/" data-title="Android项目持续集成实践之Gitlab CI" data-url="http://www.snowdream.tech/2016/07/02/android-ci-gitlab/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

@@ -1,0 +1,728 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android 应用增量升级方案之实践篇 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="作者：snowdreamEmail：yanghui1986527#gmail.comQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/08/23/android-incremental-update-solutions/  名词解释全量升级每次下载完整的新安装包，进行覆盖安装。 增量升级将新安装包和已经安装的旧安装包进行比对，生成">
+<meta name="keywords" content="android,jni">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 应用增量升级方案之实践篇">
+<meta property="og:url" content="http://www.snowdream.tech/2016/08/23/android-incremental-update-solutions/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="作者：snowdreamEmail：yanghui1986527#gmail.comQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/08/23/android-incremental-update-solutions/  名词解释全量升级每次下载完整的新安装包，进行覆盖安装。 增量升级将新安装包和已经安装的旧安装包进行比对，生成">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.snowdream.tech/2016/08/23/android-incremental-update-solutions/beijingmobile.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/08/23/android-incremental-update-solutions/test.png">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.015Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 应用增量升级方案之实践篇">
+<meta name="twitter:description" content="作者：snowdreamEmail：yanghui1986527#gmail.comQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/08/23/android-incremental-update-solutions/  名词解释全量升级每次下载完整的新安装包，进行覆盖安装。 增量升级将新安装包和已经安装的旧安装包进行比对，生成">
+<meta name="twitter:image" content="http://www.snowdream.tech/2016/08/23/android-incremental-update-solutions/beijingmobile.png">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/23/android-incremental-update-solutions/" title="Android 应用增量升级方案之实践篇" itemprop="url">Android 应用增量升级方案之实践篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-23T08:30:30.000Z" itemprop="datePublished"> 发表于 2016-08-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#名词解释"><span class="toc-number">1.</span> <span class="toc-text">名词解释</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#全量升级"><span class="toc-number">1.1.</span> <span class="toc-text">全量升级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#增量升级"><span class="toc-number">1.2.</span> <span class="toc-text">增量升级</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-number">2.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增量升级原理"><span class="toc-number">3.</span> <span class="toc-text">增量升级原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增量升级方案"><span class="toc-number">4.</span> <span class="toc-text">增量升级方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BsDiffPatch"><span class="toc-number">4.1.</span> <span class="toc-text">BsDiffPatch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HDiffPatch"><span class="toc-number">4.2.</span> <span class="toc-text">HDiffPatch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BsDiffPatch-vs-HDiffPatch"><span class="toc-number">4.3.</span> <span class="toc-text">BsDiffPatch vs HDiffPatch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展"><span class="toc-number">5.</span> <span class="toc-text">扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/08/23/android-incremental-update-solutions/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/08/23/android-incremental-update-solutions/</a></p>
+</blockquote>
+<h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><h3 id="全量升级"><a href="#全量升级" class="headerlink" title="全量升级"></a>全量升级</h3><p>每次下载完整的新安装包，进行覆盖安装。</p>
+<h3 id="增量升级"><a href="#增量升级" class="headerlink" title="增量升级"></a>增量升级</h3><p>将新安装包和已经安装的旧安装包进行比对，生成一个差分升级包（Patch包）。用户下载patch包后，和已经安装的旧安装包进行合并，生成新安装包，再进行覆盖安装。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在早期的Android应用开发中，由于android应用普遍比较小，因此，普遍采用了全量升级方案。简单粗暴，却行之有效。<br>但是，随着Android的发展，Android应用功能越来越多，体积越来越大，再综合以下几个因素考虑，全量升级方案逐渐无法满足我们的需求。</p>
+<ol>
+<li>在国内，随着2G,3G,4G的逐步演进，手机网络越来越快，但有一点事实仍然没有改变：流量很贵，非常不够用。(这个因素不适合WIFI用户和土豪用户)   <img src="/2016/08/23/android-incremental-update-solutions/beijingmobile.png" title="[北京移动流量套餐]">
+以北京移动为例，最基础套餐，5元30M流量。而最新的微信APK安装包35M。也就是说，如果你选了最基础套餐，你一个月内使用全量升级方案，升级一次微信，流量都不够用。</li>
+<li>在敏捷开发大行其道的今天，开发者希望尽快将新开发的功能推送到用户面前，并及时得到用户的反馈。恨不能三天一小版，一周一大版。</li>
+</ol>
+<p>综合以上因素，开发者必须为用户考虑：省流量，省流量，省流量。</p>
+<p>显然，全量升级这种土豪做法已经不再适用，于是，增量升级应运而生。</p>
+<h2 id="增量升级原理"><a href="#增量升级原理" class="headerlink" title="增量升级原理"></a>增量升级原理</h2><p>首先，两句话简单概括增量升级原理:</p>
+<ol>
+<li>服务端通过比对最新升级包，和当前应用包，生成差分升级包；</li>
+<li>客户端将差分升级包和当前应用包合并，生成最新升级包。</li>
+</ol>
+<p>接下来，简单介绍下增量升级的原理：</p>
+<ol>
+<li>首先，客户端获取当前应用的Version Code和应用APK文件的MD5值，发送给服务器；</li>
+<li>服务器根据既定策略，给用户返回更新包信息。<ol>
+<li>通过MD5值没有查询到旧有APK应用信息，返回全量升级包网址，全量升级包MD5值;</li>
+<li>需要返回patch包,但还没有生成patch包时，后台去生成patch包，并返回全量升级包网址，全量升级包MD5值;</li>
+<li>需要返回patch包,并且已经生成patch包时，返回patch包网址，patch包MD5值，全量升级包网址，全量升级包MD5值;</li>
+<li>不需要返回patch包,则返回全量升级包网址，全量升级包MD5值;</li>
+</ol>
+</li>
+<li>客户端根据返回信息进行更新操作。<ol>
+<li>如果只有全量升级包相关信息，则下载全量升级包，并在校验MD5值后，安装更新包;</li>
+<li>如果有差分升级包（patch包）,则下载差分升级包。校验差分升级包的MD5值。如果校验失败，走上面一个步骤。如果校验成功，则将差分升级包和当前版本的APK进行合并操作，生成新的应用包。校验新的应用包MD5值。校验通过，这安装这个生成的新应用包。如果校验失败，则走上面一个步骤。</li>
+</ol>
+</li>
+</ol>
+<p>以上只是简单介绍了增量升级的原理，实际应用中还需要细化，考虑更多的场景。</p>
+<p>注意： 下载过程中，必须支持断点续传策略。防止网络不畅时，不断重试，造成的流量浪费。</p>
+<h2 id="增量升级方案"><a href="#增量升级方案" class="headerlink" title="增量升级方案"></a>增量升级方案</h2><p>增量升级方案的核心就是使用Diff/Patch算法来对新旧APK进行diff/patch操作。<br>目前主流的Diff/Patch算法是bsdiff/bspatch，来自：<a href="http://www.daemonology.net/bsdiff/" target="_blank" rel="noopener">http://www.daemonology.net/bsdiff/</a>   </p>
+<p>另外，我了解到，国内有人开源了另外一种Diff/Patch算法,名字叫做HDiffPatch，来自：<a href="https://github.com/sisong/HDiffPatch" target="_blank" rel="noopener">https://github.com/sisong/HDiffPatch</a></p>
+<p>据说，比bsdiff/bspatch更高效呢？详见<a href="http://blog.csdn.net/housisong/article/details/9037743" target="_blank" rel="noopener">《HDiff1.0和BSDiff4.3的对比测试》</a></p>
+<p>我将bsdiff/bspatch和HDiffPatch，使用jni封装成so库，供android调用。项目地址： <a href="https://github.com/snowdream/android-diffpatch" target="_blank" rel="noopener">https://github.com/snowdream/android-diffpatch</a><br>在封装HDiffPatch过程中遇到问题，得到作者@sisong的支持和帮助，在此表示感谢。</p>
+<p>bsdiff/bspatch和HDiffPatch算法都是开源的，服务端可以根据源文件来进行编译集成。<br>这里我主要在Android客户端的角度，介绍下bsdiff/bspatch和HDiffPatch怎么使用。</p>
+<h3 id="BsDiffPatch"><a href="#BsDiffPatch" class="headerlink" title="BsDiffPatch"></a>BsDiffPatch</h3><ol>
+<li><p>在build.gradle文件中自定义jnilib目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        jniLibs.srcDirs = [&apos;libs&apos;]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 <code>app/libs/armeabi-v7a/libbsdiffpatch.so</code> 拷贝到你的工程对应目录下。</p>
+</li>
+<li>将 <code>app/src/main/java/com/github/snowdream/bsdiffpatch</code> 和 <code>app/src/main/java/com/github/snowdream/diffpatch</code> 拷贝到你的工程对应目录下，包名和文件名都不能改变。</li>
+<li>在Java文件中参考以下代码进行调用。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDiffPatch bsDiffPatch = new BSDiffPatch();</span><br><span class="line">bsDiffPatch.init(getApplicationContext()); </span><br><span class="line">//diff</span><br><span class="line">bsDiffPatch.diff(oldFilePath, newFilePath, diffFilePath);</span><br><span class="line">//patch</span><br><span class="line">bsDiffPatch.patch(oldFilePath, diffFilePath, gennewFilePath);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="HDiffPatch"><a href="#HDiffPatch" class="headerlink" title="HDiffPatch"></a>HDiffPatch</h3><ol>
+<li><p>在build.gradle文件中自定义jnilib目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        jniLibs.srcDirs = [&apos;libs&apos;]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 <code>app/libs/armeabi-v7a/libhdiffpatch.so</code> 拷贝到你的工程对应目录下。</p>
+</li>
+<li>将<code>app/src/main/java/com/github/snowdream/hdiffpatch</code> 和 <code>app/src/main/java/com/github/snowdream/diffpatch</code> 拷贝到你的工程对应目录下，包名和文件名都不能改变。</li>
+<li>在Java文件中参考以下代码进行调用。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDiffPatch hDiffPatch = new HDiffPatch();</span><br><span class="line">hDiffPatch.init(getApplicationContext()); </span><br><span class="line">//diff</span><br><span class="line">hDiffPatch.diff(oldFilePath, newFilePath, diffFilePath);</span><br><span class="line">//patch</span><br><span class="line">hDiffPatch.patch(oldFilePath, diffFilePath, gennewFilePath);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="BsDiffPatch-vs-HDiffPatch"><a href="#BsDiffPatch-vs-HDiffPatch" class="headerlink" title="BsDiffPatch vs HDiffPatch"></a>BsDiffPatch vs HDiffPatch</h3><p>这里我选择高德地图Android客户端的两个版本来进行测试。</p>
+<ul>
+<li>测试来源：<a href="http://www.autonavi.com/" target="_blank" rel="noopener">http://www.autonavi.com/</a></li>
+<li>测试版本： Amap_Android_V7.7.4.2128_GuanWang.apk 和 Amap_Android_V7.3.0.2036_GuanWang.apk (注：版本跨度大，差异大)</li>
+<li>对比算法： BsDiffPatch vs HDiffPatch</li>
+<li>测试结果：（详见下图）<ol>
+<li>BsDiffPatch生成的patch包稍小。</li>
+<li>两者的diff操作都非常耗资源，耗时间，无法忍受。（当然diff操作一般在服务端进行）</li>
+<li>两者的patch操作都比较快。通过大概五次测试，BsDiffPatch的patch操作需要13s左右，而HDiffPatch的patch操作仅仅需要1s左右。</li>
+</ol>
+</li>
+</ul>
+<p>以上结果仅供参考。</p>
+<ul>
+<li>测试结论： <ol>
+<li>BsDiffPatch应用更广泛</li>
+<li>HDiffPatch看起来更高效</li>
+</ol>
+</li>
+</ul>
+<img src="/2016/08/23/android-incremental-update-solutions/test.png" title="[test]">
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>以上算是比较成熟的增量升级方案了，但是仔细想想，可能还存在一些问题：</p>
+<ol>
+<li>由于多渠道，多版本造成非常多Patch包</li>
+<li>bs diff/patch算法性能和内存开销太高<br>第一个问题可以通过服务器策略进行限制。比如，只有最新版5个版本内的升级采用增量升级，其他的仍然采用全量升级。<br>据说，还有一种更强大的算法，可以解决以上问题。大家有兴趣的话，可以自己去了解。<br><a href="https://gist.github.com/9468305/fa8f1307ea4738225fca" target="_blank" rel="noopener">crsync-基于rsync rolling算法的文件增量更新.md</a></li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://bbs.umeng.com/thread-19-1-1.html" target="_blank" rel="noopener">友盟增量更新的原理是什么</a></li>
+<li><a href="http://my.oschina.net/liucundong/blog/160436" target="_blank" rel="noopener">Android应用增量更新库（Smart App Updates）</a></li>
+<li><a href="http://blog.csdn.net/yyh352091626/article/details/50579859" target="_blank" rel="noopener">Android实现应用的增量更新\升级</a></li>
+<li><a href="https://github.com/smuyyh/IncrementallyUpdate" target="_blank" rel="noopener">https://github.com/smuyyh/IncrementallyUpdate</a></li>
+<li><a href="http://blog.csdn.net/hmg25/article/details/8100896" target="_blank" rel="noopener">浅析android应用增量升级</a></li>
+<li><a href="https://github.com/cundong/SmartAppUpdates" target="_blank" rel="noopener">https://github.com/cundong/SmartAppUpdates</a></li>
+<li><a href="https://gist.github.com/9468305/fa8f1307ea4738225fca" target="_blank" rel="noopener">crsync-基于rsync rolling算法的文件增量更新.md</a></li>
+<li><a href="https://github.com/sisong/HDiffPatch" target="_blank" rel="noopener">https://github.com/sisong/HDiffPatch</a></li>
+<li><a href="http://www.daemonology.net/bsdiff/" target="_blank" rel="noopener">http://www.daemonology.net/bsdiff/</a></li>
+<li><a href="https://github.com/snowdream/android-diffpatch" target="_blank" rel="noopener">https://github.com/snowdream/android-diffpatch</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/jni/">jni</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/08/24/android-incremental-update-solutions-flowchart/" title="Android 应用增量升级方案之流程篇">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Android 应用增量升级方案之流程篇</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/08/13/android-develop-with-kotlin/"  title="使用Kotlin开发Android应用">
+ <strong>下一篇：</strong><br/> 
+ <span>使用Kotlin开发Android应用
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/08/23/android-incremental-update-solutions/" data-title="Android 应用增量升级方案之实践篇" data-url="http://www.snowdream.tech/2016/08/23/android-incremental-update-solutions/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

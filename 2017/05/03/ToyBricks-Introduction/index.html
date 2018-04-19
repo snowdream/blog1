@@ -1,0 +1,689 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>ToyBricks简介以及原理分析 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="ToyBricks背景我始终认为，在高内聚，低耦合的原则下，进行组件化，模块化，插件化都是移动应用开发的趋势。 为什么这么说呢？下面我们举个栗子：大家都知道，以前Android应用开发中，可以使用HttpClient或者HttpUrlConnection来进行http访问。这里假设有一个耦合严重，但代码量巨大的项目，使用了基于HttpClient封装的loopj/android-async-htt">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ToyBricks简介以及原理分析">
+<meta property="og:url" content="http://www.snowdream.tech/2017/05/03/ToyBricks-Introduction/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="ToyBricks背景我始终认为，在高内聚，低耦合的原则下，进行组件化，模块化，插件化都是移动应用开发的趋势。 为什么这么说呢？下面我们举个栗子：大家都知道，以前Android应用开发中，可以使用HttpClient或者HttpUrlConnection来进行http访问。这里假设有一个耦合严重，但代码量巨大的项目，使用了基于HttpClient封装的loopj/android-async-htt">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.snowdream.tech/2017/05/03/ToyBricks-Introduction/apt.svg">
+<meta property="og:image" content="http://www.snowdream.tech/2017/05/03/ToyBricks-Introduction/ToyBricks.svg">
+<meta property="og:image" content="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.007Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ToyBricks简介以及原理分析">
+<meta name="twitter:description" content="ToyBricks背景我始终认为，在高内聚，低耦合的原则下，进行组件化，模块化，插件化都是移动应用开发的趋势。 为什么这么说呢？下面我们举个栗子：大家都知道，以前Android应用开发中，可以使用HttpClient或者HttpUrlConnection来进行http访问。这里假设有一个耦合严重，但代码量巨大的项目，使用了基于HttpClient封装的loopj/android-async-htt">
+<meta name="twitter:image" content="http://www.snowdream.tech/2017/05/03/ToyBricks-Introduction/apt.svg">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/05/03/ToyBricks-Introduction/" title="ToyBricks简介以及原理分析" itemprop="url">ToyBricks简介以及原理分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-03T13:03:51.000Z" itemprop="datePublished"> 发表于 2017-05-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ToyBricks背景"><span class="toc-number">1.</span> <span class="toc-text">ToyBricks背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ToyBricks简介"><span class="toc-number">2.</span> <span class="toc-text">ToyBricks简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ToyBricks简介-1"><span class="toc-number">2.1.</span> <span class="toc-text">ToyBricks简介</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ToyBricks原理分析"><span class="toc-number">3.</span> <span class="toc-text">ToyBricks原理分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Android-Library（最终可能打包成jar，aar，并发布到maven库）"><span class="toc-number">3.1.</span> <span class="toc-text">Android Library（最终可能打包成jar，aar，并发布到maven库）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Android-Application"><span class="toc-number">3.2.</span> <span class="toc-text">Android Application</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料："><span class="toc-number">5.</span> <span class="toc-text">参考资料：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#联系方式"><span class="toc-number">6.</span> <span class="toc-text">联系方式</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="ToyBricks背景"><a href="#ToyBricks背景" class="headerlink" title="ToyBricks背景"></a>ToyBricks背景</h2><p>我始终认为，在高内聚，低耦合的原则下，进行组件化，模块化，插件化都是移动应用开发的趋势。</p>
+<p>为什么这么说呢？下面我们举个栗子：<br>大家都知道，以前Android应用开发中，可以使用HttpClient或者HttpUrlConnection来进行http访问。这里假设有一个耦合严重，但代码量巨大的项目，使用了基于HttpClient封装的<a href="https://github.com/loopj/android-async-http" target="_blank" rel="noopener">loopj/android-async-http</a>来进行http访问。但是，后来，Google明确支持使用HttpUrlConnection。此时，经过调研，你们觉得<a href="https://github.com/square/okhttp" target="_blank" rel="noopener">square/okhttp</a>基于HttpUrlConnection，符合你们的要求。</p>
+<p>现在，不管是否将HttpClient替换成okhttp，你们都可能面临以下困境：</p>
+<ol>
+<li>需求都做不完，根本没有排期做这个替换。于是，你们面临离google的支持越来越远，离风险越来越近的困境；</li>
+<li>辛辛苦苦耗费人力将HttpClient替换成okhttp。但由于两者变化很大，需要投入很多测试资源，来重新确认这些接口是否正常访问。一旦出现问题，还需要安排研发资源，去一一排查。</li>
+<li>替换的工作量太大。替换一部分之后，发现没有足够人力去继续完成。于是，替换终止。整个工程又变得混乱和臃肿，同时包含了两种http的封装库和调用。</li>
+</ol>
+<p><strong>模块化可以有效解决这些问题。通用的做法，是按照业务，功能等将整个项目分成不同的模块，由不同的研发测试小组负责。<br>每个模块又分为接口和实现两个部分。接口部分提供给模块外部调用，而实现部分则禁止来自外部的调用。</strong></p>
+<img src="/2017/05/03/ToyBricks-Introduction/apt.svg" title="[apt]">
+<p>那么，如何将模块的接口和实现部分关联起来呢？通过APT工具，可以轻松地将接口部分和实现部分关联起来。</p>
+<p>APT，即Annotation Processing Tool,可以理解为“编译时注解处理器工具”。</p>
+<p>官方说明：<br>“The apt tool is a command-line utility for annotation processing. It includes a set of reflective APIs and supporting infrastructure to process program annotations (JSR 175). These reflective APIs provide a build-time, source-based, read-only view of program structure. They are designed to cleanly model the Java programming language’s type system after the addition of generics (JSR 14).”</p>
+<p>简单理解如下：<br>apt工具是javac工具的一部分。在编译时，apt工具首先会扫描工程下Java源码中的编译时注解，再根据预先定义的编译时注解处理工具，生成指定的Java源码文件。紧接着，生成的Java源码文件和之前项目下的Java源码一起，由javac工具来编译成class。</p>
+<p><strong>但是，APT有一个局限性，就是只会扫描Java源码，不会扫描jar ，aar 和class 。也就是说，所有模块需要以源码形式存在。而现在通用的做法是，将模块打包成jar或者aar，发布到Maven库，再由其他模块自行引用。</strong></p>
+<p>有没有办法将APT的这种功能和特性延伸到jar和aar呢？<br>于是，ToyBricks应运而生。</p>
+<h2 id="ToyBricks简介"><a href="#ToyBricks简介" class="headerlink" title="ToyBricks简介"></a>ToyBricks简介</h2><h3 id="ToyBricks简介-1"><a href="#ToyBricks简介-1" class="headerlink" title="ToyBricks简介"></a>ToyBricks简介</h3><p>ToyBricks是一个Android项目模块化的解决方案，主要包括四个部分，APT注解，APT注解处理器，ToyBricks插件（Gradle Plugin）,ToyBricks库。</p>
+<img src="/2017/05/03/ToyBricks-Introduction/ToyBricks.svg" title="[ToyBricks]">
+<p>其中：</p>
+<ol>
+<li>APT注解，主要定义了两个注解：Interface（接口，例如：IText）,Implementation （实现，例如：TextImpl）</li>
+<li>APT注解处理器，在javac编译java源码之前。APT注解处理器会扫描Java源码中带有上面两个注解的接口和类，并且生成一个json文件， ToyBricks.json.</li>
+<li>ToyBricks插件（Gradle Plugin）,负责ToyBricks.json的打包，合并，生成Java源文件等工作</li>
+<li>ToyBricks，提供对外调用方法。通过参数传入接口，返回相应的实现。</li>
+</ol>
+<h2 id="ToyBricks原理分析"><a href="#ToyBricks原理分析" class="headerlink" title="ToyBricks原理分析"></a>ToyBricks原理分析</h2><p>下面以接口IText和实现TextImpl为例，简单介绍下ToyBricks原理。</p>
+<p>主要分为两个部分：</p>
+<h3 id="Android-Library（最终可能打包成jar，aar，并发布到maven库）"><a href="#Android-Library（最终可能打包成jar，aar，并发布到maven库）" class="headerlink" title="Android Library（最终可能打包成jar，aar，并发布到maven库）"></a>Android Library（最终可能打包成jar，aar，并发布到maven库）</h3><p>如果工程是Android库模块，则主要流程如下：<br>1.在javac编译java源码之前，由APT注解处理器扫描Java源码中带有上面两个注解的接口和类，生成ToyBricks.json。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"interfaceList"</span> : [ <span class="string">"com.github.snowdream.toybricks.app.IText"</span> ],</span><br><span class="line">  <span class="attr">"globalImplementation"</span> : &#123;</span><br><span class="line">    <span class="attr">"com.github.snowdream.toybricks.app.IText"</span> : <span class="string">"com.github.snowdream.toybricks.app.impl.NewTextGobalImpl"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"defaultImplementation"</span> : &#123;</span><br><span class="line">    <span class="attr">"com.github.snowdream.toybricks.app.IText"</span> : <span class="string">"com.github.snowdream.toybricks.app.impl.TextImpl"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"singletonImplementation"</span> : [ <span class="string">"com.github.snowdream.toybricks.app.impl.NewTextGobalImpl"</span> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.在打包jar，aar的时候，由ToyBricks插件（Gradle Plugin）提前处理，保证ToyBricks.json能被拷贝进去jar包或者aar包的根目录下，并随同一起分布到maven仓库。</p>
+<h3 id="Android-Application"><a href="#Android-Application" class="headerlink" title="Android Application"></a>Android Application</h3><p>如果工程是Android应用模块，则主要流程如下：      </p>
+<ol>
+<li>第一步，和Android Library第一步一致。</li>
+<li>Javac编译Java源代码</li>
+<li>扫描所有依赖的库文件，过滤出所有包含ToyBricks.json文件的jar包或者aar包，并且提取出来。提取完毕后，合并所有的ToyBricks.json文件，成为一个ToyBricks.json。</li>
+<li>将最终的ToyBricks.json按照预定规则生成一个Java源码文件.文件名为： InterfaceLoaderImpl.java</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.github.snowdream.toybricks.annotation.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.github.snowdream.toybricks.annotation.InterfaceLoader;</span><br><span class="line"><span class="keyword">import</span> java.lang.Class;</span><br><span class="line"><span class="keyword">import</span> java.lang.Override;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Created by snowdream</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This file is automatically generated by apt(Annotation Processing Tool)</span></span><br><span class="line"><span class="comment"> * Do not modify this file -- YOUR CHANGES WILL BE ERASED!</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This file should *NOT* be checked into Version Control Systems,</span></span><br><span class="line"><span class="comment"> * as it contains information specific to your local configuration.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">InterfaceLoaderImpl</span> <span class="keyword">implements</span> <span class="title">InterfaceLoader</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;Class, Object&gt; sSingletonMap = <span class="keyword">new</span> HashMap&lt;Class, Object&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;Class, Class&gt; sGlobalMap = <span class="keyword">new</span> HashMap&lt;Class, Class&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;Class, Class&gt; sDefaultMap = <span class="keyword">new</span> HashMap&lt;Class, Class&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">InterfaceLoaderImpl</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    addGlobalMap();</span><br><span class="line">    addDefaultMap();</span><br><span class="line">    addSingletonMap();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addGlobalMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sGlobalMap.put(com.github.snowdream.toybricks.app.IText.class,com.github.snowdream.toybricks.app.impl.NewTextGobalImpl.class);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addDefaultMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sDefaultMap.put(com.github.snowdream.toybricks.app.IText.class,com.github.snowdream.toybricks.app.impl.TextImpl.class);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addSingletonMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sSingletonMap.put(com.github.snowdream.toybricks.app.impl.NewTextGobalImpl.class,<span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">getImplementation</span><span class="params">(Class&lt;T&gt; clazz)</span> </span>&#123;</span><br><span class="line">    T implementation = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> isSingleton = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    Class implClass;</span><br><span class="line"></span><br><span class="line">    implClass = sGlobalMap.get(clazz);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (implClass == <span class="keyword">null</span>) &#123;</span><br><span class="line">      implClass = sDefaultMap.get(clazz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (implClass != <span class="keyword">null</span>) &#123;</span><br><span class="line">      isSingleton = sSingletonMap.containsKey(implClass);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (isSingleton) &#123;</span><br><span class="line">        implementation = (T) sSingletonMap.get(implClass);</span><br><span class="line">        <span class="keyword">if</span> (implementation != <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> implementation;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        implementation = (T) implClass.newInstance();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (isSingleton &amp;&amp; implementation != <span class="keyword">null</span>) &#123;</span><br><span class="line">        sSingletonMap.put(implClass, implementation);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> implementation;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>5.再次使用Javac工具编译InterfaceLoaderImpl.java文件。<br>6.这个文件就类似字典索引，通过这个文件，就可以通过传入接口，来查找对应的实现类。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>与APT工具相比，ToyBricks能够将接口和实现之间的关系进行持久化，存储在jar和aar中，并随之发布到Maven仓库，实现接口和实现的彻底分离。</p>
+<p>如果您对ToyBricks有什么问题或者建议，欢迎通过后面的联系方式联系我。</p>
+<h2 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h2><ol>
+<li><a href="https://github.com/SnowdreamFramework/ToyBricks" target="_blank" rel="noopener">SnowdreamFramework/ToyBricks</a></li>
+<li><a href="http://docs.oracle.com/javase/7/docs/technotes/guides/apt/" target="_blank" rel="noopener">Annotation Processing Tool (apt)</a></li>
+<li><a href="http://hannesdorfmann.com/annotation-processing/annotationprocessing101" target="_blank" rel="noopener">ANNOTATION PROCESSING 101</a></li>
+<li><a href="http://www.open-open.com/lib/view/open1470735314518.html" target="_blank" rel="noopener">Annotation-Processing-Tool详解</a></li>
+<li><a href="https://race604.com/annotation-processing/" target="_blank" rel="noopener">Java注解处理器</a></li>
+<li><a href="http://www.cnblogs.com/robnetcn/archive/2012/04/15/2449008.html" target="_blank" rel="noopener">什么是高内聚、低耦合？</a></li>
+</ol>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/05/07/ToyBricks-Manual/" title="ToyBricks用户手册">
+  <strong>上一篇：</strong><br/>
+  <span>
+  ToyBricks用户手册</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/14/gradle-goodness-enable-build-cache-for/"  title="Gradle精选: 为所有的构建启用构建缓存">
+ <strong>下一篇：</strong><br/> 
+ <span>Gradle精选: 为所有的构建启用构建缓存
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/05/03/ToyBricks-Introduction/" data-title="ToyBricks简介以及原理分析" data-url="http://www.snowdream.tech/2017/05/03/ToyBricks-Introduction/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

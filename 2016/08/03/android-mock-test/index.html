@@ -1,0 +1,762 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android最佳Mock单元测试方案:Junit + Mockito + Powermock | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="本文旨在从实践出发，引导开发者在Android项目中进行Mock单元测试。 什么是单元测试单元测试由一组独立的测试构成，每个测试针对软件中的一个单独的程序单元。单元测试并非检查程序单元之间是否能够合作良好，而是检查单个程序单元行为是否正确。 为什么要进行单元测试在敏捷开发大行其道的今天，由于时间紧，任务重，过分依赖测试工程师以及下列原因，导致单元测试不被重视，在开发流程中处于一个可有可无的尴尬境地">
+<meta name="keywords" content="android,test">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android最佳Mock单元测试方案:Junit + Mockito + Powermock">
+<meta property="og:url" content="http://www.snowdream.tech/2016/08/03/android-mock-test/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="本文旨在从实践出发，引导开发者在Android项目中进行Mock单元测试。 什么是单元测试单元测试由一组独立的测试构成，每个测试针对软件中的一个单独的程序单元。单元测试并非检查程序单元之间是否能够合作良好，而是检查单个程序单元行为是否正确。 为什么要进行单元测试在敏捷开发大行其道的今天，由于时间紧，任务重，过分依赖测试工程师以及下列原因，导致单元测试不被重视，在开发流程中处于一个可有可无的尴尬境地">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.023Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android最佳Mock单元测试方案:Junit + Mockito + Powermock">
+<meta name="twitter:description" content="本文旨在从实践出发，引导开发者在Android项目中进行Mock单元测试。 什么是单元测试单元测试由一组独立的测试构成，每个测试针对软件中的一个单独的程序单元。单元测试并非检查程序单元之间是否能够合作良好，而是检查单个程序单元行为是否正确。 为什么要进行单元测试在敏捷开发大行其道的今天，由于时间紧，任务重，过分依赖测试工程师以及下列原因，导致单元测试不被重视，在开发流程中处于一个可有可无的尴尬境地">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/03/android-mock-test/" title="Android最佳Mock单元测试方案:Junit + Mockito + Powermock" itemprop="url">Android最佳Mock单元测试方案:Junit + Mockito + Powermock</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-03T03:34:09.000Z" itemprop="datePublished"> 发表于 2016-08-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是单元测试"><span class="toc-number">1.</span> <span class="toc-text">什么是单元测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要进行单元测试"><span class="toc-number">2.</span> <span class="toc-text">为什么要进行单元测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android单元测试简介"><span class="toc-number">3.</span> <span class="toc-text">Android单元测试简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android最佳Mock单元测试方案"><span class="toc-number">4.</span> <span class="toc-text">Android最佳Mock单元测试方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Junit-Mockito-Powermock-简介"><span class="toc-number">4.1.</span> <span class="toc-text">Junit + Mockito + Powermock 简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Junit-Mockito-Powermock-引入"><span class="toc-number">4.2.</span> <span class="toc-text">Junit + Mockito + Powermock 引入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Junit-Mockito-Powermock-配置"><span class="toc-number">4.3.</span> <span class="toc-text">Junit + Mockito + Powermock 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Junit-Mockito-Powermock-使用"><span class="toc-number">4.4.</span> <span class="toc-text">Junit + Mockito + Powermock 使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<p>本文旨在从实践出发，引导开发者在Android项目中进行Mock单元测试。</p>
+<h2 id="什么是单元测试"><a href="#什么是单元测试" class="headerlink" title="什么是单元测试"></a>什么是单元测试</h2><p>单元测试由一组独立的测试构成，每个测试针对软件中的一个单独的程序单元。单元测试并非检查程序单元之间是否能够合作良好，而是检查单个程序单元行为是否正确。</p>
+<h2 id="为什么要进行单元测试"><a href="#为什么要进行单元测试" class="headerlink" title="为什么要进行单元测试"></a>为什么要进行单元测试</h2><p>在敏捷开发大行其道的今天，由于时间紧，任务重，过分依赖测试工程师以及下列原因，导致单元测试不被重视，在开发流程中处于一个可有可无的尴尬境地。</p>
+<ol>
+<li>浪费的时间太多</li>
+<li>软件开发人员不应参与单元测试</li>
+<li>我是很棒的程序员，不需要进行单元测试</li>
+<li>不管怎样，集成测试将会抓住所有的Bug</li>
+<li>单元测试效率不高</li>
+</ol>
+<p>那么单元测试是否正的可有可无呢？No! No! No! </p>
+<ol>
+<li>作为android客户端研发，在一个开发周期内，你负责的需求需要Web服务（API），和本地代码（JNI，Native Code）的支持，而你们的工作是同时进行的。</li>
+<li>你的需求开发完成了，但是由于需要在特定条件下才能触发，而这些条件在开发过程中很难去模拟，导致需求无法在所有场景下进行充分测试。举个例子，假设你在室内开发一个地图导航的Android应用，你需要在导航过程中，前方出现车祸，积水，施工等多种状况，怎么办？</li>
+<li>总结你过去的BUG，你会发现有些你以为写的很完善的逻辑，却在最后被发现有场景未覆盖，或者逻辑错误等问题。</li>
+<li>测试工程师给你报了一个BUG，你改完提交了，但是之后由于Merge失误导致代码丢失，或者其他人的修改导致你的BUG再次出现。直到测试工程师再次发现该BUG，并再次给你提出。</li>
+<li>你的开发进度很快，但是开发完成后，你会被BUG淹没。你持续不断的修改BUG，持续不断的加班，直至发布版本，身心俱疲。</li>
+<li>以前明明很正常的功能，在本次开发周期内，突然不能正常使用了。<br>…</li>
+</ol>
+<p>如果你也经常碰到以上问题，或者困扰，那么你需要持续不断的对项目进行<strong>单元测试</strong>。</p>
+<h2 id="Android单元测试简介"><a href="#Android单元测试简介" class="headerlink" title="Android单元测试简介"></a>Android单元测试简介</h2><p>Android的单元测试分为两大类：  </p>
+<p>1.Instrumentation</p>
+<p>通过Android系统的Instrumentation测试框架，我们可以编写测试代码，并且打包成APK，运行在Android手机上。</p>
+<p><strong>优点</strong>： 逼真<br><strong>缺点</strong>： 很慢</p>
+<p><strong>代表框架</strong>：JUnit(Android自带),espresso</p>
+<p>2.JUnit / Mock</p>
+<p>通过JUnit，以及第三方测试框架，我们可以编写测试代码，生成class文件，直接运行在JVM虚拟机中。</p>
+<p><strong>优点</strong>： 很快。使用简单，方便。<br><strong>缺点</strong>： 不够逼真。比如有些硬件相关的问题，无法通过这些测试出来。</p>
+<p><strong>代表框架</strong>： JUnit(标准),Robolectric, mockito, powermock</p>
+<h2 id="Android最佳Mock单元测试方案"><a href="#Android最佳Mock单元测试方案" class="headerlink" title="Android最佳Mock单元测试方案"></a>Android最佳Mock单元测试方案</h2><p>我通过对比前辈们对各种单元测试框架的实践，总结出Android最佳Mock单元测试方案: Junit + Mockito + Powermock.（自己认证的…）</p>
+<h3 id="Junit-Mockito-Powermock-简介"><a href="#Junit-Mockito-Powermock-简介" class="headerlink" title="Junit + Mockito + Powermock 简介"></a>Junit + Mockito + Powermock 简介</h3><p>众所周知，Junit是一个简单的单元测试框架。<br>Mockito，则是一个简单的用于Mock的单元测试框架。   </p>
+<p>那么为什么还需要Powermock呢？<br><strong>EasyMock和Mockito等框架，对static, final, private方法均是不能mock的。</strong><br>这些框架普遍是通过创建Proxy的方式来实现的mock。 而PowerMock是使用CGLib来操纵字节码而实现的mock，所以它能实现对上面方法的mock。</p>
+<h3 id="Junit-Mockito-Powermock-引入"><a href="#Junit-Mockito-Powermock-引入" class="headerlink" title="Junit + Mockito + Powermock 引入"></a>Junit + Mockito + Powermock 引入</h3><p>由于PowerMock对Mockito有较强依赖，因此需要按照以下表格采用对应的版本。</p>
+<table>
+<thead>
+<tr>
+<th>Mockito</th>
+<th style="text-align:center">PowerMock</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.0.0-beta - 2.0.42-beta</td>
+<td style="text-align:center">1.6.5+</td>
+</tr>
+<tr>
+<td>1.10.8 - 1.10.x</td>
+<td style="text-align:center">1.6.2+</td>
+</tr>
+<tr>
+<td>1.9.5-rc1 - 1.9.5</td>
+<td style="text-align:center">1.5.0 - 1.5.6</td>
+</tr>
+<tr>
+<td>1.9.0-rc1 &amp; 1.9.0</td>
+<td style="text-align:center">1.4.10 - 1.4.12</td>
+</tr>
+<tr>
+<td>1.8.5</td>
+<td style="text-align:center">1.3.9 - 1.4.9</td>
+</tr>
+<tr>
+<td>1.8.4</td>
+<td style="text-align:center">1.3.7 &amp; 1.3.8</td>
+</tr>
+<tr>
+<td>1.8.3</td>
+<td style="text-align:center">1.3.6</td>
+</tr>
+<tr>
+<td>1.8.1 &amp; 1.8.2</td>
+<td style="text-align:center">1.3.5</td>
+</tr>
+<tr>
+<td>1.8</td>
+<td style="text-align:center">1.3</td>
+</tr>
+<tr>
+<td>1.7</td>
+<td style="text-align:center">1.2.5</td>
+</tr>
+</tbody>
+</table>
+<p>建议方案：<br>在项目依赖文件build.gradle中添加以下依赖。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">testCompile <span class="string">'junit:junit:4.11'</span></span><br><span class="line"><span class="comment">// required if you want to use Mockito for unit tests</span></span><br><span class="line">testCompile <span class="string">'org.mockito:mockito-core:1.9.5'</span></span><br><span class="line"><span class="comment">// required if you want to use Powermock for unit tests</span></span><br><span class="line">testCompile <span class="string">'org.powermock:powermock-module-junit4:1.5.6'</span></span><br><span class="line">testCompile <span class="string">'org.powermock:powermock-module-junit4-rule:1.5.6'</span></span><br><span class="line">testCompile <span class="string">'org.powermock:powermock-api-mockito:1.5.6'</span></span><br></pre></td></tr></table></figure>
+<h3 id="Junit-Mockito-Powermock-配置"><a href="#Junit-Mockito-Powermock-配置" class="headerlink" title="Junit + Mockito + Powermock 配置"></a>Junit + Mockito + Powermock 配置</h3><ol>
+<li>默认的测试代码位置<br>对于通过gradle构建的android项目，在默认的项目结构中，Instrumentation的测试代码放在<br>src/androidTest/ 目录，而JUnit / Mock的测试代码放在 src/test/ 目录。</li>
+<li>自定义测试代码位置<br>有些项目是由Eclipse构建迁移到由Gradle构建，需要自定义测试代码位置。<br>举个例子，androidTest和test目录都在项目的根文件夹下。我们需要这样配置：<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">android &#123;  </span><br><span class="line">  sourceSets &#123;</span><br><span class="line">    test &#123;</span><br><span class="line">      java.srcDir <span class="string">'test'</span></span><br><span class="line">    &#125;</span><br><span class="line">    androidTest &#123;</span><br><span class="line">      java.srcDir <span class="string">'androidTest'</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果在单元测试中遇到类似”Method … not mocked.”的问题，请添加以下设置：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  testOptions &#123; </span><br><span class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Junit-Mockito-Powermock-使用"><a href="#Junit-Mockito-Powermock-使用" class="headerlink" title="Junit + Mockito + Powermock 使用"></a>Junit + Mockito + Powermock 使用</h3><p>强烈建议你熟读以下内容，来熟悉Junit + Mockito + Powermock的使用。</p>
+<ol>
+<li><a href="https://github.com/hehonghui/mockito-doc-zh" target="_blank" rel="noopener">Mockito 中文文档 ( 2.0.26 beta )</a></li>
+<li><a href="http://site.mockito.org/mockito/docs/current/org/mockito/Mockito.html" target="_blank" rel="noopener">Mockito reference documentation</a></li>
+<li><a href="https://github.com/jayway/powermock/wiki" target="_blank" rel="noopener">powermock wiki</a></li>
+<li><a href="http://www.vogella.com/tutorials/Mockito/article.html" target="_blank" rel="noopener">Unit tests with Mockito - Tutorial</a></li>
+</ol>
+<p>下面通过举例来简单说明Junit + Mockito + Powermock 使用，更多详情清参考Demo项目：<br><a href="https://github.com/snowdream/test/tree/master/android/test/mocktest" target="_blank" rel="noopener">https://github.com/snowdream/test/tree/master/android/test/mocktest</a></p>
+<p>源码： <a href="https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/main/java/snowdream/github/com/mocktest/Calc.java" target="_blank" rel="noopener">https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/main/java/snowdream/github/com/mocktest/Calc.java</a></p>
+<p>测试代码：<a href="https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/test/java/snowdream/github/com/mocktest/CalcUnitTest.java" target="_blank" rel="noopener">https://github.com/snowdream/test/blob/master/android/test/mocktest/app/src/test/java/snowdream/github/com/mocktest/CalcUnitTest.java</a></p>
+<p>1.验证某些行为,主要是验证某些函数是否被调用，以及被调用的具体次数。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//using mock</span></span><br><span class="line">mockedList.add(<span class="string">"once"</span>);</span><br><span class="line"></span><br><span class="line">mockedList.add(<span class="string">"twice"</span>);</span><br><span class="line">mockedList.add(<span class="string">"twice"</span>);</span><br><span class="line"></span><br><span class="line">mockedList.add(<span class="string">"three times"</span>);</span><br><span class="line">mockedList.add(<span class="string">"three times"</span>);</span><br><span class="line">mockedList.add(<span class="string">"three times"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//following two verifications work exactly the same - times(1) is used by default</span></span><br><span class="line"><span class="comment">// 下面的两个验证函数效果一样,因为verify默认验证的就是times(1)</span></span><br><span class="line">verify(mockedList).add(<span class="string">"once"</span>);</span><br><span class="line">verify(mockedList, times(<span class="number">1</span>)).add(<span class="string">"once"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//exact number of invocations verification</span></span><br><span class="line"><span class="comment">// 验证具体的执行次数</span></span><br><span class="line">verify(mockedList, times(<span class="number">2</span>)).add(<span class="string">"twice"</span>);</span><br><span class="line">verify(mockedList, times(<span class="number">3</span>)).add(<span class="string">"three times"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//verification using never(). never() is an alias to times(0)</span></span><br><span class="line"><span class="comment">// 使用never()进行验证,never相当于times(0)</span></span><br><span class="line">verify(mockedList, never()).add(<span class="string">"never happened"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//verification using atLeast()/atMost()</span></span><br><span class="line"><span class="comment">// 使用atLeast()/atMost()</span></span><br><span class="line">verify(mockedList, atLeastOnce()).add(<span class="string">"three times"</span>);</span><br><span class="line">verify(mockedList, atLeast(<span class="number">2</span>)).add(<span class="string">"five times"</span>);</span><br><span class="line">verify(mockedList, atMost(<span class="number">5</span>)).add(<span class="string">"three times"</span>);</span><br></pre></td></tr></table></figure>
+<p>2.验证执行顺序，主要验证某些函数是否按照预定顺序执行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A. Single mock whose methods must be invoked in a particular order</span></span><br><span class="line"><span class="comment">// A. 验证mock一个对象的函数执行顺序</span></span><br><span class="line">List singleMock = mock(List.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">//using a single mock</span></span><br><span class="line">singleMock.add(<span class="string">"was added first"</span>);</span><br><span class="line">singleMock.add(<span class="string">"was added second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//create an inOrder verifier for a single mock</span></span><br><span class="line"><span class="comment">// 为该mock对象创建一个inOrder对象</span></span><br><span class="line">InOrder inOrder = inOrder(singleMock);</span><br><span class="line"></span><br><span class="line"><span class="comment">//following will make sure that add is first called with "was added first, then with "was added second"</span></span><br><span class="line"><span class="comment">// 确保add函数首先执行的是add("was added first"),然后才是add("was added second")</span></span><br><span class="line">inOrder.verify(singleMock).add(<span class="string">"was added first"</span>);</span><br><span class="line">inOrder.verify(singleMock).add(<span class="string">"was added second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// B. Multiple mocks that must be used in a particular order</span></span><br><span class="line"><span class="comment">// B .验证多个mock对象的函数执行顺序</span></span><br><span class="line">List firstMock = mock(List.class);</span><br><span class="line">List secondMock = mock(List.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">//using mocks</span></span><br><span class="line">firstMock.add(<span class="string">"was called first"</span>);</span><br><span class="line">secondMock.add(<span class="string">"was called second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//create inOrder object passing any mocks that need to be verified in order</span></span><br><span class="line"><span class="comment">// 为这两个Mock对象创建inOrder对象</span></span><br><span class="line">InOrder inOrder = inOrder(firstMock, secondMock);</span><br><span class="line"></span><br><span class="line"><span class="comment">//following will make sure that firstMock was called before secondMock</span></span><br><span class="line"><span class="comment">// 验证它们的执行顺序</span></span><br><span class="line">inOrder.verify(firstMock).add(<span class="string">"was called first"</span>);</span><br><span class="line">inOrder.verify(secondMock).add(<span class="string">"was called second"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Oh, and A + B can be mixed together at will</span></span><br></pre></td></tr></table></figure></p>
+<p>3.使用powermock必须使用两个annotation：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(PowerMockRunner.class)</span><br><span class="line"><span class="meta">@PrepareForTest</span>(&#123;Calc.class&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalcUnitTest</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//PrepareForTest 后面要加准备被mock或stub的类，单个class直接()起来即可，多个用&#123;&#125;，并用逗号隔开。</span></span><br></pre></td></tr></table></figure></p>
+<p>4.测试公开成员变量<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPublicField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    assertEquals(mCalc.mPublicField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(mCalc.mPublicFinalField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(Calc.mPublicStaticField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(Calc.mPublicStaticFinalField, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    mCalc.mPublicField = <span class="number">1</span>;</span><br><span class="line">    Calc.mPublicStaticField = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    assertEquals(mCalc.mPublicField, <span class="number">1</span>);</span><br><span class="line">    assertEquals(mCalc.mPublicFinalField, <span class="number">0</span>);</span><br><span class="line">    assertEquals(Calc.mPublicStaticField, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>5.测试公开成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPublicMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    when(mCalc.addPublic(anyInt(), anyInt()))</span><br><span class="line">            .thenReturn(<span class="number">0</span>)</span><br><span class="line">            .thenReturn(<span class="number">1</span>)</span><br><span class="line">            .thenReturn(<span class="number">2</span>)</span><br><span class="line">            .thenReturn(<span class="number">3</span>)</span><br><span class="line">            .thenReturn(<span class="number">4</span>)</span><br><span class="line">            .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//call method</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//verify</span></span><br><span class="line">        assertEquals(mCalc.addPublic(i, i), i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//verify</span></span><br><span class="line">    verify(mCalc, times(<span class="number">6</span>)).addPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atLeast(<span class="number">1</span>)).addPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atLeastOnce()).addPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atMost(<span class="number">6</span>)).addPublic(anyInt(), anyInt());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>6.测试公开无返回值成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPublicVoidMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    doNothing().when(mCalc).voidPublic(anyInt(), anyInt());</span><br><span class="line"></span><br><span class="line">    mCalc.voidPublic(anyInt(), anyInt());</span><br><span class="line">    mCalc.voidPublic(anyInt(), anyInt());</span><br><span class="line"></span><br><span class="line">    verify(mCalc, atLeastOnce()).voidPublic(anyInt(), anyInt());</span><br><span class="line">    verify(mCalc, atLeast(<span class="number">2</span>)).voidPublic(anyInt(), anyInt());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>7.测试公开静态成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPublicStaicMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">    PowerMockito.when(Calc.class, <span class="string">"addPublicStatic"</span>, anyInt(), anyInt())</span><br><span class="line">            .thenReturn(<span class="number">0</span>)</span><br><span class="line">            .thenReturn(<span class="number">1</span>)</span><br><span class="line">            .thenReturn(<span class="number">2</span>)</span><br><span class="line">            .thenReturn(<span class="number">3</span>)</span><br><span class="line">            .thenReturn(<span class="number">4</span>)</span><br><span class="line">            .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//call method</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//verify</span></span><br><span class="line">        assertEquals(Calc.addPublicStatic(i, i), i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//verify static</span></span><br><span class="line">    PowerMockito.verifyStatic(times(<span class="number">6</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>8.测试私有成员变量<br>Powermock提供了一个Whitebox的class，可以方便的绕开权限限制，可以get/set private属性，实现注入。也可以调用private方法。也可以处理static的属性/方法，根据不同需求选择不同参数的方法即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPrivateField</span><span class="params">()</span> <span class="keyword">throws</span> IllegalAccessException </span>&#123;</span><br><span class="line">    PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateField"</span>).getInt(mCalc), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateFinalField"</span>).getInt(mCalc), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticField"</span>).getInt(<span class="keyword">null</span>), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticFinalField"</span>).getInt(<span class="keyword">null</span>), <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    Whitebox.setInternalState(mCalc, <span class="string">"mPrivateField"</span>, <span class="number">1</span>);</span><br><span class="line">    Whitebox.setInternalState(Calc.class, <span class="string">"mPrivateStaticField"</span>, <span class="number">1</span>, Calc.class);</span><br><span class="line"></span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateField"</span>).getInt(mCalc), <span class="number">1</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateFinalField"</span>).getInt(mCalc), <span class="number">0</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticField"</span>).getInt(<span class="keyword">null</span>), <span class="number">1</span>);</span><br><span class="line">    assertEquals(Whitebox.getField(Calc.class, <span class="string">"mPrivateStaticFinalField"</span>).getInt(<span class="keyword">null</span>), <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>9.测试私有成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPrivateMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//when</span></span><br><span class="line">        PowerMockito.when(mCalc,<span class="string">"addPrivate"</span>,anyInt(),anyInt())</span><br><span class="line">                .thenReturn(<span class="number">0</span>)</span><br><span class="line">                .thenReturn(<span class="number">1</span>)</span><br><span class="line">                .thenReturn(<span class="number">2</span>)</span><br><span class="line">                .thenReturn(<span class="number">3</span>)</span><br><span class="line">                .thenReturn(<span class="number">4</span>)</span><br><span class="line">                .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//call method</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//verify</span></span><br><span class="line">            assertEquals(Whitebox.invokeMethod(mCalc,<span class="string">"addPrivate"</span>,i,i), i);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//verify static</span></span><br><span class="line">        PowerMockito.verifyPrivate(mCalc,times(<span class="number">6</span>)).invoke(<span class="string">"addPrivate"</span>,anyInt(),anyInt());</span><br><span class="line">        PowerMockito.verifyPrivate(mCalc,atLeast(<span class="number">1</span>)).invoke(<span class="string">"addPrivate"</span>,anyInt(),anyInt());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>10.测试私有静态成员方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAddPrivateStaicMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">      PowerMockito.mockStatic(Calc.class);</span><br><span class="line"></span><br><span class="line">      PowerMockito.when(Calc.class, <span class="string">"addPrivateStatic"</span>, anyInt(), anyInt())</span><br><span class="line">              .thenReturn(<span class="number">0</span>)</span><br><span class="line">              .thenReturn(<span class="number">1</span>)</span><br><span class="line">              .thenReturn(<span class="number">2</span>)</span><br><span class="line">              .thenReturn(<span class="number">3</span>)</span><br><span class="line">              .thenReturn(<span class="number">4</span>)</span><br><span class="line">              .thenReturn(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="comment">//call method</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line"></span><br><span class="line">          <span class="comment">//verify</span></span><br><span class="line">          assertEquals(Whitebox.invokeMethod(Calc.class,<span class="string">"addPrivateStatic"</span>,i, i), i);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="comment">//verify static</span></span><br><span class="line">      PowerMockito.verifyStatic(times(<span class="number">6</span>));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过以上介绍，相信你对Android项目的Mock单元测试有一定的了解。<br>如果你有任何相关疑问，请通过以下方式联系我：</p>
+<blockquote>
+<p>Email：yanghui1986527#gmail.com<br>QQ 群: 529327615</p>
+</blockquote>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://developer.51cto.com/art/201106/268749.htm" target="_blank" rel="noopener">详细讲解单元测试的内容</a></li>
+<li><a href="http://developer.51cto.com/art/201106/268752.htm" target="_blank" rel="noopener">浅谈单元测试的意义</a></li>
+<li><a href="http://blog.csdn.net/ruisheng_412/article/details/7997936" target="_blank" rel="noopener">敏捷开发之测试</a></li>
+<li><a href="http://tools.android.com/tech-docs/unit-testing-support" target="_blank" rel="noopener">Unit testing support</a></li>
+<li><a href="http://junit.org/junit4/" target="_blank" rel="noopener">junit4</a></li>
+<li><a href="http://mockito.org/" target="_blank" rel="noopener">mockito</a></li>
+<li><a href="https://github.com/jayway/powermock" target="_blank" rel="noopener">powermock</a></li>
+<li><a href="https://github.com/snowdream/test/tree/master/android/test/mocktest" target="_blank" rel="noopener">mocktest</a></li>
+<li><a href="http://www.jianshu.com/p/03118c11c199" target="_blank" rel="noopener">在Android Studio中进行单元测试和UI测试</a></li>
+<li><a href="http://stackoverflow.com/a/23048" target="_blank" rel="noopener">whats-the-best-mock-framework-for-java</a></li>
+<li><a href="http://baike.baidu.com/view/2445748.htm" target="_blank" rel="noopener">mock测试</a></li>
+<li><a href="http://asialee.iteye.com/blog/981176" target="_blank" rel="noopener">使用PowerMock来Mock静态函数</a></li>
+<li><a href="http://blog.csdn.net/jackiehff/article/details/14000779" target="_blank" rel="noopener">PowerMock介绍</a></li>
+<li><a href="http://blog.danlew.net/2015/11/02/sharing-code-between-unit-tests-and-instrumentation-tests-on-android/" target="_blank" rel="noopener">Sharing code between unit tests and instrumentation tests on Android</a></li>
+<li><a href="http://www.vogella.com/tutorials/Mockito/article.html" target="_blank" rel="noopener">Unit tests with Mockito - Tutorial</a></li>
+<li><a href="http://hlong.xyz/2016/06/16/Android%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E4%B9%8BMockito%E6%B5%85%E6%9E%90/" target="_blank" rel="noopener">Android单元测试之Mockito浅析</a></li>
+<li><a href="http://waylau.com/mockito-quick-start/" target="_blank" rel="noopener">Mockito 简明教程</a></li>
+<li><a href="http://blog.csdn.net/sdyy321/article/details/38757135/" target="_blank" rel="noopener"> mockito简单教程</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/test/">test</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/08/10/gradle-android-task-graph-visteg/" title="Android项目中的Gradle Task流程可视化">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Android项目中的Gradle Task流程可视化</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/07/26/gradle-repositories-issues/"  title="Gradle源仓库相关问题总结">
+ <strong>下一篇：</strong><br/> 
+ <span>Gradle源仓库相关问题总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/08/03/android-mock-test/" data-title="Android最佳Mock单元测试方案:Junit + Mockito + Powermock" data-url="http://www.snowdream.tech/2016/08/03/android-mock-test/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

@@ -1,0 +1,666 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android 高效布局的几点建议 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="在Android应用开发过程中，布局是一项最基础的工作。如何进行高效布局，提高开发效率呢? 我经过长期实践，总结了以下几条建议： 一、 静态布局为主，动态布局为辅1.静态布局 就是我们最常用的，通过xml来进行布局。 优点：所见即所得。布局创建，修改，预览都非常的方便。缺点：灵活性稍差。 2.动态布局        通过Java代码来实现布局。     优点：灵活性好。在应用运行过程中，可以随时去">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 高效布局的几点建议">
+<meta property="og:url" content="http://www.snowdream.tech/2016/03/15/android-effective-layout/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="在Android应用开发过程中，布局是一项最基础的工作。如何进行高效布局，提高开发效率呢? 我经过长期实践，总结了以下几条建议： 一、 静态布局为主，动态布局为辅1.静态布局 就是我们最常用的，通过xml来进行布局。 优点：所见即所得。布局创建，修改，预览都非常的方便。缺点：灵活性稍差。 2.动态布局        通过Java代码来实现布局。     优点：灵活性好。在应用运行过程中，可以随时去">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.011Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 高效布局的几点建议">
+<meta name="twitter:description" content="在Android应用开发过程中，布局是一项最基础的工作。如何进行高效布局，提高开发效率呢? 我经过长期实践，总结了以下几条建议： 一、 静态布局为主，动态布局为辅1.静态布局 就是我们最常用的，通过xml来进行布局。 优点：所见即所得。布局创建，修改，预览都非常的方便。缺点：灵活性稍差。 2.动态布局        通过Java代码来实现布局。     优点：灵活性好。在应用运行过程中，可以随时去">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/15/android-effective-layout/" title="Android 高效布局的几点建议" itemprop="url">Android 高效布局的几点建议</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-15T20:18:29.000Z" itemprop="datePublished"> 发表于 2016-03-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、-静态布局为主，动态布局为辅"><span class="toc-number">1.</span> <span class="toc-text">一、 静态布局为主，动态布局为辅</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、-善用tools工具"><span class="toc-number">2.</span> <span class="toc-text">二、 善用tools工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tools-简介和用法"><span class="toc-number">2.1.</span> <span class="toc-text">Tools 简介和用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、-时刻谨记UI适配"><span class="toc-number">3.</span> <span class="toc-text">三、 时刻谨记UI适配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<p>在Android应用开发过程中，布局是一项最基础的工作。<br>如何进行高效布局，提高开发效率呢? 我经过长期实践，总结了以下几条建议：</p>
+<h2 id="一、-静态布局为主，动态布局为辅"><a href="#一、-静态布局为主，动态布局为辅" class="headerlink" title="一、 静态布局为主，动态布局为辅"></a>一、 静态布局为主，动态布局为辅</h2><p>1.静态布局</p>
+<p>就是我们最常用的，通过xml来进行布局。</p>
+<p>优点：所见即所得。布局创建，修改，预览都非常的方便。<br>缺点：灵活性稍差。</p>
+<p>2.动态布局      </p>
+<p> 通过Java代码来实现布局。    </p>
+<p>优点：灵活性好。在应用运行过程中，可以随时去调整布局，例如：增加未加载的新控件，调整控件的位置等。<br>缺点：可见性差，维护非常的繁琐。</p>
+<p>大家都知道，一个项目，一个功能，不可能自始至终都是同一个人进行维护的。人员流动，工作调整，这些都可能造成以下结果：你去接手别人维护的功能/模块，别人接手你维护的功能/模块。<strong>基于这种现状，在Android应用布局方面，可见性，可维护性显得尤为重要。</strong> 因此，我推荐的布局原则是：“静态布局为主，动态布局为辅。”</p>
+<p>推荐的理由有两点：    </p>
+<ol>
+<li>布局是一个相对持续的过程。可能UI/UE会随时让你调整下控件之间的间距，位置等。动态布局，需要每次修改后，编译运行在手机上才能看到实际的效果。而静态布局，可以随时修改，随时预览效果。</li>
+<li>静态布局，你可以通过阅读xml，预览效果，对于整个界面，可以快速的熟悉和掌握。而对于动态布局，你必须确认你对所有有关的代码熟悉后，静态布局和动态布局相结合，在脑海中对整个界面进行拼接，才能有一个整体把握。而随着布局变得复杂，这将变得越来越难。</li>
+</ol>
+<h2 id="二、-善用tools工具"><a href="#二、-善用tools工具" class="headerlink" title="二、 善用tools工具"></a>二、 善用tools工具</h2><p>有些布局，预览效果非常差。咋一看上去，一片空白。这样其实丧失了静态布局的一大优点“所见即所得。”整个布局之后，你编译运行到手机上，才能看到你设置的属性，间距等是否正常生效了。</p>
+<p>这里，我推荐一个原则：“尽量在布局中展示你要的效果。”<br>怎么实现呢？这里需要用到一个工具，tools。</p>
+<h3 id="Tools-简介和用法"><a href="#Tools-简介和用法" class="headerlink" title="Tools 简介和用法"></a>Tools 简介和用法</h3><p><strong> Tools工具的使用仅仅针对IDE有效，并不会被打包进应用。</strong></p>
+<p>具体步骤如下：</p>
+<ol>
+<li><p>在布局最外层，加上下面这句话，声明一下。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmlns:tools="http://schemas.android.com/tools"</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>一般的控件属性以“android:”开头。新增一个同样的属性，改为以“tools:”开头。</p>
+</li>
+</ol>
+<p>例如：一个TextView控件，需要设置默认状态为不可见。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:text</span>=<span class="string">"Name"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:visiblity</span>=<span class="string">"gone"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>但是你想预览它，又担心改为<code>android:visiblity=&quot;visible&quot;</code>之后忘了改回来，直接提交了。现在你不必担心，新增一个同样名称的属性，以“tools:”开头，就可以了。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:text</span>=<span class="string">"Name"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:visiblity</span>=<span class="string">"gone"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">tools:visiblity</span>=<span class="string">"visible"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="三、-时刻谨记UI适配"><a href="#三、-时刻谨记UI适配" class="headerlink" title="三、 时刻谨记UI适配"></a>三、 时刻谨记UI适配</h2><p>由于Android开源的特性，造成Android手机种类繁多。这些手机拥有不同版本的系统，不同的屏幕分辩率，不同的配置等。<br>我们在进行布局的时候，要时刻谨记UI适配，尽最大限度去适配不同的分辨率。<br>这里，我总结几点经验：</p>
+<ol>
+<li>Android控件，默认会带有一点padding。 有些背景切图，可能会留有较大的余白。而UI/UE的标注图可能并没有考虑这些因素，因此，UI/UE的标注图仅供参考。实际布局过程中，可能需要稍微调整。</li>
+<li>保留重要标注尺寸，忽略次要标注尺寸。举个简单的例子。假设一个顶部区域，固定高度。需要放置主标题，副标题两个文本控件。 建议这么布局，主标题和副标题使用一个竖直的LinearLayout进行包裹。主标题和副标题控件之间按照标注图设置精准的间距。之后，把整个LinearLayout竖直居中在顶部区域。</li>
+<li>设置android:weight,来进行按照比例布局。</li>
+<li>文本控件，需要考虑，文本过长时的省略策略。</li>
+<li>防止控件相互压盖</li>
+<li>切图至少提供两套，hdpi和xhdpi</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://tools.android.com/tips/layout-designtime-attributes" target="_blank" rel="noopener">Designtime Layout Attributes</a></li>
+<li><a href="http://tools.android.com/tech-docs/tools-attributes" target="_blank" rel="noopener">Tools Attributes</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/03/23/mintty-chinese-garbled-code/" title="mintty 中文乱码解决方案">
+  <strong>上一篇：</strong><br/>
+  <span>
+  mintty 中文乱码解决方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/03/11/android-color-argb-alpha-convert/"  title="Android 颜色透明度换算">
+ <strong>下一篇：</strong><br/> 
+ <span>Android 颜色透明度换算
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/03/15/android-effective-layout/" data-title="Android 高效布局的几点建议" data-url="http://www.snowdream.tech/2016/03/15/android-effective-layout/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

@@ -1,0 +1,712 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Xposed框架的安装 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="作者：snowdreamEmail：yanghui1986527#gmail.comGithub: https://github.com/snowdreamQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/  简介提到Xposed框架时，人们总会用到一个">
+<meta name="keywords" content="android,xposed">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Xposed框架的安装">
+<meta property="og:url" content="http://www.snowdream.tech/2016/09/02/android-install-xposed-framework/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="作者：snowdreamEmail：yanghui1986527#gmail.comGithub: https://github.com/snowdreamQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/  简介提到Xposed框架时，人们总会用到一个">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.snowdream.tech/2016/09/02/android-install-xposed-framework/xposed1.png">
+<meta property="og:image" content="http://www.snowdream.tech/2016/09/02/android-install-xposed-framework/xposed2.jpg">
+<meta property="og:image" content="http://www.snowdream.tech/2016/09/02/android-install-xposed-framework/xposed3.png">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Xposed框架的安装">
+<meta name="twitter:description" content="作者：snowdreamEmail：yanghui1986527#gmail.comGithub: https://github.com/snowdreamQQ 群: 529327615原文地址：https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/  简介提到Xposed框架时，人们总会用到一个">
+<meta name="twitter:image" content="http://www.snowdream.tech/2016/09/02/android-install-xposed-framework/xposed1.png">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/02/android-install-xposed-framework/" title="Xposed框架的安装" itemprop="url">Xposed框架的安装</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-02T01:25:43.000Z" itemprop="datePublished"> 发表于 2016-09-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#风险声明"><span class="toc-number">2.</span> <span class="toc-text">风险声明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">3.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Root"><span class="toc-number">3.1.</span> <span class="toc-text">Root</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TWRP"><span class="toc-number">3.2.</span> <span class="toc-text">TWRP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xposed-Framework"><span class="toc-number">3.3.</span> <span class="toc-text">Xposed Framework</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#下载"><span class="toc-number">3.3.1.</span> <span class="toc-text">下载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-1"><span class="toc-number">3.3.2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#卸载"><span class="toc-number">3.3.3.</span> <span class="toc-text">卸载</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xposed-Installer"><span class="toc-number">3.4.</span> <span class="toc-text">Xposed Installer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAQ"><span class="toc-number">4.</span> <span class="toc-text">FAQ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<blockquote>
+<p>作者：snowdream<br>Email：yanghui1986527#gmail.com<br>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a><br>QQ 群: 529327615<br>原文地址：<a href="https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/" target="_blank" rel="noopener">https://snowdream.github.io/blog/2016/09/02/android-install-xposed-framework/</a></p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>提到Xposed框架时，人们总会用到一个词“神器”。<br>是的，安装Xposed后，我们似乎脑洞大开，以前不能干的事件，现在都能干了。<br>对此，我的理解是：hook android，hook everything</p>
+<p>Xposed框架是什么？？？    </p>
+<p>官方对此的解释是这样的：<br>“Xposed是一个适用于Android的框架。基于这个框架开发的模块可以改变系统和app应用的行为，而不需要修改APK。这是一个很棒的特性，意味着Xposed模块可以不经过任何修改，安装在各种不同的ROM上。Xposed模块可以很容易的开启和关闭。你只需要激活或者禁用Xposed模块，然后重启手机即可。”</p>
+<img src="/2016/09/02/android-install-xposed-framework/xposed1.png" title="[xposed1]">
+<p>在手机发烧友的眼中，Xposed是这样子的： </p>
+<p>修改手机主题，权限控制，阻止广告，禁用各种APP滥用权限，微信，游戏等相关的各种外挂…</p>
+<p>在开发者的眼中，Xposed是这样子的：    </p>
+<p>渗透测试，测试数据构造,环境监控,动态埋点,热补丁,自动化录制…</p>
+<p>关于Xposed框架的基本原理以及更多介绍，请参考文末链接，或者自行百度。</p>
+<h2 id="风险声明"><a href="#风险声明" class="headerlink" title="风险声明"></a>风险声明</h2><img src="/2016/09/02/android-install-xposed-framework/xposed2.jpg" title="[xposed2]">
+<p>在安装Xposed框架之前，我必须把风险告诉你：</p>
+<ol>
+<li>软变砖</li>
+<li>无限重启</li>
+</ol>
+<p>简单解释下：</p>
+<ol>
+<li>软砖： 手机能启动，但是进不去桌面</li>
+<li>硬砖/黑砖:  手机在按电源键，或者连接电脑没反应，一直黑屏。</li>
+<li>软砖可以救 硬砖只能修。</li>
+<li>无限重启： 就是手机快要进入桌面的时候，又自动重启。周而复始，无限重启。</li>
+</ol>
+<p>根据<a href="http://forum.xda-developers.com/showthread.php?t=3034811" target="_blank" rel="noopener">官方的警示</a>和网友的反馈， <strong>三星的手机，以及索尼，戴尔的部分手机</strong> 容易导致以上风险。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Xposed框架的安装需要经过root，安装第三方Recovery，安装Xposed框架，安装Xposed Installer等几个步骤。这些步骤都是依次进行的，任何步骤的失败，都会导致Xposed框架的安装过程中止。</p>
+<p>因此，建议在 <strong>国际国内的主流Android机型</strong> 上进行安装。</p>
+<h3 id="Root"><a href="#Root" class="headerlink" title="Root"></a>Root</h3><p>根据我的个人实践，这里我推荐使用 <strong>KingRoot</strong> 这款工具进行Root。     </p>
+<p>官方网址： <a href="https://kingroot.net/?myLocale=zh_CN]" target="_blank" rel="noopener">https://kingroot.net/?myLocale=zh_CN</a></p>
+<p>Root之前，我建议你查询下，你的机型是否被支持： <a href="https://kingroot.net/model" target="_blank" rel="noopener">https://kingroot.net/model</a></p>
+<h3 id="TWRP"><a href="#TWRP" class="headerlink" title="TWRP"></a>TWRP</h3><p>对于Android 5.0以上的手机，官方提示，必须要先刷入第三方Recovery, 比如: TWRP</p>
+<p>官方网址： <a href="https://twrp.me/" target="_blank" rel="noopener">https://twrp.me/</a></p>
+<p>刷机之前，请先查询下，你的机型是否被支持：<br><a href="https://twrp.me/Devices/" target="_blank" rel="noopener">https://twrp.me/Devices/</a></p>
+<p>以Nexus 5 为例， 网站有详细的操作指南。<a href="https://twrp.me/devices/lgnexus5.html" target="_blank" rel="noopener">https://twrp.me/devices/lgnexus5.html</a></p>
+<p>当然有些非主流手机，也可以在相关论坛找到TWRP的修改版本。  </p>
+<p>比如我的手机，中兴 Blade A1(C880U) 16G 灵动白 移动4G手机 双卡双待</p>
+<p>我就是参考：<a href="中兴小鲜3中兴Blade a1移动版全网通版本TWRP刷写教程@root">中兴小鲜3中兴Blade a1移动版全网通版本TWRP刷写教程@root</a></p>
+<p>按照 <a href="https://twrp.me/devices/ztebladeapex2.html" target="_blank" rel="noopener">TWRP for ZTE Blade Apex 2</a> 强行刷入的。</p>
+<p>刷机完成后，重启可以进入Recovery界面。</p>
+<h3 id="Xposed-Framework"><a href="#Xposed-Framework" class="headerlink" title="Xposed Framework"></a>Xposed Framework</h3><h4 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h4><p>Xposed Framework下载地址：<a href="http://dl-xda.xposed.info/framework/" target="_blank" rel="noopener">http://dl-xda.xposed.info/framework/</a></p>
+<p>其中，sdk21，sdk22，sdk23，分别对应Android 5.0，5.1， 6.0.<br>根据，手机ROM版本和处理器类型选择Xposed Framework刷机包。</p>
+<p>比如，中兴Blade a1移动版(5.1, arm64)，我选择了刷机包<a href="http://dl-xda.xposed.info/framework/sdk22/arm64/xposed-v86-sdk22-arm64.zip" target="_blank" rel="noopener">xposed-v86-sdk22-arm64.zip</a> 和卸载包<a href="http://dl-xda.xposed.info/framework/uninstaller/xposed-uninstaller-20150831-arm64.zip" target="_blank" rel="noopener">xposed-uninstaller-20150831-arm64.zip</a></p>
+<p>下载之后，将这两个压缩包，拷贝到SD卡根目录下。</p>
+<h4 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h4><ol>
+<li>重启手机,进入Recovery界面。(adb reboot recovery)</li>
+<li>选择【安装刷机包】进入下级页面，选择【从SD卡选择ZIP文件】</li>
+<li>在SD卡根目录找到Xposed Framework刷机包(xposed-v86-sdk22-arm64.zip)，并选择。</li>
+<li>滑动底部的滑动条，确认刷入，等待提示刷机完成。</li>
+<li>重启手机，等待进入桌面。</li>
+</ol>
+<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><p>如果刷入Xposed Framework刷机包之后，无限重启，进不去桌面怎么办？<br>那就按照下面提示，卸载掉Xposed Framework。</p>
+<ol>
+<li>重启手机,进入Recovery界面。(adb reboot recovery)</li>
+<li>选择【安装刷机包】进入下级页面，选择【从SD卡选择ZIP文件】</li>
+<li>在SD卡根目录找到Xposed Framework卸载刷机包(xposed-uninstaller-20150831-arm64.zip)，并选择。</li>
+<li>滑动底部的滑动条，确认刷入，等待提示刷机完成。</li>
+<li>重启手机，等待进入桌面。</li>
+</ol>
+<h3 id="Xposed-Installer"><a href="#Xposed-Installer" class="headerlink" title="Xposed Installer"></a>Xposed Installer</h3><p>这是一个管理Xposed模块的官方应用。通过它，你可以随时禁用或者启用Xposed模块，然后重启手机。</p>
+<p>对于Android 5.0以上的手机，请前往XDA论坛主题贴下载附件    XposedInstaller_3.0_alpha4.apk，并安装。</p>
+<p>下载地址：<a href="http://forum.xda-developers.com/showthread.php?t=3034811" target="_blank" rel="noopener">http://forum.xda-developers.com/showthread.php?t=3034811</a></p>
+<p>如果你看到以下界面，恭喜你，Xposed Framework安装完成。</p>
+<img src="/2016/09/02/android-install-xposed-framework/xposed3.png" title="[xposed3]">
+<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><ol>
+<li><a href="http://forum.xda-developers.com/xposed/xposed-faq-issues-t2735540" target="_blank" rel="noopener">Xposed FAQ / Known issues</a></li>
+<li><a href="https://www.zhihu.com/search?type=content&amp;q=xposed" target="_blank" rel="noopener">Xposed in zhihu</a></li>
+<li><a href="http://stackoverflow.com/search?q=xposed" target="_blank" rel="noopener">Xposed in Stackoverflow</a></li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://repo.xposed.info/" target="_blank" rel="noopener">Xposed 官网</a></li>
+<li><a href="http://forum.xda-developers.com/xposed" target="_blank" rel="noopener">Xposed XDA论坛</a></li>
+<li><a href="http://forum.xda-developers.com/showthread.php?t=3034811" target="_blank" rel="noopener">[OFFICIAL] Xposed for Lollipop/Marshmallow [Android 5.0/5.1/6.0, v86, 2016/07/08]</a></li>
+<li><a href="http://xposed.appkg.com/1159.html" target="_blank" rel="noopener">Xposed framework 作者rovo89 原文（xda）介绍大译</a></li>
+<li><a href="http://www.jianshu.com/p/fee6c8a808d5" target="_blank" rel="noopener">Xposed:不得不说的 Android 神器</a></li>
+<li><a href="https://www.zhihu.com/question/22063862/answer/31085624" target="_blank" rel="noopener">Android 系统上的 Xposed 框架中都有哪些值得推荐的模块？</a></li>
+<li><a href="https://www.b521.net/archives/139.html" target="_blank" rel="noopener">xposed模块整理</a></li>
+<li><a href="http://blog.csdn.net/chenhao0428/article/details/51436837" target="_blank" rel="noopener">基于Xposed修改微信运动步数</a></li>
+<li><a href="https://testerhome.com/topics/3819" target="_blank" rel="noopener">用黑客思维做测试——神器 Xposed 框架介绍</a></li>
+<li><a href="http://blog.idhyt.com/2015/09/25/android-injection-xposed/" target="_blank" rel="noopener">安卓注入框架Xposed分析与简单应用</a></li>
+<li><a href="http://www.yangyanxing.com/article/first-use-Xposed.html" target="_blank" rel="noopener">Xposed框架初体验</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a><a href="/tags/xposed/">xposed</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/09/02/android-develop-xposed-module/" title="Xposed模块的开发">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Xposed模块的开发</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/08/24/android-incremental-update-solutions-flowchart/"  title="Android 应用增量升级方案之流程篇">
+ <strong>下一篇：</strong><br/> 
+ <span>Android 应用增量升级方案之流程篇
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/09/02/android-install-xposed-framework/" data-title="Xposed框架的安装" data-url="http://www.snowdream.tech/2016/09/02/android-install-xposed-framework/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

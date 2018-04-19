@@ -1,0 +1,762 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>学 Kotlin，看这一篇就够了。 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="为什么学习Kotlin？ 欢呼声热烈 谷歌宣布 Kotlin 成 Android 开发一级语言  Kotlin on Android. Now official  17 位谷歌 Android 开发专家是如何看待 Kotlin 的？  为什么你该摒弃 Java ，全面转向 Kotlin 语言？  为什么说Kotlin值得一试   如何学习Kotlin？官网以及相关文档 Kotlin 官网  Kot">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学 Kotlin，看这一篇就够了。">
+<meta property="og:url" content="http://www.snowdream.tech/2017/06/06/full-kotlin-docs/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="为什么学习Kotlin？ 欢呼声热烈 谷歌宣布 Kotlin 成 Android 开发一级语言  Kotlin on Android. Now official  17 位谷歌 Android 开发专家是如何看待 Kotlin 的？  为什么你该摒弃 Java ，全面转向 Kotlin 语言？  为什么说Kotlin值得一试   如何学习Kotlin？官网以及相关文档 Kotlin 官网  Kot">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.023Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学 Kotlin，看这一篇就够了。">
+<meta name="twitter:description" content="为什么学习Kotlin？ 欢呼声热烈 谷歌宣布 Kotlin 成 Android 开发一级语言  Kotlin on Android. Now official  17 位谷歌 Android 开发专家是如何看待 Kotlin 的？  为什么你该摒弃 Java ，全面转向 Kotlin 语言？  为什么说Kotlin值得一试   如何学习Kotlin？官网以及相关文档 Kotlin 官网  Kot">
+<meta name="twitter:image" content="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/06/06/full-kotlin-docs/" title="学 Kotlin，看这一篇就够了。" itemprop="url">学 Kotlin，看这一篇就够了。</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2017-06-06T13:52:20.000Z" itemprop="datePublished"> 发表于 2017-06-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么学习Kotlin？"><span class="toc-number">1.</span> <span class="toc-text">为什么学习Kotlin？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何学习Kotlin？"><span class="toc-number">2.</span> <span class="toc-text">如何学习Kotlin？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#官网以及相关文档"><span class="toc-number">2.1.</span> <span class="toc-text">官网以及相关文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kotlin开发实践"><span class="toc-number">2.2.</span> <span class="toc-text">Kotlin开发实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kotlin相关类库和资源"><span class="toc-number">3.</span> <span class="toc-text">Kotlin相关类库和资源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Libraries"><span class="toc-number">3.1.</span> <span class="toc-text">Libraries</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Frameworks"><span class="toc-number">3.2.</span> <span class="toc-text">Frameworks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Projects"><span class="toc-number">3.3.</span> <span class="toc-text">Projects</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Extensions"><span class="toc-number">3.4.</span> <span class="toc-text">Extensions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tools"><span class="toc-number">3.5.</span> <span class="toc-text">Tools</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Websites"><span class="toc-number">3.6.</span> <span class="toc-text">Websites</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#联系方式"><span class="toc-number">4.</span> <span class="toc-text">联系方式</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="为什么学习Kotlin？"><a href="#为什么学习Kotlin？" class="headerlink" title="为什么学习Kotlin？"></a>为什么学习Kotlin？</h2><ol>
+<li><p><a href="https://www.oschina.net/news/84938/android-o-release-with-kotlin" target="_blank" rel="noopener">欢呼声热烈 谷歌宣布 Kotlin 成 Android 开发一级语言</a></p>
+</li>
+<li><p><a href="https://blog.jetbrains.com/kotlin/2017/05/kotlin-on-android-now-official/?spm=a1zb6.8232479.0.0.Zj53Pa" target="_blank" rel="noopener">Kotlin on Android. Now official</a></p>
+</li>
+<li><p><a href="https://www.oschina.net/news/85468/what-do-17-google-developers-experts-for-kotlin" target="_blank" rel="noopener">17 位谷歌 Android 开发专家是如何看待 Kotlin 的？</a></p>
+</li>
+<li><p><a href="https://www.oschina.net/news/85488/why-you-should-totally-switch-to-kotlin" target="_blank" rel="noopener">为什么你该摒弃 Java ，全面转向 Kotlin 语言？</a></p>
+</li>
+<li><p><a href="http://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&amp;mid=404087761&amp;idx=1&amp;sn=d80625ee52f860a7a2ed4c238d2151b6" target="_blank" rel="noopener">为什么说Kotlin值得一试</a></p>
+</li>
+</ol>
+<h2 id="如何学习Kotlin？"><a href="#如何学习Kotlin？" class="headerlink" title="如何学习Kotlin？"></a>如何学习Kotlin？</h2><h3 id="官网以及相关文档"><a href="#官网以及相关文档" class="headerlink" title="官网以及相关文档"></a>官网以及相关文档</h3><ol>
+<li><p><a href="https://kotlinlang.org" target="_blank" rel="noopener">Kotlin 官网</a></p>
+</li>
+<li><p><a href="https://kotlinlang.org/docs/reference/" target="_blank" rel="noopener">Kotlin 文档</a></p>
+</li>
+<li><p><a href="https://blog.jetbrains.com/kotlin/" target="_blank" rel="noopener">Kotlin 博客</a></p>
+</li>
+<li><p><a href="http://www.kotlincn.net/docs/reference/" target="_blank" rel="noopener">Kotlin 中文文档</a></p>
+</li>
+<li><p><a href="https://github.com/JetBrains/kotlin" target="_blank" rel="noopener">Kotlin on GitHub</a></p>
+</li>
+</ol>
+<h3 id="Kotlin开发实践"><a href="#Kotlin开发实践" class="headerlink" title="Kotlin开发实践"></a>Kotlin开发实践</h3><ol>
+<li><p><a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html" target="_blank" rel="noopener">Getting started with Android and Kotlin</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/tutorials/android-plugin.html" target="_blank" rel="noopener">Kotlin Android Extensions</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/tutorials/android-frameworks.html" target="_blank" rel="noopener">Android Frameworks Using Annotation Processing</a></p>
+</li>
+<li><p><a href="https://github.com/JetBrains/kotlin-examples" target="_blank" rel="noopener">kotlin-examples</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/reference/java-interop.html" target="_blank" rel="noopener">Calling Java code from Kotlin</a></p>
+</li>
+<li><p><a href="http://kotlinlang.org/docs/reference/java-to-kotlin-interop.html" target="_blank" rel="noopener">Calling Kotlin from Java</a></p>
+</li>
+<li><p><a href="http://www.jianshu.com/p/2161ba6e56cf" target="_blank" rel="noopener">使用Kotlin开发Android应用</a></p>
+</li>
+<li><p><a href="https://github.com/mcxiaoke/kotlin-notes/blob/master/slides.md" target="_blank" rel="noopener">Kotlin入门和使用讲稿(PPT)</a></p>
+</li>
+<li><p><a href="https://github.com/mcxiaoke/kotlin-notes/blob/master/notes.md" target="_blank" rel="noopener">Kotlin入门和使用讲稿(文本)</a></p>
+</li>
+<li><p><a href="https://github.com/enbandari/Kotlin-Tutorials" target="_blank" rel="noopener">Kotlin从入门到『放弃』系列 视频教程</a></p>
+</li>
+<li><p><a href="https://news.realm.io/cn/news/droidcon-michael-pardo-kotlin/" target="_blank" rel="noopener">Kotlin: Java 6 废土中的一线希望</a></p>
+</li>
+<li><p><a href="https://news.realm.io/cn/news/oredev-jake-wharton-kotlin-advancing-android-dev/" target="_blank" rel="noopener">Kotlin 语言高级安卓开发入门</a></p>
+</li>
+<li><p><a href="https://wangjiegulu.gitbooks.io/kotlin-for-android-developers-zh/content/" target="_blank" rel="noopener">《Kotlin for android developers》中文版</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzMTYzOTYzNA==&amp;mid=2247483875&amp;idx=1&amp;sn=b1b565f651ee1221d4bda19ab12009ce" target="_blank" rel="noopener">深入理解 Kotlin Coroutine（一）</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzMTYzOTYzNA==&amp;mid=2247483878&amp;idx=1&amp;sn=710189e6e22a13fc7d1ea67bc2dd9270&amp;chksm=e8a05edbdfd7d7cd163ee1a2d5769fc2bf003e2d5a6d3f9c6382531b7efc22a6ab75300bb906#rd" target="_blank" rel="noopener">深入理解 Kotlin Coroutine（二）</a></p>
+</li>
+<li><p><a href="https://mp.weixin.qq.com/s?__biz=MzIzMTYzOTYzNA==&amp;mid=2247483899&amp;idx=1&amp;sn=7d24a9aecb00c80c9c6165b48660394c&amp;chksm=e8a05ec6dfd7d7d0842d41d79bad3d099afddc0c5c8012ada18a1b3f2a13aa314127b91e3a15#rd" target="_blank" rel="noopener">Kotlin Script 及其运行机制简析</a></p>
+</li>
+<li><p><a href="http://www.kotliner.cn/2017/04/15/Kotlin%20Native%20详细体验，你想要的都在这儿/" target="_blank" rel="noopener">Kotlin Native 详细体验，你想要的都在这儿</a></p>
+</li>
+</ol>
+<h2 id="Kotlin相关类库和资源"><a href="#Kotlin相关类库和资源" class="headerlink" title="Kotlin相关类库和资源"></a>Kotlin相关类库和资源</h2><h3 id="Libraries"><a href="#Libraries" class="headerlink" title="Libraries"></a>Libraries</h3><ol>
+<li><a href="https://github.com/Kotlin/anko" target="_blank" rel="noopener">Kotlin/anko</a> - Pleasant Android application development.</li>
+<li><a href="https://github.com/JakeWharton/kotterknife" target="_blank" rel="noopener">JakeWharton/kotterknife</a> - View injection library for Android.</li>
+<li><a href="https://github.com/MarcinMoskala/ActivityStarter" target="_blank" rel="noopener">MarcinMoskala/ActivityStarter</a> - Activity starter generator and arguments injection library for Android.</li>
+<li><a href="https://github.com/MarcinMoskala/KotlinPreferences" target="_blank" rel="noopener">MarcinMoskala/KotlinPreferences</a> - Kotlin Android Library, that makes preference usage in Kotlin simple and fun.</li>
+<li><a href="https://github.com/MarcinMoskala/PreferenceHolder" target="_blank" rel="noopener">MarcinMoskala/PreferenceHolder</a> - Kotlin Android Library, that makes preference usage in Kotlin simple and fun using object with fields binded to SharedPreferences.</li>
+<li><a href="https://github.com/nsk-mironov/kotlin-jetpack" target="_blank" rel="noopener">nsk-mironov/kotlin-jetpack</a> - A collection of useful extension methods for Android.</li>
+<li><a href="https://github.com/pawegio/KAndroid" target="_blank" rel="noopener">pawegio/KAndroid</a> - Kotlin library for Android providing useful extensions to eliminate boilerplate code.</li>
+<li><a href="https://github.com/chibatching/Kotpref" target="_blank" rel="noopener">chibatching/Kotpref</a> - Android SharedPreference delegation for Kotlin.</li>
+<li><a href="https://github.com/TouK/bubble" target="_blank" rel="noopener">TouK/bubble</a> - Library for obtaining screen orientation when orientation is blocked in AndroidManifest.</li>
+<li><a href="https://github.com/ragunathjawahar/kaffeine" target="_blank" rel="noopener">ragunathjawahar/kaffeine</a> - Kaffeine is a Kotlin-flavored Android library for accelerating development.</li>
+<li><a href="https://github.com/mcxiaoke/kotlin-koi" target="_blank" rel="noopener">mcxiaoke/kotlin-koi</a> - Koi, a lightweight kotlin library for Android Development.</li>
+<li><a href="https://github.com/BennyWang/KBinding" target="_blank" rel="noopener">BennyWang/KBinding</a> - Android View Model binding framework write in kotlin, base on anko, simple but powerful.</li>
+<li><a href="https://github.com/inaka/KillerTask" target="_blank" rel="noopener">inaka/KillerTask</a> -  Android AsyncTask wrapper library, written in Kotlin.</li>
+<li><a href="https://github.com/grandstaish/paperparcel" target="_blank" rel="noopener">grandstaish/paperparcel</a> - Boilerplate reduction library written specifically for working with Kotlin data classes on Android.</li>
+<li><a href="https://github.com/andre-artus/AnvilKotlin" target="_blank" rel="noopener">andre-artus/AnvilKotlin</a> - Minimal UI library for Android inspired by React.</li>
+<li><a href="https://github.com/mathcamp/fiberglass" target="_blank" rel="noopener">mathcamp/fiberglass</a> - Easy lightweight SharedPreferences library for Android in Kotlin using delegated properties.</li>
+<li><a href="https://github.com/nitrico/LastAdapter" target="_blank" rel="noopener">nitrico/LastAdapter</a> - Don’t write a RecyclerView adapter again. Not even a ViewHolder!.</li>
+<li><a href="https://github.com/denisidoro/krouter" target="_blank" rel="noopener">denisidoro/krouter</a> - A lightweight Android activity router.</li>
+<li><a href="https://github.com/metalabdesign/AsyncAwait" target="_blank" rel="noopener">metalabdesign/AsyncAwait</a> - async/await for Android built upon coroutines introduced in Kotlin 1.1.</li>
+<li><a href="https://github.com/jupf/staticlog" target="_blank" rel="noopener">jupf/staticlog</a> - StaticLog - super lightweight static logging for Kotlin, Java and Android.</li>
+<li><a href="https://github.com/zserge/anvil" target="_blank" rel="noopener">zserge/anvil</a> - Minimal UI library for Android inspired by React.</li>
+<li><a href="https://github.com/DanielMartinus/Stepper-Touch" target="_blank" rel="noopener">DanielMartinus/Stepper-Touch</a> - Fun playful Android stepper widget for counting, written in Kotlin.</li>
+<li><a href="https://github.com/GlimpseFramework/glimpse-framework-android" target="_blank" rel="noopener">GlimpseFramework/glimpse-framework-android</a> - OpenGL made simple.</li>
+<li><a href="https://github.com/infotech-group/android-drawable-dsl" target="_blank" rel="noopener">infotech-group/android-drawable-dsl</a> - DSL for constructing the drawables in Kotlin instead of in XML.</li>
+<li><a href="https://github.com/zsmb13/MaterialDrawerKt" target="_blank" rel="noopener">zsmb13/MaterialDrawerKt</a> - A DSL for creating Material Design navigation drawers without any XML.</li>
+<li><a href="https://github.com/SnowdreamFramework/ToyBricks" target="_blank" rel="noopener">SnowdreamFramework/ToyBricks</a> - Android Library that provide simpler way to achieve modularity.</li>
+</ol>
+<h3 id="Frameworks"><a href="#Frameworks" class="headerlink" title="Frameworks"></a>Frameworks</h3><ol>
+<li><a href="https://github.com/nekocode/kotgo" target="_blank" rel="noopener">nekocode/kotgo</a> - An android development framwork on kotlin using MVP architecture.</li>
+<li><a href="https://github.com/lightningkite/kotlin-core" target="_blank" rel="noopener">lightningkite/kotlin-core</a> - A full framework for making Android apps. Based on Anko and Kotson.</li>
+</ol>
+<h3 id="Projects"><a href="#Projects" class="headerlink" title="Projects"></a>Projects</h3><ol>
+<li><a href="https://github.com/antoniolg/Bandhook-Kotlin" target="_blank" rel="noopener">antoniolg/Bandhook-Kotlin</a> - A showcase music app for Android entirely written using Kotlin language.</li>
+<li><a href="https://github.com/antoniolg/Kotlin-for-Android-Developers" target="_blank" rel="noopener">antoniolg/Kotlin-for-Android-Developers</a> - Companion App for the book “Kotlin Android Developers”.</li>
+<li><a href="https://github.com/damianpetla/kotlin-dagger-example" target="_blank" rel="noopener">damianpetla/kotlin-dagger-example</a> - Example of Android project showing integration with Kotlin and Dagger 2.</li>
+<li><a href="https://github.com/dodyg/AndroidRivers" target="_blank" rel="noopener">dodyg/AndroidRivers</a> - RSS Readers for Android.</li>
+<li><a href="https://github.com/MakinGiants/banjen-android-banjo-tuner" target="_blank" rel="noopener">MakinGiants/banjen-android-banjo-tuner</a> - App that plays sounds helping to tune a brazilian banjo.</li>
+<li><a href="https://github.com/inaka/kotlillon" target="_blank" rel="noopener">inaka/kotlillon</a> - Android Kotlin Examples.</li>
+<li><a href="https://github.com/MakinGiants/todayhistory" target="_blank" rel="noopener">MakinGiants/todayhistory</a> - App that shows what happened today in history.</li>
+<li><a href="https://github.com/RxKotlin/Pocket" target="_blank" rel="noopener">RxKotlin/Pocket</a> - This app help user to save links easily, and can export to Evernote as weekly.</li>
+<li><a href="https://github.com/SidneyXu/AndroidDemoIn4Languages" target="_blank" rel="noopener">SidneyXu/AndroidDemoIn4Languages</a> - Comparison between Java, Groovy, Scala, Kotlin in Android Development.</li>
+<li><a href="https://github.com/inorichi/tachiyomi" target="_blank" rel="noopener">inorichi/tachiyomi</a> -  Free and open source manga reader for Android.</li>
+<li><a href="https://github.com/ziggy42/Blum-kotlin" target="_blank" rel="noopener">ziggy42/Blum-kotlin</a> - A simple android Twitter client written in Kotlin</li>
+<li><a href="https://github.com/TwidereProject/Twidere-Android" target="_blank" rel="noopener">TwidereProject/Twidere-Android</a> - Material Design ready and feature rich Twitter app for Android 4.0+</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Calendar" target="_blank" rel="noopener">SimpleMobileTools/Simple-Calendar</a> - A simple calendar with events, customizable widget and no ads.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Camera" target="_blank" rel="noopener">SimpleMobileTools/Simple-Camera</a> - A camera with flash, zoom and no ads.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Draw" target="_blank" rel="noopener">SimpleMobileTools/Simple-Draw</a> - A canvas you can draw on with different colors.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-File-Manager" target="_blank" rel="noopener">SimpleMobileTools/Simple-File-Manager</a> - A simple file manager for browsing and editing files and directories.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Gallery" target="_blank" rel="noopener">SimpleMobileTools/Simple-Gallery</a> - A gallery for viewing photos and videos without ads.</li>
+<li><a href="https://github.com/SimpleMobileTools/Simple-Notes" target="_blank" rel="noopener">SimpleMobileTools/Simple-Notes</a> - A simple textfield for adding quick notes without ads.</li>
+</ol>
+<h3 id="Extensions"><a href="#Extensions" class="headerlink" title="Extensions"></a>Extensions</h3><ol>
+<li><a href="https://github.com/ajalt/timberkt" target="_blank" rel="noopener">ajalt/timberkt</a> - Easy Android logging with Kotlin and Timber.</li>
+</ol>
+<h3 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h3><ol>
+<li><a href="https://github.com/kiruto/debug-bottle" target="_blank" rel="noopener">kiruto/debug-bottle</a> - Debug Bottle is an Android runtime debug / develop tools written using kotlin language.</li>
+</ol>
+<h3 id="Websites"><a href="#Websites" class="headerlink" title="Websites"></a>Websites</h3><ol>
+<li><p><a href="https://github.com/KotlinBy/awesome-kotlin" target="_blank" rel="noopener">awesome-kotlin</a></p>
+</li>
+<li><p><a href="https://kotlin.link/" target="_blank" rel="noopener">kotlin.link</a></p>
+</li>
+</ol>
+<h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
+<li>Email：yanghui1986527#gmail.com</li>
+<li>Github: <a href="https://github.com/snowdream" target="_blank" rel="noopener">https://github.com/snowdream</a></li>
+<li>Blog: <a href="http://snowdream.github.io/blog/" target="_blank" rel="noopener">http://snowdream.github.io/blog/</a></li>
+<li>简书：<a href="http://www.jianshu.com/u/748f0f7e6432" target="_blank" rel="noopener">http://www.jianshu.com/u/748f0f7e6432</a></li>
+<li>云栖博客：<a href="https://yq.aliyun.com/u/snowdream86" target="_blank" rel="noopener">https://yq.aliyun.com/u/snowdream86</a> </li>
+<li>QQ群: 529327615     </li>
+<li>微信公众号:  sn0wdr1am    </li>
+</ul>
+<p><img src="https://static.dingtalk.com/media/lADOmAwFCs0BAs0BAg_258_258.jpg" alt="sn0wdr1am"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/11/13/android-wifimanager-leak-context/" title="用了WifiManager这么多年，今天才知道彻底用错了">
+  <strong>上一篇：</strong><br/>
+  <span>
+  用了WifiManager这么多年，今天才知道彻底用错了</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/05/07/ToyBricks-Manual/"  title="ToyBricks用户手册">
+ <strong>下一篇：</strong><br/> 
+ <span>ToyBricks用户手册
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/06/06/full-kotlin-docs/" data-title="学 Kotlin，看这一篇就够了。" data-url="http://www.snowdream.tech/2017/06/06/full-kotlin-docs/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

@@ -1,0 +1,1271 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="android,java,nodejs">
+<meta name="keywords" content="Android,Nodejs,Java">
+<meta property="og:type" content="website">
+<meta property="og:title" content="snowdream - Impossible is nothing!">
+<meta property="og:url" content="http://www.snowdream.tech/page/5/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="android,java,nodejs">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="snowdream - Impossible is nothing!">
+<meta name="twitter:description" content="android,java,nodejs">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/25/anr-introduce-and-solutions/" title="ANR简介以及解决方案" itemprop="url">ANR简介以及解决方案</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-25T13:38:21.000Z" itemprop="datePublished"> 发表于 2016-02-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="ANR"><a href="#ANR" class="headerlink" title="ANR"></a>ANR</h2><p>  ANR，英文全称为 Application Not Responding，即应用无响应。<br>  具体表现，弹出一个应用无响应的窗口，也可能不弹出直接闪退。</p>
+<h2 id="ANR的类型"><a href="#ANR的类型" class="headerlink" title="ANR的类型"></a>ANR的类型</h2><p>ANR一般有三种类型：    </p>
+<ol>
+<li><p>KeyDispatchTimeout(5 seconds) –主要类型 按键或触摸事件在特定时间内无响应<br>定义参考：ActivityManagerService.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// How long we wait until we timeout on key dispatching.</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> KEY_DISPATCHING_TIMEOUT = <span class="number">5</span>*<span class="number">1000</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>BroadcastTimeout(前台 10 seconds，后台 60 seconds) BroadcastReceiver在特定时间内无法处理完成<br>定义参考：ActivityManagerService.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// How long we allow a receiver to run before giving up on it.</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BROADCAST_FG_TIMEOUT = <span class="number">10</span>*<span class="number">1000</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BROADCAST_BG_TIMEOUT = <span class="number">60</span>*<span class="number">1000</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ServiceTimeout(前台 20 seconds，后台 200 seconds) –小概率类型 Service在特定的时间内无法处理完成<br>定义参考：ActiveServices.java    </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// How long we wait for a service to finish executing.</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SERVICE_TIMEOUT = <span class="number">20</span>*<span class="number">1000</span>;</span><br><span class="line"><span class="comment">// How long we wait for a service to finish executing.</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SERVICE_BACKGROUND_TIMEOUT = SERVICE_TIMEOUT * <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="ANR的原因"><a href="#ANR的原因" class="headerlink" title="ANR的原因"></a>ANR的原因</h2><p>这里不得不介绍下Android的单线程模型。      </p>
+<p>当一个程序第一次启动时，Android会同时启动一个对应的主线程（Main Thread），主线程主要负责处理与UI相关的事件，如：用户的按键事件，用户接触屏幕的事件以及屏幕绘图事件，并把相关的事件分发到对应的组件进行处理。所以主线程通常又被叫做UI线程。</p>
+<p><strong> ANR的原因只有一个： 那就是把IO操作/耗时操作放在了主线程，导致主线程无法及时处理份内的事情（诸如：响应按键，点击事件，刷新界面等），超过了预定时间阀值，最终导致ANR。</strong></p>
+<h2 id="ANR的解决方案"><a href="#ANR的解决方案" class="headerlink" title="ANR的解决方案"></a>ANR的解决方案</h2><h3 id="分析ANR-Trace文件-（被动方案）"><a href="#分析ANR-Trace文件-（被动方案）" class="headerlink" title="分析ANR Trace文件 （被动方案）　"></a>分析ANR Trace文件 （被动方案）　</h3><p>应用内通过UncaughtExceptionHandler检测到全局崩溃时，上传ANR　Trace文件到后台服务器，归类分析。</p>
+<p>ANR Trace文件的路径通常是：data/anr/traces.txt 但是文件名可能稍有不同。因此，建议上传data/anr/下所有文件。</p>
+<p>具体上传方法不展开，请自行百度，或者参考：<a href="http://blog.csdn.net/jdsjlzx/article/details/7606423" target="_blank" rel="noopener">在Android中自定义捕获Application全局异常，可以替换掉系统的强制退出对话框（很有参考价值与实用价值）</a></p>
+<h3 id="预防ANR-（主动方案）"><a href="#预防ANR-（主动方案）" class="headerlink" title="预防ANR （主动方案）　"></a>预防ANR （主动方案）　</h3><ol>
+<li><h4 id="同步改异步"><a href="#同步改异步" class="headerlink" title="同步改异步"></a>同步改异步</h4><p>将IO操作/耗时操作全部封装成异步任务，放进子线程。</p>
+</li>
+<li><h4 id="工具辅助检测"><a href="#工具辅助检测" class="headerlink" title="工具辅助检测"></a>工具辅助检测</h4><p>通过<a href="https://github.com/moduth/blockcanary" target="_blank" rel="noopener">BlockCanary</a>检测耗时操作，通过优化算法，放进子线程等方法进行优化。       </p>
+</li>
+</ol>
+<p>具体使用方法请参考：<a href="https://github.com/moduth/blockcanary/blob/master/README_CN.md" target="_blank" rel="noopener">BlockCanary 中文简介</a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/25/anr-introduce-and-solutions/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/25/anr-introduce-and-solutions/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/20/Full-Kotlin-Reference/" title="Full Kotlin Reference" itemprop="url">Full Kotlin Reference</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-20T15:50:27.000Z" itemprop="datePublished"> 发表于 2016-02-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="http://kotlinlang.org/docs/kotlin-docs.pdf" target="_blank" rel="noopener">《Full Kotlin Reference》</a></p>
+
+
+	<div class="row">
+		<iframe src="https://drive.google.com/file/d/0B-W8h9B27fs-OW8zcEpndlhoNWs/preview" style="width:100%; height:550px"></iframe>
+	</div>
+
+
+
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/books/">books</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kotlin/">kotlin</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/20/Full-Kotlin-Reference/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/20/Full-Kotlin-Reference/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/19/ViewStub-error-must-have-a-valid-layoutResource/" title="ViewStub报错:must have a valid layoutResource解决" itemprop="url">ViewStub报错:must have a valid layoutResource解决</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-19T06:17:39.000Z" itemprop="datePublished"> 发表于 2016-02-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近在优化UI布局，试图解决GPU过度绘制的问题时，用到了ViewStub。<br>有个地方原来是include，用viewstub优化时，编译通过，但是运行报错。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.IllegalArgumentException: ViewStub must have a valid layoutResource</span><br></pre></td></tr></table></figure></p>
+<p>用法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">stub = (ViewStub)findViewById(R.id.realtime_bus_layout);  </span><br><span class="line">stub.inflate();</span><br></pre></td></tr></table></figure></p>
+<p>在网上搜了一下，发现问题所在。<br><code>&lt;include&gt;</code> 标签布局是这样设置的：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">layout="@layout/realtime_bus_layout"</span><br></pre></td></tr></table></figure>
+<p>而 <code>&lt;viewstub&gt;</code>中标签布局是这样设置的：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android:layout="@layout/realtime_bus_layout"</span><br></pre></td></tr></table></figure>
+<p>问题就在于，我改了标签，但是没有修改布局的引用方式。<br>而这个问题难以发现的原因是，这样使用编译器不会报错，而是在运行的时候报错。</p>
+<h2 id="参考文档："><a href="#参考文档：" class="headerlink" title="参考文档："></a>参考文档：</h2><ol>
+<li><a href="http://blog.csdn.net/palatine/article/details/37764369" target="_blank" rel="noopener">ViewStub报错:must have a valid layoutResource解决</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/19/ViewStub-error-must-have-a-valid-layoutResource/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/19/ViewStub-error-must-have-a-valid-layoutResource/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/android-avoid-null/" title="防止NullPointerException的最佳解决方案" itemprop="url">防止NullPointerException的最佳解决方案</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T14:11:30.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>NullPointerException在bug跟踪时经常发现，如何防止？<br>主要分阶段进行：</p>
+<h2 id="一-开发阶段"><a href="#一-开发阶段" class="headerlink" title="一. 开发阶段"></a>一. 开发阶段</h2><h3 id="1-方法的返回值尽量返回空对象，而不是null"><a href="#1-方法的返回值尽量返回空对象，而不是null" class="headerlink" title="1.方法的返回值尽量返回空对象，而不是null"></a>1.方法的返回值尽量返回空对象，而不是null</h3><ul>
+<li>对于数组，比如GeoPoint，返回空对象，return new GeoPoint[0];</li>
+<li>对于容器，比如ArraryList,返回空对象。如果需要泛型支持，retrun Collections.emptyList();<br>如果不需要泛型支持，则 return  Collections.EMPTY_LIST; 详细内容，参考：<a href="http://moto0421.iteye.com/blog/1447836" target="_blank" rel="noopener">http://moto0421.iteye.com/blog/1447836</a></li>
+<li>对于字符串String,返回空对象， return “”; 而不是return null;</li>
+<li>对于其他对象，如果可以定义空对象/初始对象，则return这个对象。否则，return null,并采用下面一种方法；</li>
+</ul>
+<h3 id="2-使用android-annotations注解库"><a href="#2-使用android-annotations注解库" class="headerlink" title="2.使用android annotations注解库"></a>2.使用android annotations注解库</h3><p>对于方法需要返回null的情况下，在方法的头部加上一个nullable的注解。</p>
+<p>通过IDE来检测可能出现的空指针，并提出警告。<br>以Intellij Idea为例，这里需要设置一下。<br>默认情况下Intellij Idea没有使用support-annotations.jar中的annotation来做nullity的分析。需要在preferences中配置。</p>
+<p>先找到Preferences -&gt; Inspections, 搜索 Nullable, 找到 Probable bugs中的 @NotNull/@Nullable problems。<br><img src="http://img1.tbcdn.cn/L1/461/1/cb8fa40216fb2a1cf76d567f2a6d5184913ce5d1.png" alt="screenshot"></p>
+<p><img src="http://img3.tbcdn.cn/L1/461/1/1c8533e643e7c53773f88d5ebd828bf06b3ec751.png" alt="screenshot"></p>
+<p>  选择 Configure Annotations<br><img src="http://img2.tbcdn.cn/L1/461/1/7d97c8623ca632c115229d718407d3e46c547317.png" alt="screenshot"></p>
+<p>在弹出窗口中分别添加并选中 support lib 中的 Nullable/NonNull。</p>
+<p><img src="http://img2.tbcdn.cn/L1/461/1/2c952d0de7bb21e10fb36677309a5dbe8abb851f.png" alt="screenshot"></p>
+<p>之后Intellij Idea会报告代码中可能存在的NullPointException的问题，也可以把 Severity 从Warning改为Error，这样更醒目。</p>
+<h3 id="3-其他"><a href="#3-其他" class="headerlink" title="3.其他"></a>3.其他</h3><ul>
+<li>避免使用以下方式进行调用：A.getB().getC().getD()<br>这样做很危险，只要中间有一个返回null，就出现空指针了。</li>
+<li>使用单例的时候要慎重。尤其不能将有生命周期的对象做单例。<br>…</li>
+</ul>
+<h2 id="二-测试阶段"><a href="#二-测试阶段" class="headerlink" title="二. 测试阶段"></a>二. 测试阶段</h2><h3 id="1-持续集成"><a href="#1-持续集成" class="headerlink" title="1.持续集成"></a>1.持续集成</h3><p>通过Jenkins + Findbugs/Lint等插件，来实时检查每次build中存在的问题。比如，出现空指针，或者可能出现空指针的情况，及时修改。</p>
+<h3 id="2-测试"><a href="#2-测试" class="headerlink" title="2.测试"></a>2.测试</h3><ul>
+<li>通过Monkey来帮助发现问题，对于发现的空指针进行及时修改。</li>
+<li>通过QA测试反馈，对于发现的空指针进行及时修改。</li>
+</ul>
+<h2 id="三-用户反馈"><a href="#三-用户反馈" class="headerlink" title="三. 用户反馈"></a>三. 用户反馈</h2><p>通过对用户反馈，以及在线崩溃日志进行分析，对于其中的问题进行及时修改。</p>
+<h3 id="最后总结一下：不要把问题留给用户，尤其是会导致崩溃的问题，比如空指针。"><a href="#最后总结一下：不要把问题留给用户，尤其是会导致崩溃的问题，比如空指针。" class="headerlink" title="最后总结一下：不要把问题留给用户，尤其是会导致崩溃的问题，比如空指针。"></a>最后总结一下：不要把问题留给用户，尤其是会导致崩溃的问题，比如空指针。</h3>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/18/android-avoid-null/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/18/android-avoid-null/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/android-bad-habit/" title="Android应用开发中的不良编程习惯" itemprop="url">Android应用开发中的不良编程习惯</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T14:00:07.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>下面总结下Android应用开发中的不良编程习惯，欢迎对号入座。</p>
+<h2 id="不注意NULL判断"><a href="#不注意NULL判断" class="headerlink" title="不注意NULL判断"></a>不注意NULL判断</h2><p><strong>原因:</strong>    粗心。 在不确认一个对象是否为Null的前提下，就大胆调用该对象的成员变量或者成员方法。<br><strong>结果：</strong>   空指针异常。<br><strong>解决方案：</strong>   细心。 参考：<a href="http://snowdream.github.io/blog/2016/02/18/android-avoid-null/" target="_blank" rel="noopener">防止NullPointerException的最佳解决方案</a></p>
+<h2 id="滥用变量"><a href="#滥用变量" class="headerlink" title="滥用变量"></a>滥用变量</h2><p><strong>原因:</strong>   滥用变量。 定义很多变量，而且变量名字并不能表达变量的意思。<br><strong>结果：</strong>     代码难以理解，维护困难。<br><strong>解决方案：</strong>   规范变量命名，尽量让名字能表达变量的意思。同时，变量应该在于精，而不在于多。           </p>
+<h2 id="函数的重复调用"><a href="#函数的重复调用" class="headerlink" title="函数的重复调用"></a>函数的重复调用</h2><p><strong>原因:</strong>    函数功能不清晰，搭车调用其他函数。举个例子，假如：函数A，B，C。 函数B中调用函数C,函数A中调用函数B。最后使用的时候，同时调用函数A，C，造成函数C被调用多次。<br><strong>结果：</strong>     轻者，造成程序性能下降，耗时，耗电。重者，导致程序逻辑混乱，造成各种意想不到的BUG。<br><strong>解决方案：</strong>   函数功能单一，并且稳定。        </p>
+<h2 id="耗时操作-IO操作放在子线程"><a href="#耗时操作-IO操作放在子线程" class="headerlink" title="耗时操作/IO操作放在子线程"></a>耗时操作/IO操作放在子线程</h2><p><strong>原因:</strong>     贪图快，把耗时操作/IO操作放在主线程执行。<br><strong>结果：</strong>    轻则造成应用卡顿，重则出现ANR，导致应用崩溃。<br><strong>解决方案：</strong>   将所有耗时操作/IO操作封装到子线程去。       </p>
+<h2 id="拷贝函数-代码"><a href="#拷贝函数-代码" class="headerlink" title="拷贝函数/代码"></a>拷贝函数/代码</h2><p><strong>原因:</strong>    有时候因为项目紧，开发任务中。在开发新功能时，经常将已有功能代码，拷贝过来改改，却没注意有部分内容需要修改或者去掉的。<br><strong>结果：</strong>     功能不符合预期，导致BUG。<br><strong>解决方案：</strong>   能重用的代码抽取出来公用。拷贝的时候，一定要过一遍，切记拿过来直接用。</p>
+<h2 id="滥用设计模式"><a href="#滥用设计模式" class="headerlink" title="滥用设计模式"></a>滥用设计模式</h2><p><strong>原因:</strong>    当维护一个项目的人员比较多时，容易发生。你想用MVP，他想用MVC，别人还要用MVVM。<br><strong>结果：</strong>     项目代码出现百家争鸣，百花齐放的现象。难以维护。<br><strong>解决方案：</strong>   统一设计模式，便于开发维护。     </p>
+<h2 id="保留大量废弃代码-功能"><a href="#保留大量废弃代码-功能" class="headerlink" title="保留大量废弃代码/功能"></a>保留大量废弃代码/功能</h2><p><strong>原因:</strong>    有可能是产品反复增加/删除某个功能，或者其他原因，导致开发人员不敢删除废弃代码。<br><strong>结果：</strong>     无故增加代码量和方法数，增加阅读和维护成本。<br><strong>解决方案：</strong>   废弃功能/废弃代码统统删掉。自觉抵制产品反复增加/删除同一个功能。</p>
+<h2 id="代码风格不统一"><a href="#代码风格不统一" class="headerlink" title="代码风格不统一"></a>代码风格不统一</h2><p><strong>原因:</strong>    使用不同的代码风格，同时又喜欢整个文件进行格式化。<br><strong>结果：</strong>     版本管理困难。 合并/比较代码时，满屏幕都是不一样代码。<br><strong>解决方案：</strong>   统一代码风格。否则，不要尝试对整个文件进行格式化。</p>
+<h2 id="函数臃肿"><a href="#函数臃肿" class="headerlink" title="函数臃肿"></a>函数臃肿</h2><p><strong>原因:</strong>    函数体代码太长，成百上千行的都有。<br><strong>结果：</strong>       代码阅读困难。<br><strong>解决方案：</strong>   拆分成多个小函数。    </p>
+<h2 id="函数命名随意，不规范"><a href="#函数命名随意，不规范" class="headerlink" title="函数命名随意，不规范"></a>函数命名随意，不规范</h2><p><strong>原因:</strong>     函数命名随意，不规范，又没有注释。<br><strong>结果：</strong>       一眼看过去，不知道这个函数干什么的。需要读完整个函数才知道函数的功能。<br><strong>解决方案：</strong>   函数命名尽量能体现函数的作用。如果无法完整体现，加函数注释，说清楚函数的作用，以及参数的含义。  </p>
+<h2 id="硬编码"><a href="#硬编码" class="headerlink" title="硬编码"></a>硬编码</h2><p><strong>原因:</strong>     在java代码中直接写字符串，而不定义在string.xml。<br><strong>结果：</strong>       不利于字符串重用和国际化。<br><strong>解决方案：</strong>     将字符串都定义到string.xml。</p>
+<h2 id="可见性控制不当"><a href="#可见性控制不当" class="headerlink" title="可见性控制不当"></a>可见性控制不当</h2><p><strong>原因:</strong>     不注意控制成员变量和成员方法的可见性，都是用public来进行修饰。<br><strong>结果：</strong>       导致可见性失控。<br><strong>解决方案：</strong>    严格控制成员变量和成员方法的可见性，尽量缩小。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>想到再来补充。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/18/android-bad-habit/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/18/android-bad-habit/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/android-res-folder-names-i18n/" title="[转载]Android各国语言Values文件夹命名规则" itemprop="url">[转载]Android各国语言Values文件夹命名规则</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T07:03:16.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>原文：<a href="http://my.oschina.net/quttap/blog/204499" target="_blank" rel="noopener">http://my.oschina.net/quttap/blog/204499</a></p>
+<p>android多国语言文件夹文件汇总如下：</p>
+<p>维吾尔文（中国）：values-ug-rCN</p>
+<p>中文（中国）：values-zh-rCN</p>
+<p>中文（台湾）：values-zh-rTW</p>
+<p>中文（香港）：values-zh-rHK</p>
+<p>英语（美国）：values-en-rUS</p>
+<p>英语（英国）：values-en-rGB</p>
+<p>英文（澳大利亚）：values-en-rAU</p>
+<p>英文（加拿大）：values-en-rCA</p>
+<p>英文（爱尔兰）：values-en-rIE</p>
+<p>英文（印度）：values-en-rIN</p>
+<p>英文（新西兰）：values-en-rNZ</p>
+<p>英文（新加坡）：values-en-rSG</p>
+<p>英文（南非）：values-en-rZA</p>
+<p>阿拉伯文（埃及）：values-ar-rEG</p>
+<p>阿拉伯文（以色列）：values-ar-rIL</p>
+<p>保加利亚文:  values-bg-rBG</p>
+<p>加泰罗尼亚文：values-ca-rES</p>
+<p>捷克文：values-cs-rCZ</p>
+<p>丹麦文：values-da-rDK</p>
+<p>德文（奥地利）：values-de-rAT</p>
+<p>德文（瑞士）：values-de-rCH</p>
+<p>德文（德国）：values-de-rDE</p>
+<p>德文（列支敦士登）：values-de-rLI</p>
+<p>希腊文：values-el-rGR</p>
+<p>西班牙文（西班牙）：values-es-rES</p>
+<p>西班牙文（美国）：values-es-rUS</p>
+<p>芬兰文（芬兰）：values-fi-rFI</p>
+<p>法文（比利时）：values-fr-rBE</p>
+<p>法文（加拿大）：values-fr-rCA</p>
+<p>法文（瑞士）：values-fr-rCH</p>
+<p>法文（法国）：values-fr-rFR</p>
+<p>希伯来文：values-iw-rIL</p>
+<p>印地文：values-hi-rIN</p>
+<p>克罗里亚文：values-hr-rHR</p>
+<p>匈牙利文：values-hu-rHU</p>
+<p>印度尼西亚文：values-in-rID</p>
+<p>意大利文（瑞士）：values-it-rCH</p>
+<p>意大利文（意大利）：values-it-rIT</p>
+<p>日文：values-ja-rJP</p>
+<p>韩文：values-ko-rKR</p>
+<p>立陶宛文：valueslt-rLT</p>
+<p>拉脱维亚文：values-lv-rLV</p>
+<p>挪威博克马尔文：values-nb-rNO</p>
+<p>荷兰文(比利时)：values-nl-BE</p>
+<p>荷兰文（荷兰）：values-nl-rNL</p>
+<p>波兰文：values-pl-rPL</p>
+<p>葡萄牙文（巴西）：values-pt-rBR</p>
+<p>葡萄牙文（葡萄牙）：values-pt-rPT</p>
+<p>罗马尼亚文：values-ro-rRO</p>
+<p>俄文：values-ru-rRU</p>
+<p>斯洛伐克文：values-sk-rSK</p>
+<p>斯洛文尼亚文：values-sl-rSI</p>
+<p>塞尔维亚文：values-sr-rRS</p>
+<p>瑞典文：values-sv-rSE</p>
+<p>泰文：values-th-rTH</p>
+<p>塔加洛语：values-tl-rPH</p>
+<p>土耳其文：values–r-rTR</p>
+<p>乌克兰文：values-uk-rUA</p>
+<p>越南文：values-vi-rVN</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/18/android-res-folder-names-i18n/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/18/android-res-folder-names-i18n/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/Singleton-mode/" title="[转载]单例模式的七种写法" itemprop="url">[转载]单例模式的七种写法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T06:58:07.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>原文：<a href="http://cantellow.iteye.com/blog/838473" target="_blank" rel="noopener">http://cantellow.iteye.com/blog/838473</a></p>
+<p>第一种（懒汉，线程不安全）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;  </span><br><span class="line">        instance = <span class="keyword">new</span> Singleton();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种写法lazy loading很明显，但是致命的是在多线程不能正常工作。</p>
+<p>第二种（懒汉，线程安全）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;  </span><br><span class="line">        instance = <span class="keyword">new</span> Singleton();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种写法能够在多线程中很好的工作，而且看起来它也具备很好的lazy loading，但是，遗憾的是，效率很低，99%情况下不需要同步。</p>
+<p>第三种（饿汉）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">return</span> instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种方式基于classloder机制避免了多线程的同步问题，不过，instance在类装载时就实例化，虽然导致类装载的原因有很多种，在单例模式中大多数都是调用getInstance方法， 但是也不能确定有其他的方式（或者其他的静态方法）导致类装载，这时候初始化instance显然没有达到lazy loading的效果。</p>
+<p>第四种（饿汉，变种）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> Singleton instance = <span class="keyword">null</span>;  </span><br><span class="line">    <span class="keyword">static</span> &#123;  </span><br><span class="line">    instance = <span class="keyword">new</span> Singleton();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>表面上看起来差别挺大，其实更第三种方式差不多，都是在类初始化即实例化instance。</p>
+<p>第五种（静态内部类）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton INSTANCE = <span class="keyword">new</span> Singleton();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">return</span> SingletonHolder.INSTANCE;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种方式同样利用了classloder的机制来保证初始化instance时只有一个线程，它跟第三种和第四种方式不同的是（很细微的差别）：第三种和第四种方式是只要Singleton类被装载了，那么instance就会被实例化（没有达到lazy loading效果），而这种方式是Singleton类被装载了，instance不一定被初始化。因为SingletonHolder类没有被主动使用，只有显示通过调用getInstance方法时，才会显示装载SingletonHolder类，从而实例化instance。想象一下，如果实例化instance很消耗资源，我想让他延迟加载，另外一方面，我不希望在Singleton类加载时就实例化，因为我不能确保Singleton类还可能在其他的地方被主动使用从而被加载，那么这个时候实例化instance显然是不合适的。这个时候，这种方式相比第三和第四种方式就显得很合理。</p>
+<p>第六种（枚举）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Singleton &#123;  </span><br><span class="line">    INSTANCE;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">whateverMethod</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种方式是Effective Java作者Josh Bloch 提倡的方式，它不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象，可谓是很坚强的壁垒啊，不过，个人认为由于1.5中才加入enum特性，用这种方式写不免让人感觉生疏，在实际工作中，我也很少看见有人这么写过。</p>
+<p>第七种（双重校验锁）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getSingleton</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;  </span><br><span class="line">        <span class="keyword">synchronized</span> (Singleton.class) &#123;  </span><br><span class="line">        <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;  </span><br><span class="line">            singleton = <span class="keyword">new</span> Singleton();  </span><br><span class="line">        &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> singleton;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> 这个是第二种方式的升级版，俗称双重检查锁定，详细介绍请查看：<a href="http://www.ibm.com/developerworks/cn/java/j-dcl.html" target="_blank" rel="noopener">http://www.ibm.com/developerworks/cn/java/j-dcl.html</a><br>在JDK1.5之后，双重检查锁定才能够正常达到单例效果。</p>
+<p>注：<br>1.第三种方式，建议声明为final的。<br>2.第四种方式有问题，    private Singleton instance = null;  应该声明为static，而getInstance方法中的this必须去掉。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java/">java</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/java/">java</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/18/Singleton-mode/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/18/Singleton-mode/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/intellij-idea-custom/" title="IntelliJ IDEA几个自定义选项" itemprop="url">IntelliJ IDEA几个自定义选项</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T03:20:04.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <ol>
+<li>终端由 cmd.exe 改成 Git bash<br><img src="http://img2.tbcdn.cn/L1/461/1/f4d4286e60c9a8ed7a4c37d1d8db39cbe0bd6ad1" alt="820HEQ_37_XG_D2RW13KQEA"></li>
+</ol>
+<ol start="2">
+<li><p>对比工具工Beyond Compare<br><img src="http://img2.tbcdn.cn/L1/461/1/60e16c2d70d8b04e9dce564755e782318472c83e" alt="_L_SCI236SZ95S1D_2_NQ2C"></p>
+</li>
+<li><p>UTF-8编码<br>以下三个选项，都选择UTF-8编码。<br><img src="http://img2.tbcdn.cn/L1/461/1/95e2ba9fc5513093c2f4c979a260d2fba563ebf2" alt="A4HDKC_C_7A4J1_GPMYEBF2"></p>
+</li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/tools/">tools</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/idea/">idea</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/18/intellij-idea-custom/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/18/intellij-idea-custom/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/android-proguard-custom/" title="Android项目中Proguard配置文件的定制" itemprop="url">Android项目中Proguard配置文件的定制</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T03:16:48.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>默认的Proguard配置文件在$ANDROID_HOME\sdk\tools\proguard 目录下。   </p>
+<ol>
+<li>proguard-android.txt      默认的Proguard配置文件（未优化）</li>
+<li>proguard-android-optimize.txt      默认的Proguard配置文件（已优化）</li>
+<li>proguard-project.txt       默认的用户定制Proguard配置文件。</li>
+</ol>
+<p>最近，我通过对Proguard文档的学习，以及各种开源项目Proguard配置文件的分析，总结了几个加强版本的Proguard配置文件。</p>
+<p>项目主页：<a href="https://github.com/SnowdreamFramework/android-proguard-configs" target="_blank" rel="noopener">https://github.com/SnowdreamFramework/android-proguard-configs</a></p>
+<h2 id="Proguard配置文件列表"><a href="#Proguard配置文件列表" class="headerlink" title="Proguard配置文件列表"></a>Proguard配置文件列表</h2><ol>
+<li>proguard-android-all.txt    android项目中可能用到的Proguard配置，仅供参考</li>
+<li>proguard-android-lib.txt        android library工程的Proguard配置（未优化）</li>
+<li>proguard-android-lib-optimize.txt       android library工程的Proguard配置（已优化）</li>
+<li>proguard-android-app.txt       android app工程的Proguard配置（未优化）</li>
+<li>proguard-android-app-optimize.txt       android app工程的Proguard配置（已优化）</li>
+</ol>
+<h2 id="使用方法（Gradle）"><a href="#使用方法（Gradle）" class="headerlink" title="使用方法（Gradle）"></a>使用方法（Gradle）</h2><p>下载项目中的Proguard配置文件，然后拷贝到$ANDROID_HOME\sdk\tools\proguard 目录下。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">buildTypes &#123;</span><br><span class="line">    release &#123;</span><br><span class="line">        minifyEnabled <span class="keyword">true</span></span><br><span class="line">        <span class="function">proguardFiles <span class="title">getDefaultProguardFile</span><span class="params">(<span class="string">'proguard-android-app-optimize.txt'</span>)</span>, 'proguard-rules.txt'</span></span><br><span class="line"><span class="function">    &#125;</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>注：对于lib项目，推荐使用proguard-android-lib.txt<br>对于app项目，推荐使用proguard-android-app-optimize.txt</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a href="http://proguard.sourceforge.net/index.html#manual/usage.html" target="_blank" rel="noopener">http://proguard.sourceforge.net/index.html#manual/usage.html</a></li>
+<li><a href="http://proguard.sourceforge.net/index.html#manual/examples.html" target="_blank" rel="noopener">http://proguard.sourceforge.net/index.html#manual/examples.html</a></li>
+<li><a href="http://developer.android.com/tools/help/proguard.html" target="_blank" rel="noopener">http://developer.android.com/tools/help/proguard.html</a></li>
+<li><a href="https://chromium.googlesource.com/external/google-cache-invalidation-api/+/master/src/example-app-build/proguard.cfg" target="_blank" rel="noopener">https://chromium.googlesource.com/external/google-cache-invalidation-api/+/master/src/example-app-build/proguard.cfg</a></li>
+<li><a href="https://google-gson.googlecode.com/svn/trunk/examples/android-proguard-example/proguard.cfg" target="_blank" rel="noopener">https://google-gson.googlecode.com/svn/trunk/examples/android-proguard-example/proguard.cfg</a></li>
+<li><a href="https://github.com/47deg/translate-bubble-android/blob/master/proguard-sbt.txt" target="_blank" rel="noopener">https://github.com/47deg/translate-bubble-android/blob/master/proguard-sbt.txt</a></li>
+<li><a href="http://sourceforge.net/p/proguard/discussion/182456/thread/32de9f92/" target="_blank" rel="noopener">http://sourceforge.net/p/proguard/discussion/182456/thread/32de9f92/</a></li>
+<li><a href="http://www.cnblogs.com/royi123/archive/2013/02/28/2937657.html" target="_blank" rel="noopener">http://www.cnblogs.com/royi123/archive/2013/02/28/2937657.html</a></li>
+<li><a href="https://code.google.com/p/csipsimple/source/browse/trunk/CSipSimple/proguard.cfg" target="_blank" rel="noopener">https://code.google.com/p/csipsimple/source/browse/trunk/CSipSimple/proguard.cfg</a></li>
+<li><a href="http://blog.csdn.net/lovexjyong/article/details/24652085" target="_blank" rel="noopener">http://blog.csdn.net/lovexjyong/article/details/24652085</a></li>
+</ol>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/18/android-proguard-custom/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/18/android-proguard-custom/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/android-remove-log/" title="[转]发布程序时移除Android调试Log" itemprop="url">[转]发布程序时移除Android调试Log</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T03:09:06.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>原文：<a href="http://blog.isming.me/blog/2014/06/30/remove-log-in-android/?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="noopener">http://blog.isming.me/blog/2014/06/30/remove-log-in-android/?utm_source=tuicool&amp;utm_medium=referral</a></p>
+<p>在Android开发中，我们使用android.util.Log来打印日志，方便我们的开发调试。但是对于正式发布的程序，我们并不希望这些Log信息显示，一方面对于用户来说影响机器性能，另一方面，其他开发者看到这些信息的时候，对我们应用程序的安全是有威胁的。所以，我们需要在正式发布时不让Log执行，或者将其移除。这里，我提供三种方法。</p>
+<h2 id="自己写一个Log的帮助类，在类中设置显示级别"><a href="#自己写一个Log的帮助类，在类中设置显示级别" class="headerlink" title="自己写一个Log的帮助类，在类中设置显示级别"></a>自己写一个Log的帮助类，在类中设置显示级别</h2><p>示例代码如下，通过一个静态变量设置Log的显示级别。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Log</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> logLevel = Log.VERBOSE;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">i</span><span class="params">(String tag, String msg)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (logLevel &lt;= Log.INFO)</span><br><span class="line">          android.util.Log.i(tag, msg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">e</span><span class="params">(String tag, String msg)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (logLevel &lt;= Log.ERROR)</span><br><span class="line">          android.util.Log.e(tag, msg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">d</span><span class="params">(String tag, String msg)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (logLevel &lt;= Log.DEBUG)</span><br><span class="line">          android.util.Log.d(tag, msg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">v</span><span class="params">(String tag, String msg)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (logLevel &lt;= Log.VERBOSE)</span><br><span class="line">          android.util.Log.v(tag, msg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">w</span><span class="params">(String tag, String msg)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (logLevel &lt;= Log.WARN)</span><br><span class="line">          android.util.Log.w(tag, msg);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用Proguard移除代码中的Log代码"><a href="#使用Proguard移除代码中的Log代码" class="headerlink" title="使用Proguard移除代码中的Log代码"></a>使用Proguard移除代码中的Log代码</h2><p>修改Proguard的配置文件，添加以下配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">-assumenosideeffects <span class="class"><span class="keyword">class</span> <span class="title">android</span>.<span class="title">util</span>.<span class="title">Log</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">v</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">i</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">w</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">d</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">e</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以根据需要在发布时候显示的级别来决定移除哪些级别的Log(需要移除的就放到配置中)，同时Proguard的配置中还要注意不要有 <code>-dontoptimize</code>这个配置。</p>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>以上两种方法都可以达到开发阶段不显示Log，正式发布移除Log。但是使用Proguard的方式，可能不是所有程序都会进行Proguard的。这个呢，大家根据自己的项目需求，来选择合适的方法。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/02/18/android-remove-log/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/18/android-remove-log/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>

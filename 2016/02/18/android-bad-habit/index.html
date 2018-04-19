@@ -1,0 +1,640 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android应用开发中的不良编程习惯 | snowdream - Impossible is nothing!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="snowdream">
+    
+
+    
+    <meta name="description" content="下面总结下Android应用开发中的不良编程习惯，欢迎对号入座。 不注意NULL判断原因:    粗心。 在不确认一个对象是否为Null的前提下，就大胆调用该对象的成员变量或者成员方法。结果：   空指针异常。解决方案：   细心。 参考：防止NullPointerException的最佳解决方案 滥用变量原因:   滥用变量。 定义很多变量，而且变量名字并不能表达变量的意思。结果：     代码">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android应用开发中的不良编程习惯">
+<meta property="og:url" content="http://www.snowdream.tech/2016/02/18/android-bad-habit/index.html">
+<meta property="og:site_name" content="snowdream - Impossible is nothing!">
+<meta property="og:description" content="下面总结下Android应用开发中的不良编程习惯，欢迎对号入座。 不注意NULL判断原因:    粗心。 在不确认一个对象是否为Null的前提下，就大胆调用该对象的成员变量或者成员方法。结果：   空指针异常。解决方案：   细心。 参考：防止NullPointerException的最佳解决方案 滥用变量原因:   滥用变量。 定义很多变量，而且变量名字并不能表达变量的意思。结果：     代码">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-19T02:49:42.011Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android应用开发中的不良编程习惯">
+<meta name="twitter:description" content="下面总结下Android应用开发中的不良编程习惯，欢迎对号入座。 不注意NULL判断原因:    粗心。 在不确认一个对象是否为Null的前提下，就大胆调用该对象的成员变量或者成员方法。结果：   空指针异常。解决方案：   细心。 参考：防止NullPointerException的最佳解决方案 滥用变量原因:   滥用变量。 定义很多变量，而且变量名字并不能表达变量的意思。结果：     代码">
+<meta name="twitter:creator" content="@snowdream86">
+<link rel="publisher" href="107081290425955479258">
+
+    
+    <link rel="alternative" href="/blog/atom.xml" title="snowdream - Impossible is nothing!" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bitbug_favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/IMG_6092.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/IMG_6092.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/IMG_6092.jpg" alt="snowdream - Impossible is nothing!" title="snowdream - Impossible is nothing!"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="snowdream - Impossible is nothing!">snowdream - Impossible is nothing!</a></h1>
+				<h2 class="blog-motto">Email: yanghui1986527#gmail.com    QQ: 273247606    QQ Group：529327615</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.snowdream.tech">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/18/android-bad-habit/" title="Android应用开发中的不良编程习惯" itemprop="url">Android应用开发中的不良编程习惯</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="https://plus.google.com/107081290425955479258?rel=author" title="snowdream" target="_blank" itemprop="author">snowdream</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-18T14:00:07.000Z" itemprop="datePublished"> 发表于 2016-02-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#不注意NULL判断"><span class="toc-number">1.</span> <span class="toc-text">不注意NULL判断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#滥用变量"><span class="toc-number">2.</span> <span class="toc-text">滥用变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数的重复调用"><span class="toc-number">3.</span> <span class="toc-text">函数的重复调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#耗时操作-IO操作放在子线程"><span class="toc-number">4.</span> <span class="toc-text">耗时操作/IO操作放在子线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拷贝函数-代码"><span class="toc-number">5.</span> <span class="toc-text">拷贝函数/代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#滥用设计模式"><span class="toc-number">6.</span> <span class="toc-text">滥用设计模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#保留大量废弃代码-功能"><span class="toc-number">7.</span> <span class="toc-text">保留大量废弃代码/功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码风格不统一"><span class="toc-number">8.</span> <span class="toc-text">代码风格不统一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数臃肿"><span class="toc-number">9.</span> <span class="toc-text">函数臃肿</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数命名随意，不规范"><span class="toc-number">10.</span> <span class="toc-text">函数命名随意，不规范</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬编码"><span class="toc-number">11.</span> <span class="toc-text">硬编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可见性控制不当"><span class="toc-number">12.</span> <span class="toc-text">可见性控制不当</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-number">13.</span> <span class="toc-text">其他</span></a></li></ol>
+		
+		</div>
+		
+		<p>下面总结下Android应用开发中的不良编程习惯，欢迎对号入座。</p>
+<h2 id="不注意NULL判断"><a href="#不注意NULL判断" class="headerlink" title="不注意NULL判断"></a>不注意NULL判断</h2><p><strong>原因:</strong>    粗心。 在不确认一个对象是否为Null的前提下，就大胆调用该对象的成员变量或者成员方法。<br><strong>结果：</strong>   空指针异常。<br><strong>解决方案：</strong>   细心。 参考：<a href="http://snowdream.github.io/blog/2016/02/18/android-avoid-null/" target="_blank" rel="noopener">防止NullPointerException的最佳解决方案</a></p>
+<h2 id="滥用变量"><a href="#滥用变量" class="headerlink" title="滥用变量"></a>滥用变量</h2><p><strong>原因:</strong>   滥用变量。 定义很多变量，而且变量名字并不能表达变量的意思。<br><strong>结果：</strong>     代码难以理解，维护困难。<br><strong>解决方案：</strong>   规范变量命名，尽量让名字能表达变量的意思。同时，变量应该在于精，而不在于多。           </p>
+<h2 id="函数的重复调用"><a href="#函数的重复调用" class="headerlink" title="函数的重复调用"></a>函数的重复调用</h2><p><strong>原因:</strong>    函数功能不清晰，搭车调用其他函数。举个例子，假如：函数A，B，C。 函数B中调用函数C,函数A中调用函数B。最后使用的时候，同时调用函数A，C，造成函数C被调用多次。<br><strong>结果：</strong>     轻者，造成程序性能下降，耗时，耗电。重者，导致程序逻辑混乱，造成各种意想不到的BUG。<br><strong>解决方案：</strong>   函数功能单一，并且稳定。        </p>
+<h2 id="耗时操作-IO操作放在子线程"><a href="#耗时操作-IO操作放在子线程" class="headerlink" title="耗时操作/IO操作放在子线程"></a>耗时操作/IO操作放在子线程</h2><p><strong>原因:</strong>     贪图快，把耗时操作/IO操作放在主线程执行。<br><strong>结果：</strong>    轻则造成应用卡顿，重则出现ANR，导致应用崩溃。<br><strong>解决方案：</strong>   将所有耗时操作/IO操作封装到子线程去。       </p>
+<h2 id="拷贝函数-代码"><a href="#拷贝函数-代码" class="headerlink" title="拷贝函数/代码"></a>拷贝函数/代码</h2><p><strong>原因:</strong>    有时候因为项目紧，开发任务中。在开发新功能时，经常将已有功能代码，拷贝过来改改，却没注意有部分内容需要修改或者去掉的。<br><strong>结果：</strong>     功能不符合预期，导致BUG。<br><strong>解决方案：</strong>   能重用的代码抽取出来公用。拷贝的时候，一定要过一遍，切记拿过来直接用。</p>
+<h2 id="滥用设计模式"><a href="#滥用设计模式" class="headerlink" title="滥用设计模式"></a>滥用设计模式</h2><p><strong>原因:</strong>    当维护一个项目的人员比较多时，容易发生。你想用MVP，他想用MVC，别人还要用MVVM。<br><strong>结果：</strong>     项目代码出现百家争鸣，百花齐放的现象。难以维护。<br><strong>解决方案：</strong>   统一设计模式，便于开发维护。     </p>
+<h2 id="保留大量废弃代码-功能"><a href="#保留大量废弃代码-功能" class="headerlink" title="保留大量废弃代码/功能"></a>保留大量废弃代码/功能</h2><p><strong>原因:</strong>    有可能是产品反复增加/删除某个功能，或者其他原因，导致开发人员不敢删除废弃代码。<br><strong>结果：</strong>     无故增加代码量和方法数，增加阅读和维护成本。<br><strong>解决方案：</strong>   废弃功能/废弃代码统统删掉。自觉抵制产品反复增加/删除同一个功能。</p>
+<h2 id="代码风格不统一"><a href="#代码风格不统一" class="headerlink" title="代码风格不统一"></a>代码风格不统一</h2><p><strong>原因:</strong>    使用不同的代码风格，同时又喜欢整个文件进行格式化。<br><strong>结果：</strong>     版本管理困难。 合并/比较代码时，满屏幕都是不一样代码。<br><strong>解决方案：</strong>   统一代码风格。否则，不要尝试对整个文件进行格式化。</p>
+<h2 id="函数臃肿"><a href="#函数臃肿" class="headerlink" title="函数臃肿"></a>函数臃肿</h2><p><strong>原因:</strong>    函数体代码太长，成百上千行的都有。<br><strong>结果：</strong>       代码阅读困难。<br><strong>解决方案：</strong>   拆分成多个小函数。    </p>
+<h2 id="函数命名随意，不规范"><a href="#函数命名随意，不规范" class="headerlink" title="函数命名随意，不规范"></a>函数命名随意，不规范</h2><p><strong>原因:</strong>     函数命名随意，不规范，又没有注释。<br><strong>结果：</strong>       一眼看过去，不知道这个函数干什么的。需要读完整个函数才知道函数的功能。<br><strong>解决方案：</strong>   函数命名尽量能体现函数的作用。如果无法完整体现，加函数注释，说清楚函数的作用，以及参数的含义。  </p>
+<h2 id="硬编码"><a href="#硬编码" class="headerlink" title="硬编码"></a>硬编码</h2><p><strong>原因:</strong>     在java代码中直接写字符串，而不定义在string.xml。<br><strong>结果：</strong>       不利于字符串重用和国际化。<br><strong>解决方案：</strong>     将字符串都定义到string.xml。</p>
+<h2 id="可见性控制不当"><a href="#可见性控制不当" class="headerlink" title="可见性控制不当"></a>可见性控制不当</h2><p><strong>原因:</strong>     不注意控制成员变量和成员方法的可见性，都是用public来进行修饰。<br><strong>结果：</strong>       导致可见性失控。<br><strong>解决方案：</strong>    严格控制成员变量和成员方法的可见性，尽量缩小。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>想到再来补充。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/android/">android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/android/">android</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2084287" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/02/18/android-avoid-null/" title="防止NullPointerException的最佳解决方案">
+  <strong>上一篇：</strong><br/>
+  <span>
+  防止NullPointerException的最佳解决方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/02/18/android-res-folder-names-i18n/"  title="[转载]Android各国语言Values文件夹命名规则">
+ <strong>下一篇：</strong><br/> 
+ <span>[转载]Android各国语言Values文件夹命名规则
+</span>
+</a>
+</div>
+
+</nav>
+
+	<!-- 
+<section id="googlead" class="googlead">
+  <div id="googlead"> -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- github -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-4784160492252285"
+         data-ad-slot="6568520857"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+<!-- </div>
+</section> -->
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/02/18/android-bad-habit/" data-title="Android应用开发中的不良编程习惯" data-url="http://www.snowdream.tech/2016/02/18/android-bad-habit/"></div>
+</section>
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="snowdream" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/android/" title="android">android<sup>31</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/books/" title="books">books<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/gradle/" title="gradle">gradle<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/project/" title="project">project<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/settings/" title="settings">settings<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/tools/" title="tools">tools<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/android/" title="android">android<sup>32</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/xposed/" title="xposed">xposed<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/project/" title="project">project<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/groovy/" title="groovy">groovy<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jni/" title="jni">jni<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java/" title="java">java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/idea/" title="idea">idea<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ci/" title="ci">ci<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nodejs/" title="nodejs">nodejs<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/npm/" title="npm">npm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/maven/" title="maven">maven<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ubuntu/" title="ubuntu">ubuntu<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/linux/" title="linux">linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://yq.aliyun.com/users/30710776/own" target="_blank" title="面向开发者的开放型技术平台">云栖社区</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://github.com/snowdream" target="_blank" title="Github">Github</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.bwg2.com/index.html" target="_blank" title="搬瓦工VPS中文网">搬瓦工VPS中文网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/blog/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Impossible is nothing！ <br/>
+			Email: yanghui1986527#gmail.com QQ: 273247606 QQ Group：529327615</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/snowdream" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/821624" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/snowdream86" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/snowdream1986" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		<a href="https://plus.google.com/107081290425955479258?rel=author" target="_blank" class="icon-google_plus" title="Google+"></a>
+		
+		
+		<a href="mailto:yanghui1986527#gmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="snowdream">snowdream</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"snowdream-blog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'snowdream-blog';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-43950516-1', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
+
+<a href="https://github.com/snowdream"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
